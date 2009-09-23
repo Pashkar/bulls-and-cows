@@ -1,0 +1,56 @@
+<project name="build" default="all">
+	<target name="clean" description="Clean up">
+		<delete dir="build"/>
+		<delete dir="dist"/>
+	</target>
+	<target name="all" description="clean, compile-src, test, jar" depends="clean, test, jar"/>
+	<target name="jar" description="make jar file" depends="compile-src, copy-libs">
+		<jar destfile="dist/bnc.jar">
+			<fileset dir="build/classes">
+				<include name="**/*.class"/>
+				<include name="**/*"/>
+			</fileset>
+		</jar>
+	</target>
+	<target name="copy-libs" description="copy libs">
+		<copy todir="dist">
+			<fileset dir="lib">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="test" description="junit" depends="compile-test">
+    		<junit>
+      			<classpath refid="classpath.test"/>
+      			<formatter type="brief" usefile="false"/>
+      			<test name="paxus.bnc.AllTests"/>
+    		</junit>
+  	</target>
+	<target name="compile-test" description="compile test" depends="make.dirs, compile-src">
+		<javac destdir="build/classes-tests" classpathref="classpath.test">
+			<src path="tests"/>
+		</javac>
+  	</target>
+	<target name="compile-src" description="compile src" depends="make.dirs">
+		<javac destdir="build/classes" classpathref="classpath.src">
+			<src path="src"/>
+		</javac>
+	</target>
+	<target name="make.dirs" description="Make a dir">
+		<mkdir dir="build"/>
+		<mkdir dir="build/classes"/>
+		<mkdir dir="build/classes-tests"/>
+		<mkdir dir="dist"/>
+	</target>
+	<path id="classpath.src">
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	<path id="classpath.test">
+		<pathelement location="build/classes"/>
+		<pathelement location="build/classes-tests"/>
+		<pathelement location="commons/junit-4.7.jar"/>
+   		<path refid="classpath.src"/>
+	</path>
+</project>
