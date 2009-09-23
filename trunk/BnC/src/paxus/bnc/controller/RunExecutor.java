@@ -54,7 +54,6 @@ public final class RunExecutor {
 	private Alphabet getAlphabet() {
 		//FIXME getAlphabet
 		Alphabet alphabet = Alphabet.DIGITAL;
-		alphabet.reinit();
 		return alphabet;//  
 	}
 }
