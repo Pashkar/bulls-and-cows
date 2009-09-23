@@ -1,7 +1,5 @@
 package paxus.bnc.controller;
 
-import java.util.Arrays;
-
 import paxus.bnc.model.ENCharState;
 import paxus.bnc.model.IStatesCounter;
 
@@ -22,12 +20,13 @@ public final class LimitedStateSequencer implements ICharStateSequencer {
 		this.sc = sc; 
 	}
 
-	@Override
-	public ENCharState nextState(ENCharState curState,
-			ENCharState... forbidden) {
+	public ENCharState nextState(ENCharState curState, ENCharState... forbidden) {
 		ENCharState[] newForb = forbidden;
 		if (sc.getStatesCount(state) >= max) {
-			newForb = Arrays.copyOf(forbidden, forbidden.length + 1);
+			newForb = new ENCharState[forbidden.length + 1];
+			for (int i = 0; i < forbidden.length; i++) {
+				newForb[i] = forbidden[i];
+			}
 			newForb[newForb.length - 1] = state;
 		}
 		return baseCss.nextState(curState, newForb);

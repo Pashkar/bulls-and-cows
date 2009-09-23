@@ -24,7 +24,6 @@ public abstract class Alphabet implements IStatesCounter {
 	}
 
 	private int presentStateCount; 
-	@Override
 	public int getStatesCount(ENCharState state) {
 		if (state != ENCharState.PRESENT)
 			return -1;
