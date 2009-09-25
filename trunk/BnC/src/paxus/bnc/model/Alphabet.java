@@ -13,7 +13,7 @@ public abstract class Alphabet implements IStatesCounter {
 	
 	private final Set<Character> symbols;
 	
-	private final Map<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
+	private final HashMap<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
 	
 	private ICharStateSequencer defaultCss;
 	/**
@@ -36,9 +36,10 @@ public abstract class Alphabet implements IStatesCounter {
 	}
 	
 	private Set<Character> init() {
-		Set<Character> ss = new HashSet<Character>();
-		for (char ch : getSymbolsLine().toCharArray()) 
-			ss.add(Character.valueOf(ch));
+		HashSet<Character> ss = new HashSet<Character>();
+		char[] charArray = getSymbolsLine().toCharArray();
+		for (int i = 0; i < charArray.length; i++) 
+			ss.add(new Character(charArray[i]));
 		return Collections.unmodifiableSet(ss);
 	}
 	

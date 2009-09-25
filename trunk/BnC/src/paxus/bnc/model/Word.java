@@ -19,31 +19,34 @@ public final class Word {
 			throw new BncException("Word is loo long (" + word.length() + ")");
 		this.wordLength = word.length(); 
 		
-		Set<Character> chars = new HashSet<Character>();
-		int i = 0;
-		for (char ch : word.toLowerCase().toCharArray()) {
+		Char[] mWord = this.word;
+		HashSet<Character> chars = new HashSet<Character>();
+		char[] charArray = word.toLowerCase().toCharArray();
+		for (int i = 0; i < charArray.length; i++) {
+			char ch = charArray[i];
 			//check that no duplicates
 			if (chars.contains(ch))	
 				throw new BncException("Duplicate chars \"" + ch + "\" in word \"" + word + "\"");
 			chars.add(ch);
-			
-			this.word[i++] = new Char(ch, alphabet);
+			mWord[i++] = new Char(ch, alphabet);
 		}
 	}
 
 	@Override
 	public String toString() {
+		Char[] mWord = word;
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < wordLength; i++) {
-			sb.append(word[i] + "");
+			sb.append(mWord[i] + "");
 		}
 		return sb.toString();
 	}
 	
 	public String asString() {
+		Char[] mWord = word;
 		StringBuilder sb = new StringBuilder(wordLength);
 		for (int i = 0; i < wordLength; i++) {
-			sb.append(word[i].ch);
+			sb.append(mWord[i].ch);
 		}
 		return sb.toString();
 	}

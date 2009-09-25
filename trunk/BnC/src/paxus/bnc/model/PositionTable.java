@@ -3,8 +3,6 @@ package paxus.bnc.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import paxus.bnc.BncException;
@@ -12,9 +10,9 @@ import paxus.bnc.controller.ICharStateSequencer;
 
 public class PositionTable {
 
-	private final List<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
+	private final ArrayList<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
 
-	private final Map<Char, PositionLine> char2line = new HashMap<Char, PositionLine>(Run.MAX_WORD_LENGTH); 
+	private final HashMap<Char, PositionLine> char2line = new HashMap<Char, PositionLine>(Run.MAX_WORD_LENGTH); 
 	
 	public final int maxLines;
 	
@@ -101,23 +99,26 @@ public class PositionTable {
 
 		public PositionLine(Char ch) {
 			this.ch = ch;
+			PosChar[] mChars = this.chars;
 			for (int i = 0; i < PositionTable.this.maxLines; i++) {
-				this.chars[i] = new PosChar(ch);
+				mChars[i] = new PosChar(ch);
 			}
 		}
 
 		public int getPosPresent() {
+			PosChar[] mChars = chars;
 			for (int i = 0; i < maxLines; i++) {
-				if (chars[i].state == ENCharState.PRESENT)
+				if (mChars[i].state == ENCharState.PRESENT)
 					return i;
 			}
 			return -1;
 		}
 		
 		public Set<Integer> getPosAbsent() {
-			Set<Integer> res = new HashSet<Integer>();
+			PosChar[] mChars = chars;
+			HashSet<Integer> res = new HashSet<Integer>();
 			for (int i = 0; i < maxLines; i++) {
-				if (chars[i].state == ENCharState.ABSENT)
+				if (mChars[i].state == ENCharState.ABSENT)
 					res.add(i);
 			}
 			return res;
@@ -125,10 +126,11 @@ public class PositionTable {
 		
 		@Override
 		public String toString() {
+			PosChar[] mChars = chars;
 			StringBuilder sb = new StringBuilder();
 			sb.append(ch.ch + " ");
 			for (int i = 0; i < PositionTable.this.maxLines; i++) {
-				sb.append(chars[i]);
+				sb.append(mChars[i]);
 			}
 			return sb.toString();
 		}
@@ -136,9 +138,9 @@ public class PositionTable {
 	
 	public final class PosChar {
 
-		private final Char ch;
+		final Char ch;
 		
-		private ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char 
+		ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char 
 
 		public PosChar(Char ch) {
 			this.ch = ch;
