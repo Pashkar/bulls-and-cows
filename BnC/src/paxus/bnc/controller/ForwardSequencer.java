@@ -11,8 +11,10 @@ import paxus.bnc.model.ENCharState;
  */
 public class ForwardSequencer implements ICharStateSequencer {
 	public ENCharState nextState(ENCharState curState, ENCharState... forbidden) {
-		Set<ENCharState> forbSet = new HashSet<ENCharState>();
-		forbSet.addAll(Arrays.asList(forbidden));
+		HashSet<ENCharState> forbSet = new HashSet<ENCharState>();
+		for (int i = 0; i < forbidden.length; i++) {
+			forbSet.add(forbidden[i]);
+		}
 		
 		ENCharState state = curState;
 		do {
