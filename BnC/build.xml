@@ -3,7 +3,7 @@
 		<delete dir="build"/>
 		<delete dir="dist"/>
 	</target>
-	<target name="all" description="clean, compile-src, test, jar" depends="clean, test, jar"/>
+	<target name="all" description="compile-src, test, jar" depends="test, jar"/>
 	<target name="jar" description="make jar file" depends="compile-src, copy-libs">
 		<jar destfile="dist/bnc.jar">
 			<fileset dir="build/classes">

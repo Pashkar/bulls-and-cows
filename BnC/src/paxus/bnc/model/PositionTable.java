@@ -128,7 +128,7 @@ public class PositionTable {
 		public String toString() {
 			PosChar[] mChars = chars;
 			StringBuilder sb = new StringBuilder();
-			sb.append(ch.ch + " ");
+			sb.append(ch.asString + " ");
 			for (int i = 0; i < PositionTable.this.maxLines; i++) {
 				sb.append(mChars[i]);
 			}

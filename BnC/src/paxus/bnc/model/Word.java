@@ -1,7 +1,6 @@
 package paxus.bnc.model;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import paxus.bnc.BncException;
 
@@ -28,7 +27,7 @@ public final class Word {
 			if (chars.contains(ch))	
 				throw new BncException("Duplicate chars \"" + ch + "\" in word \"" + word + "\"");
 			chars.add(ch);
-			mWord[i++] = new Char(ch, alphabet);
+			mWord[i] = new Char(ch, alphabet);
 		}
 	}
 
