@@ -3,7 +3,6 @@ package paxus.bnc.model;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import paxus.bnc.BncException;
@@ -115,17 +114,6 @@ public abstract class Alphabet implements IStatesCounter {
 			return "abcdefghijklmnopqrstuvwxyz";
 		}
 		
-	};
-	
-	public static final Alphabet CYRILLIC = new Alphabet() {
-		@Override
-		public String getName() {
-			return "Cyrillic";
-		}
-		@Override
-		protected String getSymbolsLine() {
-			return "אבגדהוזחטיךכלםמןנסעףפץצקרשתûü‎‏ÿ";
-		}
 	};
 	
 	public static final Alphabet DIGITAL = new Alphabet() {
