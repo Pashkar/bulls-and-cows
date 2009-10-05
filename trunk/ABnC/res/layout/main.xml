@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/LinearLayout01"
 	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android">
+	android:layout_height="fill_parent">
 	
-	<view class="paxus.bnc.android.CharView" 
-		id="@+id/CharView"
+		<view xmlns:android="http://schemas.android.com/apk/res/android"
+		class="paxus.bnc.android.CharView"
+		android:id="@+id/CharView"
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent"
 		android:background="@drawable/noth"
@@ -14,9 +14,8 @@
 		android:scrollbars="vertical"
 		android:fadingEdge="vertical"
 		/>
-<TextView android:text="@+id/TextView01" android:id="@+id/TextView01" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-
-
-
+		
+	
+	
 
 </LinearLayout>

@@ -1,20 +1,23 @@
 package paxus.bnc.android;
 
+import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.model.Char;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.View.OnClickListener;
 
-public class CharView extends View {
+public class CharView extends View implements OnClickListener {
 
 	private static final int WIDTH = 14;
 	private static final int HEIGHT = 14;
 	
 	private Paint paint;
 	
-	private Char ch = Char.NULL; 
+	private Char ch = Char.NO_ALPHA; 
 	public void setCh(Char ch) {
 		this.ch = ch;
 	}
@@ -23,8 +26,6 @@ public class CharView extends View {
 		super(context, attrs);
 		initView();
 	}
-
-
 
 	public CharView(Context context) {
 		super(context);
@@ -36,7 +37,7 @@ public class CharView extends View {
         paint.setAntiAlias(true);
         paint.setTextSize(24);
         paint.setColor(0xFFFFFFFF);
-//        setPadding(3, 3, 3, 3);
+        paint.setTextAlign(Align.CENTER);
 	}
 	
     @Override
@@ -46,45 +47,19 @@ public class CharView extends View {
     }
     
     private int measureWidth(int measureSpec) {
-    	/*int result = 0;
-        int specMode = MeasureSpec.getMode(measureSpec);
-        int specSize = MeasureSpec.getSize(measureSpec);
-
-        if (specMode == MeasureSpec.EXACTLY) {
-            result = specSize;
-        } else {
-            result = WIDTH + getPaddingLeft()
-                    + getPaddingRight();
-            if (specMode == MeasureSpec.AT_MOST) {
-                result = Math.min(result, specSize);
-            }
-        }
-
-        return result;*/
         return WIDTH + getPaddingLeft() + getPaddingRight();
     }
 
     private int measureHeight(int measureSpec) {
-    	/*int result = 0;
-        int specMode = MeasureSpec.getMode(measureSpec);
-        int specSize = MeasureSpec.getSize(measureSpec);
-
-        if (specMode == MeasureSpec.EXACTLY) {
-            result = specSize;
-        } else {
-            result = HEIGHT + getPaddingLeft()
-                    + getPaddingRight();
-            if (specMode == MeasureSpec.AT_MOST) {
-                result = Math.min(result, specSize);
-            }
-        }*/
-        return HEIGHT + getPaddingLeft() + getPaddingRight();
+        return HEIGHT + getPaddingTop() + getPaddingBottom();
     }
     
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        canvas.drawText(ch.asString, (float)getPaddingLeft(), (float)getPaddingTop(), paint);
-        canvas.drawText(ch.asString, 15, 30, paint);
-//        canvas.drawCircle(30, 30, 25, paint);
+        canvas.drawText(ch.asString, getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
     }
+
+	public void onClick(View v) {
+		ch.moveState(ICharStateSequencer.FORWARD);
+	}
 }
