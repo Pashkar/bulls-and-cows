@@ -2,6 +2,7 @@ package paxus.bnc.android;
 
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.model.Char;
+import paxus.bnc.model.ENCharState;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -25,6 +26,7 @@ public class CharView extends View implements OnClickListener {
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView();
+		setOnClickListener(this);
 	}
 
 	public CharView(Context context) {
@@ -60,6 +62,25 @@ public class CharView extends View implements OnClickListener {
     }
 
 	public void onClick(View v) {
-		ch.moveState(ICharStateSequencer.FORWARD);
+		ENCharState oldState = ch.getState();
+		ENCharState newState = ch.moveState(ICharStateSequencer.FORWARD);
+		if (newState != oldState) {
+			changeBackground(newState);
+			invalidate();
+		}
+	}
+
+	private void changeBackground(ENCharState state) {
+		switch (state) {
+		case NONE:
+			setBackgroundResource(R.drawable.noth);
+			break;
+		case ABSENT:
+			setBackgroundResource(R.drawable.wrong);
+			break;
+		case PRESENT:
+			setBackgroundResource(R.drawable.cow);
+			break;
+		}
 	}
 }
