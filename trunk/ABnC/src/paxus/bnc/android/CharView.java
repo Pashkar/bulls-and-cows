@@ -28,10 +28,11 @@ public class CharView extends View implements OnClickListener {
 		initView();
 		setOnClickListener(this);
 	}
-
+	
 	public CharView(Context context) {
 		super(context);
 		initView();
+		setOnClickListener(this);
 	}
 
 	public void initView() {
