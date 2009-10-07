@@ -28,9 +28,8 @@ public class Char {
 		return alphabet.getStateForChar(ch);
 	}
 
-	//package-private
 	//change using Run - it cares of consistancy 
-	ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
+	public ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
 		return alphabet.moveCharState(this, css, forbidden);
 	}
 	
@@ -68,20 +67,22 @@ public class Char {
 		return true;
 	}
 
-	public static final Char NULL;
+	public static final Char NO_ALPHA;
 	static {
 		Char ch = null;
 		try {
 			ch = new Char(NULL_CHAR, null) {
-				ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
-					throw new UnsupportedOperationException();
+				private ENCharState state = ENCharState.NONE; 
+				public ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
+					state = css.nextState(state, forbidden);
+					return state;
 				}
 				@Override
 				public ENCharState getState() {
-					return ENCharState.NONE;
+					return state;
 				}
 			};
 		} catch (BncException e) {}
-		NULL = ch;
+		NO_ALPHA = ch;
 	}
 }
