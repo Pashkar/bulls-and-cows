@@ -6,7 +6,6 @@ import paxus.bnc.model.ENCharState;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,12 +15,9 @@ public class CharView extends View implements OnClickListener {
 	private static final int WIDTH = 14;
 	private static final int HEIGHT = 14;
 	
-	private Paint paint;
-	
-	private Char ch = Char.NO_ALPHA; 
-	public void setCh(Char ch) {
-		this.ch = ch;
-	}
+	Paint paint;
+
+	Char ch = Char.NO_ALPHA; 
 
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -36,11 +32,11 @@ public class CharView extends View implements OnClickListener {
 	}
 
 	public void initView() {
-        paint = new Paint();
+        /*paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(24);
         paint.setColor(0xFFFFFFFF);
-        paint.setTextAlign(Align.CENTER);
+        paint.setTextAlign(Align.CENTER);*/
 	}
 	
     @Override

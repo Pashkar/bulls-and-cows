@@ -6,68 +6,10 @@
 	android:orientation="vertical">
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout01"
+		android:id="@+id/AlphabetLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:orientation="horizontal">
 	</LinearLayout>
-
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout02"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout03"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout04"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout05"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-	
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout06"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-	
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout07"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-	
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout08"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-	
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/LinearLayout09"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	</LinearLayout>
-	
-	
 
 </LinearLayout>
