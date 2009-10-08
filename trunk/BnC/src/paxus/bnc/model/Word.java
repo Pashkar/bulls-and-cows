@@ -27,7 +27,7 @@ public final class Word {
 			if (chars.contains(ch))	
 				throw new BncException("Duplicate chars \"" + ch + "\" in word \"" + word + "\"");
 			chars.add(ch);
-			mWord[i] = new Char(ch, alphabet);
+			mWord[i] = Char.valueOf(ch, alphabet);
 		}
 	}
 

@@ -1,23 +1,20 @@
 package paxus.bnc.model;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
-import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
 
 public abstract class Alphabet implements IStatesCounter {
 	
-	private final Set<Character> symbols;
+	private final HashSet<Character> symbols = new HashSet<Character>();
 	
-	private final HashMap<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
+	final HashMap<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
+	
+	final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
 	
 	private ICharStateSequencer defaultCss;
-	/**
-	 * Set up default CharStateSequencer
-	 */
 	public void setDefaultCss(ICharStateSequencer defaultCss) {
 		this.defaultCss = defaultCss;
 	}
@@ -29,51 +26,54 @@ public abstract class Alphabet implements IStatesCounter {
 		return presentStateCount;
 	}
 
-	private Alphabet() {
-		symbols = init();
-		reinit();
-	}
-	
-	private Set<Character> init() {
-		HashSet<Character> ss = new HashSet<Character>();
+	public Alphabet() {
+		//replace members by local references (for-loop increase impact) 
+		final HashMap<Character, ENCharState> char2state2 = char2state;
+		final HashMap<Character, Char> char2char2 = char2char;
+		final HashSet<Character> ss = symbols;
+		
 		char[] charArray = getSymbolsLine().toCharArray();
-		for (int i = 0; i < charArray.length; i++) 
-			ss.add(new Character(charArray[i]));
-		return Collections.unmodifiableSet(ss);
+		for (int i = 0; i < charArray.length; i++) { 
+			Character character = new Character(charArray[i]);
+			ss.add(character);	//init list of allowed symbols 
+			char2state2.put(character, ENCharState.NONE);	//init states for all chars
+			char2char2.put(character, new Char(this, charArray[i])); //init all Char objects for all allowed symbols
+		}
 	}
 	
 	/**
 	 * 	Clear all chars states. Clears defaultCss.
 	 */
-	public void reinit() {
+	public void clear() {
+		final HashMap<Character, ENCharState> char2state2 = char2state;
 		for (Character ch : symbols) {
-			char2state.put(ch, ENCharState.NONE);	//no null state for entire alphabet
+			char2state2.put(ch, ENCharState.NONE);	//clear states for all chars
 		}
 		presentStateCount = 0;
 		defaultCss = null;
 	}
+	
+	public Collection<Char> getAllChars() {
+		return char2char.values();
+	}
 
-	public final ENCharState getStateForChar(Character ch) {
-		return char2state.get(ch);
-	}
-	
 	//package-private
 	//change using Run - it cares of consistancy
-	final ENCharState moveCharState(Character ch, ENCharState... forbidden) throws BncException {
-		return moveCharState(new Char(ch, this), defaultCss, forbidden);
-	}
-	
-	//package-private
-	//change using Run - it cares of consistancy
-	final ENCharState moveCharState(Character ch, ICharStateSequencer css, ENCharState... forbidden) throws BncException {
-		return moveCharState(new Char(ch, this), css, forbidden);
+	final ENCharState moveCharState(Character ch, ENCharState... forbidden) {
+		return moveCharState(ch, defaultCss, forbidden);
 	}
 
 	//package-private
 	//change using Run - it cares of consistancy
 	final ENCharState moveCharState(Char ch, ICharStateSequencer css, ENCharState... forbidden) {
+		return moveCharState(ch.ch, css, forbidden);
+	}
+	
+	//package-private
+	//change using Run - it cares of consistancy
+	final ENCharState moveCharState(Character ch, ICharStateSequencer css, ENCharState... forbidden) {
 		ICharStateSequencer newCss = css != null ? css : defaultCss; 
-		return setCharState(ch.ch, newCss.nextState(char2state.get(ch.ch), forbidden));
+		return setCharState(ch, newCss.nextState(char2state.get(ch), forbidden));
 	}
 	
 	private ENCharState setCharState(Character ch, ENCharState newState) {
@@ -91,7 +91,7 @@ public abstract class Alphabet implements IStatesCounter {
 	}
 	
 	
-	public final boolean isCharValid(Character ch) {
+	public final boolean isValidSymbol(Character ch) {
 		return symbols.contains(ch);
 	}
 	
@@ -101,10 +101,14 @@ public abstract class Alphabet implements IStatesCounter {
 	
 	@Override
 	public String toString() {
-		return char2state + "";
+		return getName() + "";
+	}
+	
+	public Char getCharInstance(char ch) {
+		return char2char.get(ch);
 	}
 
-	public static final Alphabet LATIN = new Alphabet() {
+	public static class Latin extends Alphabet {
 		@Override
 		public String getName() {
 			return "Latin";
@@ -116,7 +120,7 @@ public abstract class Alphabet implements IStatesCounter {
 		
 	};
 	
-	public static final Alphabet DIGITAL = new Alphabet() {
+	public static class Digital extends Alphabet {
 		@Override
 		public String getName() {
 			return "Digital";
@@ -126,6 +130,4 @@ public abstract class Alphabet implements IStatesCounter {
 			return "0123456789";
 		}
 	};
-	
-	
 }

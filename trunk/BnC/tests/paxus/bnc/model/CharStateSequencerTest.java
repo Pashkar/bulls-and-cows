@@ -4,17 +4,14 @@ import junit.framework.TestCase;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.RunExecutor;
-import paxus.bnc.model.Alphabet;
-import paxus.bnc.model.Char;
-import paxus.bnc.model.ENCharState;
-import paxus.bnc.model.Run;
 
 public class CharStateSequencerTest extends TestCase {
 
 	public void testForwardSequencer() throws BncException {
+		final Alphabet la = new Alphabet.Latin();
 		RunExecutor re = new RunExecutor();
-		Run run = re.startNewRun(Alphabet.LATIN, "abcd");
-		Char ch = new Char('a', run.alphabet);
+		Run run = re.startNewRun(la, "abcd");
+		Char ch = Char.valueOf('a', run.alphabet);
 		
 		//simple cycle
 		assertEquals(ENCharState.ABSENT, ch.moveState(ICharStateSequencer.FORWARD));
@@ -29,8 +26,9 @@ public class CharStateSequencerTest extends TestCase {
 	}
 	
 	public void testAlphabetSequencer() throws BncException {
+		final Alphabet la = new Alphabet.Latin();
 		RunExecutor re = new RunExecutor();
-		Run run = re.startNewRun(Alphabet.LATIN, "abcd");
+		Run run = re.startNewRun(la, "abcd");
 
 		//test too many PRESENT
 		assertEquals(ENCharState.PRESENT, run.alphabet.moveCharState('x', ENCharState.ABSENT));

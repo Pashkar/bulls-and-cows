@@ -20,9 +20,33 @@ public class CharTest extends TestCase {
 		
 		//try null alphabet
 		boolean ok = false;
-		try {new Char('a', null); } 
+		try {Char.valueOf('a', null); } 
 		catch (NullPointerException e) {ok = true;}
 		if (!ok)
 			throw new BncException();
 	}
+	
+	public void testValueOf() throws BncException {
+		final Alphabet la = new Alphabet.Latin();
+		Char ch = Char.valueOf('a', la);
+		assertTrue(ch == la.getCharInstance('a'));
+		
+		assertNotNull(la.getCharInstance('b'));	//not instantiated implicitly is actually created by by alphabet constructor
+		assertTrue(Char.NO_ALPHA == Char.valueOf(Char.NULL_CHAR, null));
+	}
+	
+	public void testWrongAlphabet() throws BncException {
+		final Alphabet la = new Alphabet.Latin();
+		Char.valueOf('a', la);
+		
+		final Alphabet da = new Alphabet.Digital();
+		Char.valueOf('1', da);
+		
+		boolean ok = false;
+		try {Char.valueOf('z', da); } 
+		catch (BncException e) {ok = true;}
+		if (!ok)
+			throw new BncException();
+	}
+	
 }

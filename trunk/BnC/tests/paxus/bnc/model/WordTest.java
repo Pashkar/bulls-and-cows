@@ -6,19 +6,22 @@ import paxus.bnc.BncException;
 public class WordTest extends TestCase {
 
 	public void testWord() throws BncException {
-		new Word(Alphabet.LATIN, "aBc");
-		new Word(Alphabet.DIGITAL, "123");
+		final Alphabet da = new Alphabet.Digital();
+		new Word(da, "123");
+
+		final Alphabet la = new Alphabet.Latin();
+		new Word(la, "aBc");
 		
 		//test duplicate
 		boolean ok = false;
-		try {new Word(Alphabet.LATIN, "aBcA"); } 
+		try {new Word(la, "aBcA"); } 
 		catch (BncException e) {ok = true;}
 		if (!ok)
 			throw new BncException();
 
 		//test invalid char
 		ok = false;
-		try {new Word(Alphabet.LATIN, "abc1"); } 
+		try {new Word(la, "abc1"); } 
 		catch (BncException e) {ok = true;}
 		if (!ok)
 			throw new BncException();
