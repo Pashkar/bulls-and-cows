@@ -16,18 +16,8 @@ public final class RunExecutor {
 	
 	private final static WordComparator wc = new WordComparator(); 
 	
-	public static void main(String... args) throws BncException {
-		RunExecutor re = new RunExecutor();
-		re.startNewRun();
-	}
-	
-	public Run startNewRun() throws BncException {
-		return startNewRun(getAlphabet(),  getSecret());
-	}
-	
 	public Run startNewRun(Alphabet alphabet, String secret) throws BncException {
 		this.run = new Run(alphabet,  secret);
-		run.alphabet.reinit();
 		run.alphabet.setDefaultCss(new LimitedStateSequencer(ICharStateSequencer.FORWARD, run.wordLength, ENCharState.PRESENT, run.alphabet));
 		return this.run; 
 	}
@@ -44,16 +34,5 @@ public final class RunExecutor {
 	private void winGame() {
 		//FIXME winGame
 		System.out.println("WIN THE GAME");
-	}
-
-	private String getSecret() {
-		//FIXME getSecret
-		return "1234";
-	}
-
-	private Alphabet getAlphabet() {
-		//FIXME getAlphabet
-		Alphabet alphabet = Alphabet.DIGITAL;
-		return alphabet;//  
 	}
 }

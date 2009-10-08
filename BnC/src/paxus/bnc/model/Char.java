@@ -14,7 +14,7 @@ public class Char {
 	
 	public final Alphabet alphabet;
 	
-	public Char(char ch, Alphabet alphabet) throws BncException {
+/*	private Char(char ch, Alphabet alphabet) throws BncException {
 		if (alphabet == null && ch != NULL_CHAR)
 			throw new NullPointerException("Alphabet must not be null");
 		if (alphabet != null && !alphabet.isCharValid(ch))
@@ -22,10 +22,30 @@ public class Char {
 		this.alphabet = alphabet;
 		this.ch = ch;
 		this.asString = ch + "";
+	}*/
+	
+	//package-private
+	//for init from alphabet only - no checks needed
+	Char(Alphabet alphabet, char ch) {
+		this.alphabet = alphabet;
+		this.ch = ch;
+		this.asString = ch + "";
+	}
+	
+	public static Char valueOf(char ch, Alphabet alphabet) throws BncException {
+		if (alphabet == null) {
+			if (ch == NULL_CHAR)
+				return NO_ALPHA;
+			else
+				throw new NullPointerException("Alphabet must not be null"); 
+		}
+		if (!alphabet.isValidSymbol(ch))
+			throw new BncException("Symbol " + ch + " is not allowed in alphabet " + alphabet);
+		return alphabet.char2char.get(ch);	//all char must be initialized on alphabet load
 	}
 
 	public ENCharState getState() {
-		return alphabet.getStateForChar(ch);
+		return alphabet.char2state.get(ch);
 	}
 
 	//change using Run - it cares of consistancy 
@@ -70,19 +90,17 @@ public class Char {
 	public static final Char NO_ALPHA;
 	static {
 		Char ch = null;
-		try {
-			ch = new Char(NULL_CHAR, null) {
-				private ENCharState state = ENCharState.NONE; 
-				public ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
-					state = css.nextState(state, forbidden);
-					return state;
-				}
-				@Override
-				public ENCharState getState() {
-					return state;
-				}
-			};
-		} catch (BncException e) {}
+		ch = new Char(null, NULL_CHAR) {
+			private ENCharState state = ENCharState.NONE; 
+			public ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
+				state = css.nextState(state, forbidden);
+				return state;
+			}
+			@Override
+			public ENCharState getState() {
+				return state;
+			}
+		};
 		NO_ALPHA = ch;
 	}
 }
