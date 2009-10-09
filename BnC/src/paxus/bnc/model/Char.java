@@ -120,6 +120,12 @@ public class Char implements OnStateChangedListener {
 			public ENCharState getState() {
 				return state;
 			}
+			@Override
+			public void addStateChangedListener(OnStateChangedListener listener) {
+			}
+			@Override
+			public void removeStateChangedListener(OnStateChangedListener listener) {
+			}
 		};
 		NO_ALPHA = ch;
 	}

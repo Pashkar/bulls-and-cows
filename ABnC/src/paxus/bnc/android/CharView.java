@@ -18,7 +18,7 @@ public class CharView extends View implements OnClickListener, OnStateChangedLis
 	
 	Paint paint;
 
-	Char ch = Char.NO_ALPHA; 
+	private Char ch = Char.NO_ALPHA; 
 
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -32,6 +32,10 @@ public class CharView extends View implements OnClickListener, OnStateChangedLis
 
 	public void initView() {
 		setOnClickListener(this);
+	}
+	
+	public void setChar(Char ch) {
+		this.ch = ch;
 		ch.addStateChangedListener(this);
 	}
 	
@@ -75,5 +79,10 @@ public class CharView extends View implements OnClickListener, OnStateChangedLis
 			setBackgroundResource(R.drawable.cow);
 			break;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return ch + "";
 	}
 }

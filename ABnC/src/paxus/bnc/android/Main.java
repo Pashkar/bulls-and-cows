@@ -5,7 +5,6 @@ import paxus.bnc.controller.RunExecutor;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
 import paxus.bnc.model.Run;
-import paxus.bnc.model.Word;
 import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
@@ -37,7 +36,7 @@ public class Main extends Activity {
 		for (int i = 0; i < COLUMNS; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
-        	cv.ch = chars[i];
+        	cv.setChar(chars[i]);
         	la.addView(cv);
         }
 
@@ -46,7 +45,7 @@ public class Main extends Activity {
         for (int i = 0; i < run.secret.wordLength; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);
         	cv.paint = paint;
-        	cv.ch = chars[i];
+        	cv.setChar(chars[i]);
         	ls.addView(cv);
         }
         
