@@ -3,6 +3,7 @@ package paxus.bnc.android;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.model.Char;
 import paxus.bnc.model.ENCharState;
+import paxus.bnc.model.OnStateChangedListener;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,7 +11,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class CharView extends View implements OnClickListener {
+public class CharView extends View implements OnClickListener, OnStateChangedListener {
 
 	private static final int WIDTH = 14;
 	private static final int HEIGHT = 14;
@@ -22,21 +23,16 @@ public class CharView extends View implements OnClickListener {
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView();
-		setOnClickListener(this);
 	}
 	
 	public CharView(Context context) {
 		super(context);
 		initView();
-		setOnClickListener(this);
 	}
 
 	public void initView() {
-        /*paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setTextSize(24);
-        paint.setColor(0xFFFFFFFF);
-        paint.setTextAlign(Align.CENTER);*/
+		setOnClickListener(this);
+		ch.addStateChangedListener(this);
 	}
 	
     @Override
@@ -59,12 +55,12 @@ public class CharView extends View implements OnClickListener {
     }
 
 	public void onClick(View v) {
-		ENCharState oldState = ch.getState();
-		ENCharState newState = ch.moveState(ICharStateSequencer.FORWARD);
-		if (newState != oldState) {
-			changeBackground(newState);
-			invalidate();
-		}
+		ch.moveState(ICharStateSequencer.FORWARD);	//if state really changes - onStateChanged will be notified
+	}
+	
+	public void onStateChanged(Character ch, ENCharState newState) {
+		changeBackground(newState);
+		invalidate();
 	}
 
 	private void changeBackground(ENCharState state) {

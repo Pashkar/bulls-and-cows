@@ -58,19 +58,19 @@ public abstract class Alphabet implements IStatesCounter {
 	}
 
 	//package-private
-	//change using Run - it cares of consistancy
+	//change using Run - it cares of consistency
 	final ENCharState moveCharState(Character ch, ENCharState... forbidden) {
 		return moveCharState(ch, defaultCss, forbidden);
 	}
 
 	//package-private
-	//change using Run - it cares of consistancy
+	//change using Run - it cares of consistency
 	final ENCharState moveCharState(Char ch, ICharStateSequencer css, ENCharState... forbidden) {
 		return moveCharState(ch.ch, css, forbidden);
 	}
 	
 	//package-private
-	//change using Run - it cares of consistancy
+	//change using Run - it cares of consistency
 	final ENCharState moveCharState(Character ch, ICharStateSequencer css, ENCharState... forbidden) {
 		ICharStateSequencer newCss = css != null ? css : defaultCss; 
 		return setCharState(ch, newCss.nextState(char2state.get(ch), forbidden));
@@ -87,9 +87,9 @@ public abstract class Alphabet implements IStatesCounter {
 			presentStateCount++;
 
 		char2state.put(ch, newState);
+		char2char.get(ch).onStateChanged(ch, newState);	//state can be changed directly through alphabet, not only by char.moveState() - must notify char
 		return newState;
 	}
-	
 	
 	public final boolean isValidSymbol(Character ch) {
 		return symbols.contains(ch);
@@ -104,7 +104,7 @@ public abstract class Alphabet implements IStatesCounter {
 		return getName() + "";
 	}
 	
-	public Char getCharInstance(char ch) {
+	public OnStateChangedListener getCharInstance(char ch) {
 		return char2char.get(ch);
 	}
 
@@ -117,7 +117,6 @@ public abstract class Alphabet implements IStatesCounter {
 		protected String getSymbolsLine() {
 			return "abcdefghijklmnopqrstuvwxyz";
 		}
-		
 	};
 	
 	public static class Digital extends Alphabet {

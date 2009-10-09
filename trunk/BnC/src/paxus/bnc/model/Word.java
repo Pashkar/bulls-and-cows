@@ -6,7 +6,7 @@ import paxus.bnc.BncException;
 
 public final class Word {
 
-	public final Char[] word = new Char[Run.MAX_WORD_LENGTH];
+	public final Char[] chars = new Char[Run.MAX_WORD_LENGTH];
 	
 	public final int wordLength;
 
@@ -18,7 +18,7 @@ public final class Word {
 			throw new BncException("Word is loo long (" + word.length() + ")");
 		this.wordLength = word.length(); 
 		
-		Char[] mWord = this.word;
+		OnStateChangedListener[] mWord = this.chars;
 		HashSet<Character> chars = new HashSet<Character>();
 		char[] charArray = word.toLowerCase().toCharArray();
 		for (int i = 0; i < charArray.length; i++) {
@@ -33,7 +33,7 @@ public final class Word {
 
 	@Override
 	public String toString() {
-		Char[] mWord = word;
+		OnStateChangedListener[] mWord = chars;
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < wordLength; i++) {
 			sb.append(mWord[i] + "");
@@ -42,7 +42,7 @@ public final class Word {
 	}
 	
 	public String asString() {
-		Char[] mWord = word;
+		Char[] mWord = chars;
 		StringBuilder sb = new StringBuilder(wordLength);
 		for (int i = 0; i < wordLength; i++) {
 			sb.append(mWord[i].ch);
