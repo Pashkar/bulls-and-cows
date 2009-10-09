@@ -32,7 +32,7 @@ public class PositionTable {
 		return lines.size();
 	}
 	
-	public int removeLine(Char ch) throws BncException {
+	public int removeLine(OnStateChangedListener ch) throws BncException {
 		PositionLine line = char2line.remove(ch);
 		if (line == null)
 			throw new BncException("No line for " + ch + " found");
@@ -57,7 +57,7 @@ public class PositionTable {
 	 * 	Only one {@link ENCharState.PRESENT}  in line/column allowed. <br/>
 	 *  All chars with {@link ENCharState.ABSENT} in line/column not allowed.
 	 */
-	public ENCharState moveStateForChar(Char ch, ICharStateSequencer css, int pos) {
+	public ENCharState moveStateForChar(OnStateChangedListener ch, ICharStateSequencer css, int pos) {
 		PositionLine line = char2line.get(ch);
 		PosChar pch = line.chars[pos];
 		
@@ -72,7 +72,7 @@ public class PositionTable {
 		return newState;
 	}
 
-	private Char getCharPresentInColumn(int pos) {
+	private OnStateChangedListener getCharPresentInColumn(int pos) {
 		for (PositionLine line : lines) {
 			PosChar posChar = line.chars[pos];
 			if (posChar.state == ENCharState.PRESENT)

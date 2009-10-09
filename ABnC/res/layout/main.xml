@@ -5,11 +5,25 @@
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
 
+	<!-- There must be independent layout for each predefined alphabets -->
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/AlphabetLayout"
+		android:id="@+id/DigitalAlphabetLayout"		
 		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
+		android:layout_height="wrap_content" 
+		android:orientation="horizontal"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp">
 	</LinearLayout>
+
+	<!-- May be replaced by custom "Word" layout -->
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/SecretLayout"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:orientation="horizontal"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp">
+	</LinearLayout>
+
 
 </LinearLayout>

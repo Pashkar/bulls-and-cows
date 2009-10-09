@@ -40,7 +40,6 @@ public final class Run {
 			} else if (oldState == ENCharState.PRESENT) {
 				posTable.removeLine(ch);
 			}
-				
 		}
 		return newState;
 	}

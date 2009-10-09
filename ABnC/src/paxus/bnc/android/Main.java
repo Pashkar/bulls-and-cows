@@ -5,10 +5,12 @@ import paxus.bnc.controller.RunExecutor;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
 import paxus.bnc.model.Run;
+import paxus.bnc.model.Word;
 import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 public class Main extends Activity {
@@ -28,17 +30,25 @@ public class Main extends Activity {
 		} catch (BncException e) {}
 		
 		final Paint paint = createPaint();
+		final LayoutInflater layoutInflater = getLayoutInflater();
 		
-        LinearLayout la = (LinearLayout) findViewById(R.id.AlphabetLayout);
+        LinearLayout la = (LinearLayout) findViewById(R.id.DigitalAlphabetLayout);
         Char[] chars = alphabet.getAllChars().toArray(new Char[COLUMNS]);
-        for (int i = 0; i < COLUMNS; i++) {
-        	CharView cv = (CharView) getLayoutInflater().inflate(R.layout.char_view, null);
+		for (int i = 0; i < COLUMNS; i++) {
+        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
         	cv.ch = chars[i];
         	la.addView(cv);
         }
-        
-        
+
+        LinearLayout ls = (LinearLayout) findViewById(R.id.SecretLayout);
+        chars = run.secret.chars;
+        for (int i = 0; i < run.secret.wordLength; i++) {
+        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);
+        	cv.paint = paint;
+        	cv.ch = chars[i];
+        	ls.addView(cv);
+        }
         
     }
 
@@ -55,10 +65,10 @@ public class Main extends Activity {
     	//TODO can keep alphabet instance if not changed and just reinit().
     	//alphabet.reinit();
     	
-    	alphabet = new Alphabet.Latin();
+    	alphabet = new Alphabet.Digital();
     	//TODO offer alphabet selecting for user
     	
-    	run = re.startNewRun(alphabet, "abcde");
+    	run = re.startNewRun(alphabet, "12345");
     }
     
 }
