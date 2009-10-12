@@ -10,8 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class CharView extends View implements OnClickListener, IStateChangedListener {
-
+public class PosCharView extends View implements OnClickListener, IStateChangedListener {
 	private static final int WIDTH = 14;
 	private static final int HEIGHT = 14;
 	
@@ -19,12 +18,12 @@ public class CharView extends View implements OnClickListener, IStateChangedList
 
 	private Char ch = Char.NO_ALPHA; 
 
-	public CharView(Context context, AttributeSet attrs) {
+	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView();
 	}
 	
-	public CharView(Context context) {
+	public PosCharView(Context context) {
 		super(context);
 		initView();
 	}

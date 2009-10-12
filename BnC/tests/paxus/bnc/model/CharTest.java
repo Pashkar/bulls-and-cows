@@ -2,7 +2,7 @@ package paxus.bnc.model;
 
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
-import paxus.bnc.controller.OnStateChangedListener;
+import paxus.bnc.controller.IStateChangedListener;
 
 public class CharTest extends TestCase {
 
@@ -53,7 +53,7 @@ public class CharTest extends TestCase {
 		final Alphabet la = new Alphabet.Latin();
 		Char ch = Char.valueOf('a', la);
 		final int[] counter = {0};
-		final OnStateChangedListener listener = new OnStateChangedListener() {
+		final IStateChangedListener listener = new IStateChangedListener() {
 			public void onStateChanged(Character ch, ENCharState newState) {
 				counter[0]++;
 			}

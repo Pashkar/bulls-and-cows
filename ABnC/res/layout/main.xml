@@ -5,9 +5,9 @@
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
 
-	<!-- There must be independent layout for each predefined alphabets -->
+	<!-- May be replaced by custom "Word" layout -->
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/DigitalAlphabetLayout"		
+		android:id="@+id/SecretLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:orientation="horizontal"
@@ -15,9 +15,19 @@
 		android:paddingBottom="5dp">
 	</LinearLayout>
 
-	<!-- May be replaced by custom "Word" layout -->
+	<!-- To contain various number of LinearLayouts of PosTable-->
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/SecretLayout"
+		android:id="@+id/PositioningLayout"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:orientation="vertical"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp">
+	</LinearLayout>
+
+	<!-- There must be independent layout for each predefined alphabets -->
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/DigitalAlphabetLayout"		
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:orientation="horizontal"

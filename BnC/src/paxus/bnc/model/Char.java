@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
-import paxus.bnc.controller.OnStateChangedListener;
+import paxus.bnc.controller.IStateChangedListener;
 
 
-public class Char implements OnStateChangedListener {
+public class Char implements IStateChangedListener {
 	 
 	static final char NULL_CHAR = '?';
 
@@ -18,7 +18,7 @@ public class Char implements OnStateChangedListener {
 	public final Alphabet alphabet;
 
 	//List - since there is only one Char instance for several CharView instances
-	private ArrayList<OnStateChangedListener> stateChangedListenerList = new ArrayList<OnStateChangedListener>();
+	private ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
 	
 /*	private Char(char ch, Alphabet alphabet) throws BncException {
 		if (alphabet == null && ch != NULL_CHAR)
@@ -60,17 +60,17 @@ public class Char implements OnStateChangedListener {
 	}
 	
 	//TODO - method can be inlined
-	public void addStateChangedListener(OnStateChangedListener listener) {
+	public void addStateChangedListener(IStateChangedListener listener) {
 		this.stateChangedListenerList.add(listener);
 	}
 	
 	//TODO - method can be inlined
-	public void removeStateChangedListener(OnStateChangedListener listener) {
+	public void removeStateChangedListener(IStateChangedListener listener) {
 		this.stateChangedListenerList.remove(listener);
 	}
 	
 	public void onStateChanged(Character ch, ENCharState newState) {
-		for (OnStateChangedListener listener : stateChangedListenerList)
+		for (IStateChangedListener listener : stateChangedListenerList)
 			listener.onStateChanged(ch, newState);
 	}
 	
@@ -123,10 +123,10 @@ public class Char implements OnStateChangedListener {
 				return state;
 			}
 			@Override
-			public void addStateChangedListener(OnStateChangedListener listener) {
+			public void addStateChangedListener(IStateChangedListener listener) {
 			}
 			@Override
-			public void removeStateChangedListener(OnStateChangedListener listener) {
+			public void removeStateChangedListener(IStateChangedListener listener) {
 			}
 		};
 		NO_ALPHA = ch;
