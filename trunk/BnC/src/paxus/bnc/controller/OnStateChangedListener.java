@@ -1,4 +1,6 @@
-package paxus.bnc.model;
+package paxus.bnc.controller;
+
+import paxus.bnc.model.ENCharState;
 
 public interface OnStateChangedListener {
 

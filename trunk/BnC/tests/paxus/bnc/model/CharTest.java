@@ -2,7 +2,7 @@ package paxus.bnc.model;
 
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
-import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.OnStateChangedListener;
 
 public class CharTest extends TestCase {
 
@@ -12,9 +12,9 @@ public class CharTest extends TestCase {
 		assertEquals('?', ch.ch);
 		assertEquals("?", ch.asString);
 		
-		assertEquals(ENCharState.ABSENT, ch.moveState(ICharStateSequencer.FORWARD));
-		assertEquals(ENCharState.PRESENT, ch.moveState(ICharStateSequencer.FORWARD));
-		assertEquals(ENCharState.NONE, ch.moveState(ICharStateSequencer.FORWARD));
+		assertEquals(ENCharState.ABSENT, ch.moveState());
+		assertEquals(ENCharState.PRESENT, ch.moveState());
+		assertEquals(ENCharState.NONE, ch.moveState());
 
 		assertEquals(ENCharState.NONE, ch.getState());
 		
@@ -28,10 +28,10 @@ public class CharTest extends TestCase {
 	
 	public void testValueOf() throws BncException {
 		final Alphabet la = new Alphabet.Latin();
-		OnStateChangedListener ch = Char.valueOf('a', la);
+		Char ch = Char.valueOf('a', la);
 		assertTrue(ch == la.getCharInstance('a'));
 		
-		assertNotNull(la.getCharInstance('b'));	//not instantiated implicitly is actually created by by alphabet constructor
+		assertNotNull(la.getCharInstance('b'));	//not instantiated explicitly, is actually created by alphabet constructor
 		assertTrue(Char.NO_ALPHA == Char.valueOf(Char.NULL_CHAR, null));
 	}
 	
@@ -61,19 +61,19 @@ public class CharTest extends TestCase {
 		ch.addStateChangedListener(listener);
 		
 		//change by Char
-		ch.moveState(ICharStateSequencer.FORWARD);
+		ch.moveState();
 		assertEquals(1, counter[0]);
 
 		//change by alphabet
-		la.moveCharState(ch.ch, ICharStateSequencer.FORWARD);
+		la.moveCharState(ch.ch);
 		assertEquals(2, counter[0]);
 		
 		//no allowed states - should not change state and notify listeners
-		ch.moveState(ICharStateSequencer.FORWARD, ENCharState.NONE, ENCharState.ABSENT, ENCharState.PRESENT);
+		ch.moveState(ENCharState.NONE, ENCharState.ABSENT, ENCharState.PRESENT);
 		assertEquals(2, counter[0]);
 
 		ch.removeStateChangedListener(listener);
-		ch.moveState(ICharStateSequencer.FORWARD);
+		ch.moveState();
 		assertEquals(2, counter[0]);
 	}
 	

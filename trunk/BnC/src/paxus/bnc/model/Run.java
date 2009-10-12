@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import paxus.bnc.BncException;
-import paxus.bnc.controller.ICharStateSequencer;
 
 public final class Run {
 
@@ -33,7 +32,7 @@ public final class Run {
 
 	public ENCharState moveCharStateForward(Char ch) throws BncException {
 		ENCharState oldState = ch.getState();
-		ENCharState newState = ch.moveState(ICharStateSequencer.FORWARD);
+		ENCharState newState = ch.moveState();
 		if (newState != oldState) {
 			if (newState == ENCharState.PRESENT) {
 				posTable.addLine(ch);
