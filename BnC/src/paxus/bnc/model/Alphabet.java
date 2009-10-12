@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.IStatesCounter;
 
 public abstract class Alphabet implements IStatesCounter {
 	
@@ -14,20 +15,20 @@ public abstract class Alphabet implements IStatesCounter {
 	
 	final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
 	
-	private ICharStateSequencer defaultCss;
-	public void setDefaultCss(ICharStateSequencer defaultCss) {
-		this.defaultCss = defaultCss;
+	private ICharStateSequencer css = ICharStateSequencer.FORWARD;
+	public void setCss(ICharStateSequencer defaultCss) {
+		this.css = defaultCss;
 	}
 
 	private int presentStateCount; 
-	public int getStatesCount(ENCharState state) {
+	public int getStatesCount(ENCharState state, Char ch, int pos) {
 		if (state != ENCharState.PRESENT)
 			return -1;
 		return presentStateCount;
 	}
 
 	public Alphabet() {
-		//replace members by local references (for-loop increase impact) 
+		//replace members by local references (for-loop increases impact) 
 		final HashMap<Character, ENCharState> char2state2 = char2state;
 		final HashMap<Character, Char> char2char2 = char2char;
 		final HashSet<Character> ss = symbols;
@@ -50,7 +51,7 @@ public abstract class Alphabet implements IStatesCounter {
 			char2state2.put(ch, ENCharState.NONE);	//clear states for all chars
 		}
 		presentStateCount = 0;
-		defaultCss = null;
+		css = null;
 	}
 	
 	public Collection<Char> getAllChars() {
@@ -59,23 +60,11 @@ public abstract class Alphabet implements IStatesCounter {
 
 	//package-private
 	//change using Run - it cares of consistency
+	//change state using predefined CharStateSequencer css
 	final ENCharState moveCharState(Character ch, ENCharState... forbidden) {
-		return moveCharState(ch, defaultCss, forbidden);
+		return setCharState(ch, css.nextState(char2state.get(ch), null, -1, forbidden));
 	}
 
-	//package-private
-	//change using Run - it cares of consistency
-	final ENCharState moveCharState(Char ch, ICharStateSequencer css, ENCharState... forbidden) {
-		return moveCharState(ch.ch, css, forbidden);
-	}
-	
-	//package-private
-	//change using Run - it cares of consistency
-	final ENCharState moveCharState(Character ch, ICharStateSequencer css, ENCharState... forbidden) {
-		ICharStateSequencer newCss = css != null ? css : defaultCss; 
-		return setCharState(ch, newCss.nextState(char2state.get(ch), forbidden));
-	}
-	
 	private ENCharState setCharState(Character ch, ENCharState newState) {
 		ENCharState curState = char2state.get(ch);
 		if (newState == curState)
@@ -104,7 +93,7 @@ public abstract class Alphabet implements IStatesCounter {
 		return getName() + "";
 	}
 	
-	public OnStateChangedListener getCharInstance(char ch) {
+	public Char getCharInstance(char ch) {
 		return char2char.get(ch);
 	}
 

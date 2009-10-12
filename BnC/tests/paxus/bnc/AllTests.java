@@ -2,6 +2,7 @@ package paxus.bnc;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import paxus.bnc.model.AlphabetTest;
 import paxus.bnc.model.CharStateSequencerTest;
 import paxus.bnc.model.CharTest;
 import paxus.bnc.model.PositionTableTest;
@@ -15,6 +16,7 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for paxus.bnc.test");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(CharTest.class);
+		suite.addTestSuite(AlphabetTest.class);
 		suite.addTestSuite(RunTest.class);
 		suite.addTestSuite(WordComparisonResultTest.class);
 		suite.addTestSuite(CharStateSequencerTest.class);

@@ -2,7 +2,6 @@ package paxus.bnc.model;
 
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
-import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.RunExecutor;
 
 public class PositionTableTest extends TestCase {
@@ -41,36 +40,36 @@ public class PositionTableTest extends TestCase {
 			throw new BncException();
 		
 		//change state to be sure that after following removing states are cleared
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), ICharStateSequencer.FORWARD, 0));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), 0));
 		
 		assertEquals(3, table.removeLine(Char.valueOf('a', run.alphabet)));
 		assertEquals(4, table.addLine(Char.valueOf('a', run.alphabet)));
 		
 		//all ABSENT in line not allowed
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), ICharStateSequencer.FORWARD, 0));
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), ICharStateSequencer.FORWARD, 1));
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), ICharStateSequencer.FORWARD, 2));
-		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), ICharStateSequencer.FORWARD, 3));
-		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('a', run.alphabet), ICharStateSequencer.FORWARD, 3));
-		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), ICharStateSequencer.FORWARD, 3));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), 0));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), 1));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), 2));
+		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), 3));
+		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('a', run.alphabet), 3));
+		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('a', run.alphabet), 3));
 		
 		//Only one PRESENT in column
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 3));
-		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 3));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), 3));
+		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('b', run.alphabet), 3));
 		
 		//If line with PRESENT removed, PRESENT in column allowed   
 		table.removeLine(Char.valueOf('a', run.alphabet));
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 3));
-		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 3));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), 3));
+		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), 3));
 		
 		//Only one PRESENT in line
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 0));
-		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 0));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), 0));
+		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('b', run.alphabet), 0));
 		
 		//If PRESENT in line removed, another PRESENT allowed
-		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 3));
-		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 0));
-		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), ICharStateSequencer.FORWARD, 0));
+		assertEquals(ENCharState.NONE, table.moveStateForChar(Char.valueOf('b', run.alphabet), 3));
+		assertEquals(ENCharState.ABSENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), 0));
+		assertEquals(ENCharState.PRESENT, table.moveStateForChar(Char.valueOf('b', run.alphabet), 0));
 		
 	}
 }

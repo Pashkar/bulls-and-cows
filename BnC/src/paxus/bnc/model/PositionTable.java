@@ -2,17 +2,21 @@ package paxus.bnc.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.IStatesCounter;
 
-public class PositionTable {
+public class PositionTable implements IStatesCounter {
 
 	private final ArrayList<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
-
+	
 	private final HashMap<Char, PositionLine> char2line = new HashMap<Char, PositionLine>(Run.MAX_WORD_LENGTH); 
+	
+	private ICharStateSequencer css;
+	public void setCss(ICharStateSequencer defaultCss) {
+		this.css = defaultCss;
+	}
 	
 	public final int maxLines;
 	
@@ -32,7 +36,7 @@ public class PositionTable {
 		return lines.size();
 	}
 	
-	public int removeLine(OnStateChangedListener ch) throws BncException {
+	public int removeLine(Char ch) throws BncException {
 		PositionLine line = char2line.remove(ch);
 		if (line == null)
 			throw new BncException("No line for " + ch + " found");
@@ -54,25 +58,37 @@ public class PositionTable {
 	}
 
 	/**
-	 * 	Only one {@link ENCharState.PRESENT}  in line/column allowed. <br/>
+	 * 	Only one {@link ENCharState.PRESENT} in line/column allowed. <br/>
 	 *  All chars with {@link ENCharState.ABSENT} in line/column not allowed.
+	 *  this.css must take care of that.
 	 */
-	public ENCharState moveStateForChar(OnStateChangedListener ch, ICharStateSequencer css, int pos) {
+	public ENCharState moveStateForChar(Char ch, int pos) {
 		PositionLine line = char2line.get(ch);
 		PosChar pch = line.chars[pos];
-		
-		boolean presentAllowed = line.getPosPresent() < 0 && this.getCharPresentInColumn(pos) == null; 
-		boolean absentAllowed = line.getPosAbsent().size() < maxLines - 1 && this.getCharAbsentInColumn(pos).size() < maxLines - 1;
-		
-		//LimitedStateSequencer can be used, but simpler way used due to performance
-		ENCharState newState = css.nextState(pch.state, 
-				presentAllowed ? null : ENCharState.PRESENT,
-				absentAllowed ? null : ENCharState.ABSENT);
-		pch.state = newState;
-		return newState;
+		pch.state = css.nextState(pch.state, ch, pos);
+		return pch.state;
 	}
-
-	private OnStateChangedListener getCharPresentInColumn(int pos) {
+	
+	/**
+	 * 	Only one {@link ENCharState.PRESENT} in line/column allowed. <br/>
+	 *  All chars with {@link ENCharState.ABSENT} in line/column not allowed.
+	 *  getStatesCount() designed to be used under LimitedStateSequencer
+	 */
+	public int getStatesCount(ENCharState state, Char ch, int pos) {
+		final PositionLine line = char2line.get(ch);
+		if (line == null)
+			return 0;
+		switch(state) {
+		case PRESENT:
+			return Math.max(line.getPresentCount(), getPresentCountInColumn(pos));
+		case ABSENT:
+			return Math.max(line.getAbsentCount(), getAbsentCountInColumn(pos));
+		default:
+			return 0;
+		}
+	}
+	
+	private Char getPresentInColumn(int pos) {
 		for (PositionLine line : lines) {
 			PosChar posChar = line.chars[pos];
 			if (posChar.state == ENCharState.PRESENT)
@@ -80,8 +96,12 @@ public class PositionTable {
 		}
 		return null;
 	}
+	
+	private int getPresentCountInColumn(int pos) {
+		return getPresentInColumn(pos) == null ? 0 : 1;
+	}
 
-	private Set<Char> getCharAbsentInColumn(int pos) {
+	/*private Set<Char> getAbsentInColumn(int pos) {
 		Set<Char> chars = new HashSet<Char>();
 		for (PositionLine line : lines) {
 			PosChar posChar = line.chars[pos];
@@ -89,14 +109,25 @@ public class PositionTable {
 				chars.add(posChar.ch);
 		}
 		return chars;
+	}*/
+	
+	private int getAbsentCountInColumn(int pos) {
+		int res = 0;
+		for (PositionLine line : lines) {
+			PosChar posChar = line.chars[pos];
+			if (posChar.state == ENCharState.ABSENT)
+				res++;
+		}
+		return res;
 	}
 
+	
 	private final class PositionLine {
 
 		private final Char ch;	//to manipulate real state in alphabet
 
 		private final PosChar[] chars = new PosChar[Run.MAX_WORD_LENGTH];
-
+		
 		public PositionLine(Char ch) {
 			this.ch = ch;
 			PosChar[] mChars = this.chars;
@@ -104,7 +135,7 @@ public class PositionTable {
 				mChars[i] = new PosChar(ch);
 			}
 		}
-
+		
 		public int getPosPresent() {
 			PosChar[] mChars = chars;
 			for (int i = 0; i < maxLines; i++) {
@@ -114,7 +145,21 @@ public class PositionTable {
 			return -1;
 		}
 		
-		public Set<Integer> getPosAbsent() {
+		public int getPresentCount() {
+			return getPosPresent() == -1 ? 0 : 1;
+		}
+		
+		public int getAbsentCount() {
+			PosChar[] mChars = chars;
+			int res = 0;
+			for (int i = 0; i < maxLines; i++) {
+				if (mChars[i].state == ENCharState.ABSENT)
+					res++;
+			}
+			return res;
+		}
+		
+/*		public Set<Integer> getPosAbsent() {
 			PosChar[] mChars = chars;
 			HashSet<Integer> res = new HashSet<Integer>();
 			for (int i = 0; i < maxLines; i++) {
@@ -122,7 +167,7 @@ public class PositionTable {
 					res.add(i);
 			}
 			return res;
-		}
+		}*/
 		
 		@Override
 		public String toString() {

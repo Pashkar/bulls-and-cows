@@ -17,8 +17,19 @@ public final class RunExecutor {
 	private final static WordComparator wc = new WordComparator(); 
 	
 	public Run startNewRun(Alphabet alphabet, String secret) throws BncException {
+		alphabet.clear();
 		this.run = new Run(alphabet,  secret);
-		run.alphabet.setDefaultCss(new LimitedStateSequencer(ICharStateSequencer.FORWARD, run.wordLength, ENCharState.PRESENT, run.alphabet));
+		
+		//Not more then wordLength PRESENT allowed
+		run.alphabet.setCss(new LimitedStateSequencer(ICharStateSequencer.FORWARD, ENCharState.PRESENT, run.wordLength, run.alphabet));
+		 
+		//Only one PRESENT in line/column allowed. <br/>
+		//All chars with ABSENT in line/column not allowed.
+		run.posTable.setCss(
+				new LimitedStateSequencer(	//limit of ABSENT
+						new LimitedStateSequencer(ICharStateSequencer.FORWARD, ENCharState.PRESENT, 1, run.posTable),	//limit of PRESENT
+						ENCharState.ABSENT, run.wordLength - 1, run.posTable)
+				);
 		return this.run; 
 	}
 	

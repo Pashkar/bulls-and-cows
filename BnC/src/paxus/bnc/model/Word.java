@@ -18,7 +18,7 @@ public final class Word {
 			throw new BncException("Word is loo long (" + word.length() + ")");
 		this.wordLength = word.length(); 
 		
-		OnStateChangedListener[] mWord = this.chars;
+		Char[] mWord = this.chars;
 		HashSet<Character> chars = new HashSet<Character>();
 		char[] charArray = word.toLowerCase().toCharArray();
 		for (int i = 0; i < charArray.length; i++) {
@@ -33,7 +33,7 @@ public final class Word {
 
 	@Override
 	public String toString() {
-		OnStateChangedListener[] mWord = chars;
+		Char[] mWord = chars;
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < wordLength; i++) {
 			sb.append(mWord[i] + "");

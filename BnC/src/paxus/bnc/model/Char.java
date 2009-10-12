@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.OnStateChangedListener;
 
 
 public class Char implements OnStateChangedListener {
@@ -54,8 +55,8 @@ public class Char implements OnStateChangedListener {
 	}
 
 	//change using Run - it cares of consistency 
-	public ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
-		return alphabet.moveCharState(this, css, forbidden);
+	public ENCharState moveState(ENCharState... forbidden) {
+		return alphabet.moveCharState(ch, forbidden);
 	}
 	
 	//TODO - method can be inlined
@@ -112,8 +113,9 @@ public class Char implements OnStateChangedListener {
 		Char ch = null;
 		ch = new Char(null, NULL_CHAR) {
 			private ENCharState state = ENCharState.NONE; 
-			public ENCharState moveState(ICharStateSequencer css, ENCharState... forbidden) {
-				state = css.nextState(state, forbidden);
+			@Override
+			public ENCharState moveState(ENCharState... forbidden) {
+				state = ICharStateSequencer.FORWARD.nextState(state, null, -1, forbidden);
 				return state;
 			}
 			@Override
