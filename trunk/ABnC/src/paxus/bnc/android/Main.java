@@ -31,32 +31,36 @@ public class Main extends Activity {
 		final Paint paint = createPaint();
 		final LayoutInflater layoutInflater = getLayoutInflater();
 		
-        LinearLayout la = (LinearLayout) findViewById(R.id.DigitalAlphabetLayout);
-        Char[] chars = alphabet.getAllChars().toArray(new Char[COLUMNS]);
+        fillCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
+        		alphabet.getAllChars().toArray(new Char[COLUMNS]), layoutInflater, paint);
+        fillCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, layoutInflater, paint);
+        
+        LinearLayout pl = (LinearLayout) findViewById(R.id.PositioningLayout);
+        for (int i = 0; i < run.wordLength; i++)
+        	for (int j = 0; j < run.wordLength; j++) {
+        		LinearLayout la = new LinearLayout(this);
+        		la.setOrientation(LinearLayout.HORIZONTAL);
+        		Char
+        	}
+        
+    }
+
+	private void fillCharsLine(LinearLayout la, Char[] chars, final LayoutInflater layoutInflater, 
+			final Paint paint) {
 		for (int i = 0; i < COLUMNS; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
         	cv.setChar(chars[i]);
         	la.addView(cv);
         }
-
-        LinearLayout ls = (LinearLayout) findViewById(R.id.SecretLayout);
-        chars = run.secret.chars;
-        for (int i = 0; i < run.secret.wordLength; i++) {
-        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);
-        	cv.paint = paint;
-        	cv.setChar(chars[i]);
-        	ls.addView(cv);
-        }
-        
-    }
+	}
 
 	private Paint createPaint() {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(24);
-        paint.setColor(0xFFFFFFFF);
         paint.setTextAlign(Align.CENTER);
+        paint.setColor(0xFFFFFFFF);
         return paint;
 	}
     
@@ -64,10 +68,9 @@ public class Main extends Activity {
     	//TODO can keep alphabet instance if not changed and just reinit().
     	//alphabet.reinit();
     	
-    	alphabet = new Alphabet.Digital();
     	//TODO offer alphabet selecting for user
     	
-    	run = re.startNewRun(alphabet, "12345");
+    	run = re.startNewRun(new Alphabet.Digital(), "12345");
     }
     
 }
