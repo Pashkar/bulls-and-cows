@@ -1,10 +1,12 @@
 package paxus.bnc.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.IStateChangedListener;
 import paxus.bnc.controller.IStatesCounter;
 
 public abstract class Alphabet implements IStatesCounter {
@@ -14,6 +16,9 @@ public abstract class Alphabet implements IStatesCounter {
 	final HashMap<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
 	
 	final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
+	
+	//List - since there is only one Char instance for several CharView instances
+	private final ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
 	
 	private ICharStateSequencer css = ICharStateSequencer.FORWARD;
 	public void setCss(ICharStateSequencer defaultCss) {
@@ -52,6 +57,7 @@ public abstract class Alphabet implements IStatesCounter {
 		}
 		presentStateCount = 0;
 		css = null;
+		stateChangedListenerList.clear();
 	}
 	
 	public Collection<Char> getAllChars() {
@@ -76,10 +82,23 @@ public abstract class Alphabet implements IStatesCounter {
 			presentStateCount++;
 
 		char2state.put(ch, newState);
-		char2char.get(ch).onStateChanged(ch, newState);	//state can be changed directly through alphabet, not only by char.moveState() - must notify char
+		notifyStateChangedListeners(ch, newState);
 		return newState;
 	}
 	
+	public void addStateChangedListener(IStateChangedListener listener) {
+		this.stateChangedListenerList.add(listener);
+	}
+	
+	public void removeStateChangedListener(IStateChangedListener listener) {
+		this.stateChangedListenerList.remove(listener);
+	}
+	
+	private void notifyStateChangedListeners(Character ch, ENCharState newState) {
+		for (IStateChangedListener listener : stateChangedListenerList) 
+			listener.onStateChanged(ch, newState);
+	}
+
 	public final boolean isValidSymbol(Character ch) {
 		return symbols.contains(ch);
 	}

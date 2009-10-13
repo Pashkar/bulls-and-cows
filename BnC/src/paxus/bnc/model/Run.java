@@ -23,7 +23,7 @@ public final class Run {
 		this.alphabet = alphabet;
 		this.secret = new Word(alphabet, secret);
 		this.wordLength = secret.length();
-		this.posTable = new PositionTable(wordLength);
+		this.posTable = new PositionTable(wordLength, wordLength);
 	}
 	
 	public void addWordCompared(WordCompared wordCompared) {

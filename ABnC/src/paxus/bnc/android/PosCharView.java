@@ -1,8 +1,8 @@
 package paxus.bnc.android;
 
-import paxus.bnc.controller.IStateChangedListener;
-import paxus.bnc.model.Char;
+import paxus.bnc.controller.IPosStateChangedListener;
 import paxus.bnc.model.ENCharState;
+import paxus.bnc.model.PosChar;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,13 +10,13 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class PosCharView extends View implements OnClickListener, IStateChangedListener {
+public class PosCharView extends View implements OnClickListener, IPosStateChangedListener {
 	private static final int WIDTH = 14;
 	private static final int HEIGHT = 14;
 	
 	Paint paint;
 
-	private Char ch = Char.NO_ALPHA; 
+	private PosChar pch = PosChar.NULL; 
 
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -32,9 +32,9 @@ public class PosCharView extends View implements OnClickListener, IStateChangedL
 		setOnClickListener(this);
 	}
 	
-	public void setChar(Char ch) {
-		this.ch = ch;
-		ch.addStateChangedListener(this);
+	public void setPosChar(PosChar pch) {
+		this.pch = pch;
+		pch.table.addPosStateChangedListener(this);
 	}
 	
     @Override
@@ -53,14 +53,16 @@ public class PosCharView extends View implements OnClickListener, IStateChangedL
     
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawText("" + ch.ch, getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
+        canvas.drawText("[" + pch.ch + "]", getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
     }
 
 	public void onClick(View v) {
-		ch.moveState();	//if state really changes - onStateChanged will be notified
+		pch.movePosState();	//if state really changes - onStateChanged will be notified
 	}
 	
-	public void onStateChanged(Character ch, ENCharState newState) {
+	public void onPosStateChanged(PosChar pch, ENCharState newState) {
+		if (this.pch != pch)
+			return;
 		changeBackground(newState);
 		invalidate();
 	}
@@ -81,6 +83,6 @@ public class PosCharView extends View implements OnClickListener, IStateChangedL
 
 	@Override
 	public String toString() {
-		return ch + "";
+		return pch + "";
 	}
 }

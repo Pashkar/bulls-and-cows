@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+	class="paxus.bnc.model.PosChar"
+	android:id="@+id/PosCharView"
+	android:layout_width="wrap_content" 
+	android:layout_height="wrap_content"
+	android:background="@drawable/noth"
+	android:padding="10dip" 
+	android:fadingEdge="vertical"
+	/>

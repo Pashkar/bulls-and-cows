@@ -9,7 +9,7 @@ public class CharTest extends TestCase {
 	public void testNull() throws BncException {
 		Char ch = Char.NO_ALPHA;
 		
-		assertEquals('?', ch.ch);
+		assertEquals(new Character('?'), ch.ch);
 		assertEquals("?", ch.asString);
 		
 		assertEquals(ENCharState.ABSENT, ch.moveState());
@@ -58,6 +58,11 @@ public class CharTest extends TestCase {
 				counter[0]++;
 			}
 		};
+		
+		//no listeners 
+		ch.moveState();
+		assertEquals(0, counter[0]);
+
 		ch.addStateChangedListener(listener);
 		
 		//change by Char

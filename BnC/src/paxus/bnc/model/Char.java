@@ -1,25 +1,23 @@
 package paxus.bnc.model;
 
-import java.util.ArrayList;
-
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IStateChangedListener;
 
 
-public class Char implements IStateChangedListener {
+public class Char /*implements IStateChangedListener */{
 	 
 	static final char NULL_CHAR = '?';
 
-	public final char ch;
+	public final Character ch;
 	
 	public final String asString;
 	
 	public final Alphabet alphabet;
 
-	//List - since there is only one Char instance for several CharView instances
+	/*//List - since there is only one Char instance for several CharView instances
 	private ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
-	
+	*/
 /*	private Char(char ch, Alphabet alphabet) throws BncException {
 		if (alphabet == null && ch != NULL_CHAR)
 			throw new NullPointerException("Alphabet must not be null");
@@ -38,7 +36,7 @@ public class Char implements IStateChangedListener {
 		this.asString = ch + "";
 	}
 	
-	public static Char valueOf(char ch, Alphabet alphabet) throws BncException {
+	public static Char valueOf(Character ch, Alphabet alphabet) throws BncException {
 		if (alphabet == null) {
 			if (ch == NULL_CHAR)
 				return NO_ALPHA;
@@ -59,20 +57,18 @@ public class Char implements IStateChangedListener {
 		return alphabet.moveCharState(ch, forbidden);
 	}
 	
-	//TODO - method can be inlined
 	public void addStateChangedListener(IStateChangedListener listener) {
-		this.stateChangedListenerList.add(listener);
+		this.alphabet.addStateChangedListener(listener);
 	}
 	
-	//TODO - method can be inlined
 	public void removeStateChangedListener(IStateChangedListener listener) {
-		this.stateChangedListenerList.remove(listener);
+		this.alphabet.removeStateChangedListener(listener);
 	}
 	
-	public void onStateChanged(Character ch, ENCharState newState) {
+	/*public void onStateChanged(Character ch, ENCharState newState) {
 		for (IStateChangedListener listener : stateChangedListenerList)
 			listener.onStateChanged(ch, newState);
-	}
+	}*/
 	
 	@Override
 	public String toString() {
