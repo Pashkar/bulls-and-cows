@@ -1,11 +1,13 @@
 package paxus.bnc.model;
 
+import java.util.ArrayList;
+
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IStateChangedListener;
 
 
-public class Char /*implements IStateChangedListener */{
+public class Char {
 	 
 	static final char NULL_CHAR = '?';
 
@@ -14,6 +16,10 @@ public class Char /*implements IStateChangedListener */{
 	public final String asString;
 	
 	public final Alphabet alphabet;
+	
+	//List - since there is only one Char instance for several CharView instances
+	private final ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
+
 
 	/*//List - since there is only one Char instance for several CharView instances
 	private ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
@@ -58,17 +64,17 @@ public class Char /*implements IStateChangedListener */{
 	}
 	
 	public void addStateChangedListener(IStateChangedListener listener) {
-		this.alphabet.addStateChangedListener(listener);
+		stateChangedListenerList.add(listener);
 	}
 	
 	public void removeStateChangedListener(IStateChangedListener listener) {
-		this.alphabet.removeStateChangedListener(listener);
+		stateChangedListenerList.remove(listener);
 	}
 	
-	/*public void onStateChanged(Character ch, ENCharState newState) {
+	public void onStateChanged(Character ch, ENCharState newState) {
 		for (IStateChangedListener listener : stateChangedListenerList)
 			listener.onStateChanged(ch, newState);
-	}*/
+	}
 	
 	@Override
 	public String toString() {

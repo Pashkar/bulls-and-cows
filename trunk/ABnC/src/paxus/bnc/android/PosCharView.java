@@ -34,7 +34,7 @@ public class PosCharView extends View implements OnClickListener, IPosStateChang
 	
 	public void setPosChar(PosChar pch) {
 		this.pch = pch;
-		pch.table.addPosStateChangedListener(this);
+		pch.addPosStateChangedListener(this);
 	}
 	
     @Override

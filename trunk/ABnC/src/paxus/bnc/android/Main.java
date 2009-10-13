@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 
 public class Main extends Activity {
     private static final int COLUMNS = 9;
-    private Alphabet alphabet;
 	private final RunExecutor re = new RunExecutor();
 	private Run run;
 
@@ -32,8 +31,8 @@ public class Main extends Activity {
 		final LayoutInflater layoutInflater = getLayoutInflater();
 		
         fillCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-        		alphabet.getAllChars().toArray(new Char[COLUMNS]), layoutInflater, paint);
-        fillCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, layoutInflater, paint);
+        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), COLUMNS, layoutInflater, paint);
+        fillCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, run.wordLength, layoutInflater, paint);
         
         LinearLayout pl = (LinearLayout) findViewById(R.id.PositioningLayout);
         for (int i = 0; i < run.wordLength; i++) {
@@ -46,11 +45,12 @@ public class Main extends Activity {
         	}
         	pl.addView(la);
         }
+        
     }
 
-	private void fillCharsLine(LinearLayout la, Char[] chars, final LayoutInflater layoutInflater, 
+	private void fillCharsLine(LinearLayout la, Char[] chars, int length, final LayoutInflater layoutInflater, 
 			final Paint paint) {
-		for (int i = 0; i < COLUMNS; i++) {
+		for (int i = 0; i < length && i < COLUMNS; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
         	cv.setChar(chars[i]);

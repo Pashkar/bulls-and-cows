@@ -83,11 +83,12 @@ public class PositionTableTest extends TestCase {
 		table.setCss(ICharStateSequencer.FORWARD);
 		Char charA = Char.valueOf('a', la);
 		table.addLine(charA);
+		final PosChar pchA0 = table.char2line.get(charA).chars[0];
 
-		final int[] counter = {0, 0};
+		final int[] counter = {0};
 		final IPosStateChangedListener listener = new IPosStateChangedListener() {
 			public void onPosStateChanged(PosChar pch, ENCharState newState) {
-				counter[pch.pos]++;
+				counter[0]++;
 			}
 		};
 		
@@ -95,10 +96,10 @@ public class PositionTableTest extends TestCase {
 		table.movePosStateForChar(charA, 0);
 		assertEquals(0, counter[0]);
 		
-		table.addPosStateChangedListener(listener);
+		pchA0.addPosStateChangedListener(listener);
 		
 		//move by poschar
-		table.char2line.get(charA).chars[0].movePosState();
+		pchA0.movePosState();
 		assertEquals(1, counter[0]);
 		
 		//move by table
@@ -107,7 +108,7 @@ public class PositionTableTest extends TestCase {
 		
 		//another poschar
 		table.movePosStateForChar(charA, 1);
-		assertEquals(1, counter[1]);
+		assertEquals(2, counter[0]);
 	}
 
 }
