@@ -1,6 +1,5 @@
 package paxus.bnc.controller;
 
-import paxus.bnc.model.Char;
 import paxus.bnc.model.ENCharState;
 
 /**
@@ -20,7 +19,7 @@ public final class LimitedStateSequencer implements ICharStateSequencer {
 		this.sc = sc; 
 	}
 
-	public ENCharState nextState(ENCharState curState, Char ch, int pos, ENCharState... forbidden) {
+	public ENCharState nextState(ENCharState curState, Character ch, int pos, ENCharState... forbidden) {
 		ENCharState[] newForb = forbidden;
 		if (sc.getStatesCount(state, ch, pos) >= max) {
 			newForb = new ENCharState[forbidden.length + 1];

@@ -3,18 +3,17 @@ package paxus.bnc.controller;
 
 import java.util.HashSet;
 
-import paxus.bnc.model.Char;
 import paxus.bnc.model.ENCharState;
 
 public interface ICharStateSequencer {
 	
-	public ENCharState nextState(ENCharState curState, Char ch, int pos, ENCharState... forbidden);
+	public ENCharState nextState(ENCharState curState, Character ch, int pos, ENCharState... forbidden);
 	
 	/**
 	 * NONE -> ABSENT -> PRESENT -> NONE
 	 */
 	public static final ICharStateSequencer FORWARD = new ICharStateSequencer() {
-		public ENCharState nextState(ENCharState curState, Char ch, int pos, ENCharState... forbidden) {
+		public ENCharState nextState(ENCharState curState, Character ch, int pos, ENCharState... forbidden) {
 			HashSet<ENCharState> forbSet = new HashSet<ENCharState>();
 			for (int i = 0; i < forbidden.length; i++) {
 				forbSet.add(forbidden[i]);
