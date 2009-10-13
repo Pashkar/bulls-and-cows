@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
-import paxus.bnc.controller.IPosStateChangedListener;
 import paxus.bnc.controller.IStatesCounter;
 
 public class PositionTable implements IStatesCounter {
@@ -22,8 +21,6 @@ public class PositionTable implements IStatesCounter {
 	public final int maxLines;
 
 	public final int wordLength;
-
-	private final ArrayList<IPosStateChangedListener> stateChangedListenerList = new ArrayList<IPosStateChangedListener>();
 
 	//package-private
 	//for use from Run and tests
@@ -88,21 +85,8 @@ public class PositionTable implements IStatesCounter {
 		if (curState == newState) 
 			return newState;
 		pch.state = newState;
-		notifyStateChangedListeners(pch, newState);
+		pch.onPosStateChanged(pch, newState);	//notify exact PosChar
 		return newState;
-	}
-	
-	public void addPosStateChangedListener(IPosStateChangedListener listener) {
-		this.stateChangedListenerList.add(listener);
-	}
-	
-	public void removePosStateChangedListener(IPosStateChangedListener listener) {
-		this.stateChangedListenerList.remove(listener);
-	}
-	
-	private void notifyStateChangedListeners(PosChar pch, ENCharState newState) {
-		for (IPosStateChangedListener listener : stateChangedListenerList) 
-			listener.onPosStateChanged(pch, newState);		
 	}
 
 	/**

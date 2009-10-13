@@ -1,24 +1,21 @@
 package paxus.bnc.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import paxus.bnc.controller.ICharStateSequencer;
-import paxus.bnc.controller.IStateChangedListener;
 import paxus.bnc.controller.IStatesCounter;
 
 public abstract class Alphabet implements IStatesCounter {
 	
 	private final HashSet<Character> symbols = new HashSet<Character>();
 	
+	//TODO Optimization : replace map with ordinal array by char->int
 	final HashMap<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
 	
+	//TODO Optimization : replace map with ordinal array by char->int
 	final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
-	
-	//List - since there is only one Char instance for several CharView instances
-	private final ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
 	
 	private ICharStateSequencer css = ICharStateSequencer.FORWARD;
 	public void setCss(ICharStateSequencer defaultCss) {
@@ -57,7 +54,6 @@ public abstract class Alphabet implements IStatesCounter {
 		}
 		presentStateCount = 0;
 		css = null;
-		stateChangedListenerList.clear();
 	}
 	
 	public Collection<Char> getAllChars() {
@@ -72,7 +68,9 @@ public abstract class Alphabet implements IStatesCounter {
 	}
 
 	private ENCharState setCharState(Character ch, ENCharState newState) {
-		ENCharState curState = char2state.get(ch);
+		final HashMap<Character, ENCharState> char2state2 = char2state;
+		
+		ENCharState curState = char2state2.get(ch);
 		if (newState == curState)
 			return newState;
 		
@@ -81,24 +79,11 @@ public abstract class Alphabet implements IStatesCounter {
 		else if (newState == ENCharState.PRESENT) 
 			presentStateCount++;
 
-		char2state.put(ch, newState);
-		notifyStateChangedListeners(ch, newState);
+		char2state2.put(ch, newState);
+		char2char.get(ch).onStateChanged(ch, newState);		//notify exact Char
 		return newState;
 	}
 	
-	public void addStateChangedListener(IStateChangedListener listener) {
-		this.stateChangedListenerList.add(listener);
-	}
-	
-	public void removeStateChangedListener(IStateChangedListener listener) {
-		this.stateChangedListenerList.remove(listener);
-	}
-	
-	private void notifyStateChangedListeners(Character ch, ENCharState newState) {
-		for (IStateChangedListener listener : stateChangedListenerList) 
-			listener.onStateChanged(ch, newState);
-	}
-
 	public final boolean isValidSymbol(Character ch) {
 		return symbols.contains(ch);
 	}

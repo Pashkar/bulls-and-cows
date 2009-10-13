@@ -51,35 +51,55 @@ public class CharTest extends TestCase {
 	
 	public void testStateChangeListener() throws BncException {
 		final Alphabet la = new Alphabet.Latin();
-		Char ch = Char.valueOf('a', la);
-		final int[] counter = {0};
-		final IStateChangedListener listener = new IStateChangedListener() {
+		Char chA = Char.valueOf('a', la);
+		Char chB = Char.valueOf('b', la);
+		final int[] counterA = {0};
+		final IStateChangedListener listenerA = new IStateChangedListener() {
 			public void onStateChanged(Character ch, ENCharState newState) {
-				counter[0]++;
+				counterA[0]++;
+			}
+		};
+		final int[] counterB = {0};
+		final IStateChangedListener listenerB = new IStateChangedListener() {
+			public void onStateChanged(Character ch, ENCharState newState) {
+				counterB[0]++;
 			}
 		};
 		
 		//no listeners 
-		ch.moveState();
-		assertEquals(0, counter[0]);
+		chA.moveState();
+		assertEquals(0, counterA[0]);
 
-		ch.addStateChangedListener(listener);
+		chA.addStateChangedListener(listenerA);
+		chB.addStateChangedListener(listenerB);
 		
 		//change by Char
-		ch.moveState();
-		assertEquals(1, counter[0]);
+		chA.moveState();
+		assertEquals(1, counterA[0]);
 
 		//change by alphabet
-		la.moveCharState(ch.ch);
-		assertEquals(2, counter[0]);
+		la.moveCharState(chA.ch);
+		assertEquals(2, counterA[0]);
 		
 		//no allowed states - should not change state and notify listeners
-		ch.moveState(ENCharState.NONE, ENCharState.ABSENT, ENCharState.PRESENT);
-		assertEquals(2, counter[0]);
+		chA.moveState(ENCharState.NONE, ENCharState.ABSENT, ENCharState.PRESENT);
+		assertEquals(2, counterA[0]);
 
-		ch.removeStateChangedListener(listener);
-		ch.moveState();
-		assertEquals(2, counter[0]);
+		//another char, another listener
+		chB.moveState();
+		assertEquals(2, counterA[0]);
+		assertEquals(1, counterB[0]);
+		
+		//two listeners, both notified
+		chA.addStateChangedListener(listenerB);
+		chA.moveState();
+		assertEquals(3, counterA[0]);
+		assertEquals(2, counterB[0]);
+		
+		//remove listener
+		chA.removeStateChangedListener(listenerA);
+		chA.moveState();
+		assertEquals(3, counterA[0]);		
 	}
 	
 }
