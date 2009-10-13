@@ -5,13 +5,14 @@ import java.util.HashMap;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.IPosStateChangedListener;
 import paxus.bnc.controller.IStatesCounter;
 
 public class PositionTable implements IStatesCounter {
 
 	private final ArrayList<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
 	
-	private final HashMap<Char, PositionLine> char2line = new HashMap<Char, PositionLine>(Run.MAX_WORD_LENGTH); 
+	public final HashMap<Char, PositionLine> char2line = new HashMap<Char, PositionLine>(Run.MAX_WORD_LENGTH); 
 	
 	private ICharStateSequencer css;
 	public void setCss(ICharStateSequencer defaultCss) {
@@ -19,9 +20,16 @@ public class PositionTable implements IStatesCounter {
 	}
 	
 	public final int maxLines;
-	
-	public PositionTable(int maxLines) {
+
+	public final int wordLength;
+
+	private final ArrayList<IPosStateChangedListener> stateChangedListenerList = new ArrayList<IPosStateChangedListener>();
+
+	//package-private
+	//for use from Run and tests
+	PositionTable(int maxLines, int wordLength) {
 		this.maxLines = maxLines;
+		this.wordLength = wordLength;
 	}
 	
 	public int addLine(Char ch) throws BncException {
@@ -61,14 +69,42 @@ public class PositionTable implements IStatesCounter {
 	 * 	Only one {@link ENCharState.PRESENT} in line/column allowed. <br/>
 	 *  All chars with {@link ENCharState.ABSENT} in line/column not allowed.
 	 *  this.css must take care of that.
+	 * @throws BncException 
 	 */
-	public ENCharState moveStateForChar(Char ch, int pos) {
+	public ENCharState movePosStateForChar(Char ch, int pos) throws BncException {
+		if (pos >= wordLength)
+			throw new BncException("Pos value more than wordLength");
 		PositionLine line = char2line.get(ch);
 		PosChar pch = line.chars[pos];
-		pch.state = css.nextState(pch.state, ch, pos);
-		return pch.state;
+		return movePosState(pch);
 	}
 	
+	public ENCharState movePosState(PosChar pch) {
+		return setPosCharState(pch, css.nextState(pch.state, pch.ch, pch.pos));
+	}
+	
+	private ENCharState setPosCharState(PosChar pch, ENCharState newState) {
+		ENCharState curState = pch.state;
+		if (curState == newState) 
+			return newState;
+		pch.state = newState;
+		notifyStateChangedListeners(pch, newState);
+		return newState;
+	}
+	
+	public void addPosStateChangedListener(IPosStateChangedListener listener) {
+		this.stateChangedListenerList.add(listener);
+	}
+	
+	public void removePosStateChangedListener(IPosStateChangedListener listener) {
+		this.stateChangedListenerList.remove(listener);
+	}
+	
+	private void notifyStateChangedListeners(PosChar pch, ENCharState newState) {
+		for (IPosStateChangedListener listener : stateChangedListenerList) 
+			listener.onPosStateChanged(pch, newState);		
+	}
+
 	/**
 	 * 	Only one {@link ENCharState.PRESENT} in line/column allowed. <br/>
 	 *  All chars with {@link ENCharState.ABSENT} in line/column not allowed.
@@ -122,23 +158,23 @@ public class PositionTable implements IStatesCounter {
 	}
 
 	
-	private final class PositionLine {
+	public final class PositionLine {
 
 		private final Char ch;	//to manipulate real state in alphabet
 
-		private final PosChar[] chars = new PosChar[Run.MAX_WORD_LENGTH];
+		public final PosChar[] chars = new PosChar[Run.MAX_WORD_LENGTH];
 		
 		public PositionLine(Char ch) {
 			this.ch = ch;
 			PosChar[] mChars = this.chars;
-			for (int i = 0; i < PositionTable.this.maxLines; i++) {
-				mChars[i] = new PosChar(ch);
+			for (int i = 0; i < wordLength; i++) {
+				mChars[i] = new PosChar(ch, i, PositionTable.this);
 			}
 		}
 		
 		public int getPosPresent() {
 			PosChar[] mChars = chars;
-			for (int i = 0; i < maxLines; i++) {
+			for (int i = 0; i < wordLength; i++) {
 				if (mChars[i].state == ENCharState.PRESENT)
 					return i;
 			}
@@ -152,7 +188,7 @@ public class PositionTable implements IStatesCounter {
 		public int getAbsentCount() {
 			PosChar[] mChars = chars;
 			int res = 0;
-			for (int i = 0; i < maxLines; i++) {
+			for (int i = 0; i < wordLength; i++) {
 				if (mChars[i].state == ENCharState.ABSENT)
 					res++;
 			}
@@ -174,26 +210,10 @@ public class PositionTable implements IStatesCounter {
 			PosChar[] mChars = chars;
 			StringBuilder sb = new StringBuilder();
 			sb.append(ch.asString + " ");
-			for (int i = 0; i < PositionTable.this.maxLines; i++) {
+			for (int i = 0; i < PositionTable.this.wordLength; i++) {
 				sb.append(mChars[i]);
 			}
 			return sb.toString();
-		}
-	}
-	
-	public final class PosChar {
-
-		final Char ch;
-		
-		ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char 
-
-		public PosChar(Char ch) {
-			this.ch = ch;
-		}
-
-		@Override
-		public String toString() {
-			return state + ""; 
 		}
 	}
 }

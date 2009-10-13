@@ -36,13 +36,16 @@ public class Main extends Activity {
         fillCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, layoutInflater, paint);
         
         LinearLayout pl = (LinearLayout) findViewById(R.id.PositioningLayout);
-        for (int i = 0; i < run.wordLength; i++)
+        for (int i = 0; i < run.wordLength; i++) {
+        	LinearLayout la = new LinearLayout(this);
         	for (int j = 0; j < run.wordLength; j++) {
-        		LinearLayout la = new LinearLayout(this);
         		la.setOrientation(LinearLayout.HORIZONTAL);
-        		Char
+        		PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);
+        		pcw.paint = paint;
+        		la.addView(pcw);
         	}
-        
+        	pl.addView(la);
+        }
     }
 
 	private void fillCharsLine(LinearLayout la, Char[] chars, final LayoutInflater layoutInflater, 
