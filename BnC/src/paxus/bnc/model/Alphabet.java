@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateChangedListener;
+import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IStatesCounter;
 
 public abstract class Alphabet implements IStatesCounter {
@@ -79,11 +80,11 @@ public abstract class Alphabet implements IStatesCounter {
 	//package-private
 	//change using Run - it cares of consistency
 	//change state using predefined CharStateSequencer css
-	final ENCharState moveCharState(Character ch, ENCharState... forbidden) {
+	final ENCharState moveCharState(Character ch, ENCharState... forbidden) throws BncException {
 		return setCharState(ch, css.nextState(char2state.get(ch), null, -1, forbidden));
 	}
 
-	private ENCharState setCharState(Character ch, ENCharState newState) {
+	private ENCharState setCharState(Character ch, ENCharState newState) throws BncException {
 		final HashMap<Character, ENCharState> char2state2 = char2state;
 		
 		ENCharState curState = char2state2.get(ch);
@@ -97,9 +98,15 @@ public abstract class Alphabet implements IStatesCounter {
 
 		char2state2.put(ch, newState);
 		char2char.get(ch).onStateChanged(ch, newState);		//notify exact Char
+		notifyCharStateChangedListeners(ch, newState);		//notify all listeners, they will filter by Char in args 
 		return newState;
 	}
 	
+	private void notifyCharStateChangedListeners(Character ch, ENCharState newState) throws BncException {
+		for (ICharStateChangedListener listener : stateChangedListenerList)
+			listener.onCharStateChanged(ch, newState);
+	}
+
 	public final boolean isValidSymbol(Character ch) {
 		return symbols.contains(ch);
 	}

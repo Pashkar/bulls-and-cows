@@ -47,16 +47,9 @@ public class Main extends Activity {
         LinearLayout pl = (LinearLayout) findViewById(R.id.PositioningLayout);
         for (int i = 0; i < run.wordLength; i++) {
         	posLineLayout2[i] = new LinearLayout(this);
-        	/*for (int j = 0; j < run.wordLength; j++) {
-        		posLineLayout2[i].setOrientation(LinearLayout.HORIZONTAL);
-        		PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);
-        		pcw.paint = paint;
-        		posLineLayout2[i].addView(pcw);
-        	}*/
         	fillPosCharsLine(posLineLayout2[i], null, run.wordLength, layoutInflater, paint);
         	pl.addView(posLineLayout2[i]);
         }
-        
         
     }
 

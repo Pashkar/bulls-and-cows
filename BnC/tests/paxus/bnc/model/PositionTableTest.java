@@ -32,11 +32,8 @@ public class PositionTableTest extends TestCase {
 		catch (BncException e) {ok = true;}
 		assertTrue(ok);
 		
-		//remove wrong char
-		ok = false;
-		try{ table.removeLine(new Character('z'));}
-		catch (BncException e) {ok = true;}
-		assertTrue(ok);
+		//remove wrong char - no erros, just ignores
+		table.removeLine(new Character('z'));
 		
 		//too big pos value
 		ok = false;
@@ -111,4 +108,26 @@ public class PositionTableTest extends TestCase {
 		assertEquals(2, counter[0]);
 	}
 
+	public void testAddRemoveLine() throws BncException {
+		final Alphabet da = new Alphabet.Digital();
+		RunExecutor re = new RunExecutor();
+		Run run = re.startNewRun(da, "01");
+
+		//check that all PRESENT chars are added as new lines to PosTable and removed when become not PRESENT
+
+		//move by alphabet
+		assertEquals(ENCharState.ABSENT, da.moveCharState(new Character('0')));
+		assertEquals(0, run.posTable.getLinesCount());
+		
+		//move by Char
+		assertEquals(ENCharState.PRESENT, Char.valueOf(new Character('0'), da).moveState());
+		assertEquals(1, run.posTable.getLinesCount());
+		
+		assertEquals(ENCharState.PRESENT, da.moveCharState(new Character('1'), ENCharState.ABSENT));
+		assertEquals(2, run.posTable.getLinesCount());
+		
+		//check that line removed
+		assertEquals(ENCharState.NONE, da.moveCharState(new Character('0')));
+		assertEquals(1, run.posTable.getLinesCount());
+	}
 }

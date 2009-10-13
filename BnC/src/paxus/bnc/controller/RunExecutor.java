@@ -20,6 +20,9 @@ public final class RunExecutor {
 		alphabet.clear();
 		this.run = new Run(alphabet,  secret);
 		
+		//allow PosTable listen to changes to automatically add/remove row on char marked/unmarked as PRESENT
+		this.run.alphabet.addStateChangedListener(this.run.posTable);
+		
 		//Not more then wordLength PRESENT allowed
 		run.alphabet.setCss(
 				new LimitedStateSequencer(
