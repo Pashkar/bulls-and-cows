@@ -24,25 +24,10 @@ public final class Run {
 		this.secret = new Word(alphabet, secret);
 		this.wordLength = secret.length();
 		this.posTable = new PositionTable(wordLength, wordLength);
-		this.alphabet.addStateChangedListener(this.posTable);
 	}
 	
 	public void addWordCompared(WordCompared wordCompared) {
 		wordsCompared.add(wordCompared);
-	}
-
-	//TODO remove
-	public ENCharState moveCharStateForward(Char ch) throws BncException {
-		ENCharState oldState = ch.getState();
-		ENCharState newState = ch.moveState();
-		if (newState != oldState) {
-			if (newState == ENCharState.PRESENT) {
-				posTable.addLine(ch.ch);
-			} else if (oldState == ENCharState.PRESENT) {
-				posTable.removeLine(ch.ch);
-			}
-		}
-		return newState;
 	}
 	
 	public final class WordCompared {

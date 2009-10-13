@@ -3,8 +3,8 @@ package paxus.bnc.model;
 import java.util.ArrayList;
 
 import paxus.bnc.BncException;
-import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.ICharStateChangedListener;
+import paxus.bnc.controller.ICharStateSequencer;
 
 
 public class Char {
@@ -57,10 +57,9 @@ public class Char {
 	}
 
 	//change using Run - it cares of consistency 
-	public ENCharState moveState(ENCharState... forbidden) {
+	public ENCharState moveState(ENCharState... forbidden) throws BncException {
 		return alphabet.moveCharState(ch, forbidden);
 	}
-	
 	
 	/**
 	 * Subscribe to stateChanged notifications for exact Char instance.
@@ -75,7 +74,7 @@ public class Char {
 		stateChangedListenerList.remove(listener);
 	}
 	
-	public void onStateChanged(Character ch, ENCharState newState) {
+	public void onStateChanged(Character ch, ENCharState newState) throws BncException {
 		for (ICharStateChangedListener listener : stateChangedListenerList)
 			listener.onCharStateChanged(ch, newState);
 	}

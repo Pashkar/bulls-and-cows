@@ -44,14 +44,17 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 	
 	public int removeLine(Character ch) throws BncException {
 		PositionLine line = char2line.remove(ch);
-		if (line == null)
-			throw new BncException("No line for " + ch + " found");
-		lines.remove(line);
+		if (line != null)	//ignore invokation for already removed line
+			lines.remove(line);
 		return lines.size();
 	}
 	
-	public void onCharStateChanged(Character ch, ENCharState newState) {
-		
+	public void onCharStateChanged(Character ch, ENCharState newState) throws BncException {
+		//automatically add/remove row on char marked/unmarked as PRESENT
+		if (newState == ENCharState.PRESENT)
+			addLine(ch);
+		else 
+			removeLine(ch);
 	}
 	
 	public int getLinesCount() {

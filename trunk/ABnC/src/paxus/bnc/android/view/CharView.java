@@ -1,5 +1,6 @@
 package paxus.bnc.android.view;
 
+import paxus.bnc.BncException;
 import paxus.bnc.android.R;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.model.Char;
@@ -59,7 +60,9 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     }
 
 	public void onClick(View v) {
-		ch.moveState();	//if state really changes - onStateChanged will be notified
+		try {
+			ch.moveState();		//if state really changes - onStateChanged will be notified
+		} catch (BncException e) {};
 	}
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) {
