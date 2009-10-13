@@ -4,14 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import paxus.bnc.BncException;
+import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IStatesCounter;
 
-public class PositionTable implements IStatesCounter {
+public class PositionTable implements IStatesCounter, ICharStateChangedListener {
 
 	private final ArrayList<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
 	
-	public final HashMap<Char, PositionLine> char2line = new HashMap<Char, PositionLine>(Run.MAX_WORD_LENGTH); 
+	public final HashMap<Character, PositionLine> char2line = new HashMap<Character, PositionLine>(Run.MAX_WORD_LENGTH); 
 	
 	private ICharStateSequencer css;
 	public void setCss(ICharStateSequencer defaultCss) {
@@ -29,7 +30,7 @@ public class PositionTable implements IStatesCounter {
 		this.wordLength = wordLength;
 	}
 	
-	public int addLine(Char ch) throws BncException {
+	public int addLine(Character ch) throws BncException {
 		if (lines.size() == maxLines)
 			throw new BncException("Too much lines to add");
 		if (char2line.containsKey(ch))
@@ -41,12 +42,16 @@ public class PositionTable implements IStatesCounter {
 		return lines.size();
 	}
 	
-	public int removeLine(Char ch) throws BncException {
+	public int removeLine(Character ch) throws BncException {
 		PositionLine line = char2line.remove(ch);
 		if (line == null)
 			throw new BncException("No line for " + ch + " found");
 		lines.remove(line);
 		return lines.size();
+	}
+	
+	public void onCharStateChanged(Character ch, ENCharState newState) {
+		
 	}
 	
 	public int getLinesCount() {
@@ -68,7 +73,7 @@ public class PositionTable implements IStatesCounter {
 	 *  this.css must take care of that.
 	 * @throws BncException 
 	 */
-	public ENCharState movePosStateForChar(Char ch, int pos) throws BncException {
+	public ENCharState movePosStateForChar(Character ch, int pos) throws BncException {
 		if (pos >= wordLength)
 			throw new BncException("Pos value more than wordLength");
 		PositionLine line = char2line.get(ch);
@@ -94,7 +99,7 @@ public class PositionTable implements IStatesCounter {
 	 *  All chars with {@link ENCharState.ABSENT} in line/column not allowed.
 	 *  getStatesCount() designed to be used under LimitedStateSequencer
 	 */
-	public int getStatesCount(ENCharState state, Char ch, int pos) {
+	public int getStatesCount(ENCharState state, Character ch, int pos) {
 		final PositionLine line = char2line.get(ch);
 		if (line == null)
 			return 0;
@@ -108,7 +113,7 @@ public class PositionTable implements IStatesCounter {
 		}
 	}
 	
-	private Char getPresentInColumn(int pos) {
+	private Character getPresentInColumn(int pos) {
 		for (PositionLine line : lines) {
 			PosChar posChar = line.chars[pos];
 			if (posChar.state == ENCharState.PRESENT)
@@ -144,12 +149,9 @@ public class PositionTable implements IStatesCounter {
 	
 	public final class PositionLine {
 
-		private final Char ch;	//to manipulate real state in alphabet
-
 		public final PosChar[] chars = new PosChar[Run.MAX_WORD_LENGTH];
 		
-		public PositionLine(Char ch) {
-			this.ch = ch;
+		public PositionLine(Character ch) {
 			PosChar[] mChars = this.chars;
 			for (int i = 0; i < wordLength; i++) {
 				mChars[i] = new PosChar(ch, i, PositionTable.this);
@@ -193,9 +195,9 @@ public class PositionTable implements IStatesCounter {
 		public String toString() {
 			PosChar[] mChars = chars;
 			StringBuilder sb = new StringBuilder();
-			sb.append(ch.asString + " ");
 			for (int i = 0; i < PositionTable.this.wordLength; i++) {
 				sb.append(mChars[i]);
+				sb.append(" ");
 			}
 			return sb.toString();
 		}

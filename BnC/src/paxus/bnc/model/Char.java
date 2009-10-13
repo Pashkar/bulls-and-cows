@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
-import paxus.bnc.controller.IStateChangedListener;
+import paxus.bnc.controller.ICharStateChangedListener;
 
 
 public class Char {
@@ -17,9 +17,7 @@ public class Char {
 	
 	public final Alphabet alphabet;
 	
-	//List - since there is only one Char instance for several CharView instances
-	private final ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
-
+	private final ArrayList<ICharStateChangedListener> stateChangedListenerList = new ArrayList<ICharStateChangedListener>();
 
 	/*//List - since there is only one Char instance for several CharView instances
 	private ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
@@ -63,17 +61,23 @@ public class Char {
 		return alphabet.moveCharState(ch, forbidden);
 	}
 	
-	public void addStateChangedListener(IStateChangedListener listener) {
+	
+	/**
+	 * Subscribe to stateChanged notifications for exact Char instance.
+	 * {@link #onStateChanged(Character, ENCharState)} will be invoked with Character argument from this instance.
+	 * Use {@link Alphabet#addStateChangedListener(ICharStateChangedListener)} to subscribe to all Char's state updates.
+	 */
+	public void addStateChangedListener(ICharStateChangedListener listener) {
 		stateChangedListenerList.add(listener);
 	}
 	
-	public void removeStateChangedListener(IStateChangedListener listener) {
+	public void removeStateChangedListener(ICharStateChangedListener listener) {
 		stateChangedListenerList.remove(listener);
 	}
 	
 	public void onStateChanged(Character ch, ENCharState newState) {
-		for (IStateChangedListener listener : stateChangedListenerList)
-			listener.onStateChanged(ch, newState);
+		for (ICharStateChangedListener listener : stateChangedListenerList)
+			listener.onCharStateChanged(ch, newState);
 	}
 	
 	@Override
@@ -125,10 +129,10 @@ public class Char {
 				return state;
 			}
 			@Override
-			public void addStateChangedListener(IStateChangedListener listener) {
+			public void addStateChangedListener(ICharStateChangedListener listener) {
 			}
 			@Override
-			public void removeStateChangedListener(IStateChangedListener listener) {
+			public void removeStateChangedListener(ICharStateChangedListener listener) {
 			}
 		};
 		NO_ALPHA = ch;

@@ -1,8 +1,9 @@
-package paxus.bnc.android;
+package paxus.bnc.android.view;
 
-import paxus.bnc.controller.IPosStateChangedListener;
+import paxus.bnc.android.R;
+import paxus.bnc.controller.ICharStateChangedListener;
+import paxus.bnc.model.Char;
 import paxus.bnc.model.ENCharState;
-import paxus.bnc.model.PosChar;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,20 +11,21 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class PosCharView extends View implements OnClickListener, IPosStateChangedListener {
+public class CharView extends View implements OnClickListener, ICharStateChangedListener {
+
 	private static final int WIDTH = 14;
 	private static final int HEIGHT = 14;
 	
-	Paint paint;
+	public Paint paint;
 
-	private PosChar pch = PosChar.NULL; 
+	private Char ch = Char.NO_ALPHA; 
 
-	public PosCharView(Context context, AttributeSet attrs) {
+	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView();
 	}
 	
-	public PosCharView(Context context) {
+	public CharView(Context context) {
 		super(context);
 		initView();
 	}
@@ -32,9 +34,9 @@ public class PosCharView extends View implements OnClickListener, IPosStateChang
 		setOnClickListener(this);
 	}
 	
-	public void setPosChar(PosChar pch) {
-		this.pch = pch;
-		pch.addPosStateChangedListener(this);
+	public void setChar(Char ch) {
+		this.ch = ch;
+		ch.addStateChangedListener(this);
 	}
 	
     @Override
@@ -53,16 +55,14 @@ public class PosCharView extends View implements OnClickListener, IPosStateChang
     
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawText("[" + pch.ch + "]", getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
+        canvas.drawText("" + ch.ch, getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
     }
 
 	public void onClick(View v) {
-		pch.movePosState();	//if state really changes - onStateChanged will be notified
+		ch.moveState();	//if state really changes - onStateChanged will be notified
 	}
 	
-	public void onPosStateChanged(PosChar pch, ENCharState newState) {
-		if (this.pch != pch)
-			return;
+	public void onCharStateChanged(Character ch, ENCharState newState) {
 		changeBackground(newState);
 		invalidate();
 	}
@@ -83,6 +83,6 @@ public class PosCharView extends View implements OnClickListener, IPosStateChang
 
 	@Override
 	public String toString() {
-		return pch + "";
+		return ch + "";
 	}
 }

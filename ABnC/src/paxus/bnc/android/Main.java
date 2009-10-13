@@ -1,9 +1,12 @@
 package paxus.bnc.android;
 
 import paxus.bnc.BncException;
+import paxus.bnc.android.view.CharView;
+import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.RunExecutor;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
+import paxus.bnc.model.PosChar;
 import paxus.bnc.model.Run;
 import android.app.Activity;
 import android.graphics.Paint;
@@ -13,9 +16,15 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 public class Main extends Activity {
+	
     private static final int COLUMNS = 9;
+    
 	private final RunExecutor re = new RunExecutor();
+	
 	private Run run;
+	
+	private final LinearLayout posLineLayout[] = new LinearLayout[Run.MAX_WORD_LENGTH];
+	
 
 	/** Called when the activity is first created. */
     @Override
@@ -34,17 +43,20 @@ public class Main extends Activity {
         		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), COLUMNS, layoutInflater, paint);
         fillCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, run.wordLength, layoutInflater, paint);
         
+        LinearLayout[] posLineLayout2 = posLineLayout;
         LinearLayout pl = (LinearLayout) findViewById(R.id.PositioningLayout);
         for (int i = 0; i < run.wordLength; i++) {
-        	LinearLayout la = new LinearLayout(this);
-        	for (int j = 0; j < run.wordLength; j++) {
-        		la.setOrientation(LinearLayout.HORIZONTAL);
+        	posLineLayout2[i] = new LinearLayout(this);
+        	/*for (int j = 0; j < run.wordLength; j++) {
+        		posLineLayout2[i].setOrientation(LinearLayout.HORIZONTAL);
         		PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);
         		pcw.paint = paint;
-        		la.addView(pcw);
-        	}
-        	pl.addView(la);
+        		posLineLayout2[i].addView(pcw);
+        	}*/
+        	fillPosCharsLine(posLineLayout2[i], null, run.wordLength, layoutInflater, paint);
+        	pl.addView(posLineLayout2[i]);
         }
+        
         
     }
 
@@ -55,6 +67,17 @@ public class Main extends Activity {
         	cv.paint = paint;
         	cv.setChar(chars[i]);
         	la.addView(cv);
+        }
+	}
+	
+	private void fillPosCharsLine(LinearLayout la, PosChar[] posChars, int length, final LayoutInflater layoutInflater, 
+			final Paint paint) {
+		for (int i = 0; i < length && i < COLUMNS; i++) {
+			PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
+			pcw.paint = paint;
+			if (posChars != null)
+				pcw.setPosChar(posChars[i]);
+        	la.addView(pcw);
         }
 	}
 

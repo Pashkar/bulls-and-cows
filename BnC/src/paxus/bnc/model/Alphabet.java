@@ -1,10 +1,12 @@
 package paxus.bnc.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IStatesCounter;
 
 public abstract class Alphabet implements IStatesCounter {
@@ -17,13 +19,15 @@ public abstract class Alphabet implements IStatesCounter {
 	//TODO Optimization : replace map with ordinal array by char->int
 	final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
 	
+	private final ArrayList<ICharStateChangedListener> stateChangedListenerList = new ArrayList<ICharStateChangedListener>();
+	
 	private ICharStateSequencer css = ICharStateSequencer.FORWARD;
 	public void setCss(ICharStateSequencer defaultCss) {
 		this.css = defaultCss;
 	}
 
 	private int presentStateCount; 
-	public int getStatesCount(ENCharState state, Char ch, int pos) {
+	public int getStatesCount(ENCharState state, Character ch, int pos) {
 		if (state != ENCharState.PRESENT)
 			return -1;
 		return presentStateCount;
@@ -45,6 +49,17 @@ public abstract class Alphabet implements IStatesCounter {
 	}
 	
 	/**
+	 * Use {@link Char#addStateChangedListener(ICharStateChangedListener)} to subcribe to exact Char instance notifications.
+	 */
+	public void addStateChangedListener(ICharStateChangedListener listener) {
+		stateChangedListenerList.add(listener);
+	}
+	
+	public void removeStateChangedListener(ICharStateChangedListener listener) {
+		stateChangedListenerList.remove(listener);
+	}
+
+	/**
 	 * 	Clear all chars states. Clears defaultCss.
 	 */
 	public void clear() {
@@ -54,6 +69,7 @@ public abstract class Alphabet implements IStatesCounter {
 		}
 		presentStateCount = 0;
 		css = null;
+		stateChangedListenerList.clear();
 	}
 	
 	public Collection<Char> getAllChars() {

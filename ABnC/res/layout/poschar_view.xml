@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <view xmlns:android="http://schemas.android.com/apk/res/android"
-	class="paxus.bnc.android.PosCharView"
+	class="paxus.bnc.android.view.PosCharView"
 	android:id="@+id/PosCharView"
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
