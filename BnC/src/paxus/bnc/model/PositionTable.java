@@ -6,13 +6,17 @@ import java.util.HashMap;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.IStatesCounter;
 
 public class PositionTable implements IStatesCounter, ICharStateChangedListener {
 
-	private final ArrayList<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
+	public final ArrayList<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
 	
-	public final HashMap<Character, PositionLine> char2line = new HashMap<Character, PositionLine>(Run.MAX_WORD_LENGTH); 
+	//TODO replace Map with ordinal array by char -> int
+	public final HashMap<Character, PositionLine> char2line = new HashMap<Character, PositionLine>(Run.MAX_WORD_LENGTH);
+	
+	private final ArrayList<IPositionTableListener> posTableListenerList = new ArrayList<IPositionTableListener>();
 	
 	private ICharStateSequencer css;
 	public void setCss(ICharStateSequencer defaultCss) {
@@ -39,14 +43,23 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 		PositionLine line = new PositionLine(ch);
 		lines.add(line);
 		char2line.put(ch, line);
+		notifyListeners(true, ch, line);
 		return lines.size();
 	}
 	
 	public int removeLine(Character ch) throws BncException {
 		PositionLine line = char2line.remove(ch);
-		if (line != null)	//ignore invokation for already removed line
+		if (line != null) {		//ignore invocation for already removed line
 			lines.remove(line);
+			notifyListeners(false, ch, null);
+		}
 		return lines.size();
+	}
+	
+	private void notifyListeners(boolean insert, Character ch, PositionLine line) {
+		for (IPositionTableListener listener : posTableListenerList) {
+			listener.onPosTableUpdate(insert, ch, line);
+		}
 	}
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) throws BncException {
@@ -59,6 +72,14 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 	
 	public int getLinesCount() {
 		return lines.size();
+	}
+	
+	public void addStateChangedListener(IPositionTableListener listener) {
+		posTableListenerList.add(listener);
+	}
+	
+	public void removeStateChangedListener(IPositionTableListener listener) {
+		posTableListenerList.remove(listener);
 	}
 	
 	@Override

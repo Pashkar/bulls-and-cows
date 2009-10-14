@@ -4,7 +4,9 @@ import junit.framework.TestCase;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IPosCharStateChangedListener;
+import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
+import paxus.bnc.model.PositionTable.PositionLine;
 
 public class PositionTableTest extends TestCase {
 
@@ -75,7 +77,6 @@ public class PositionTableTest extends TestCase {
 	}
 	
 	public void testPosStateChangedListener() throws BncException {
-		Alphabet.Latin la = new Alphabet.Latin();
 		PositionTable table = new PositionTable(1, 3);
 		table.setCss(ICharStateSequencer.FORWARD);
 		Character charA = new Character('a');
@@ -129,5 +130,50 @@ public class PositionTableTest extends TestCase {
 		//check that line removed
 		assertEquals(ENCharState.NONE, da.moveCharState(new Character('0')));
 		assertEquals(1, run.posTable.getLinesCount());
+	}
+	
+	public void testPosTableListener() throws BncException {
+		final Alphabet da = new Alphabet.Digital();
+		RunExecutor re = new RunExecutor();
+		Run run = re.startNewRun(da, "0123");
+		
+		final int[] counter = {0, 0};
+		final IPositionTableListener listener = new IPositionTableListener() {
+			public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
+				counter[insert ? 0 : 1]++;
+			}
+		};
+		
+		//check w/o listeners
+		assertEquals(1, run.posTable.addLine('0'));
+		assertEquals(0, counter[0]);
+		assertEquals(0, counter[1]);
+		assertEquals(0, run.posTable.removeLine('0'));
+		assertEquals(0, counter[0]);
+		assertEquals(0, counter[1]);
+		
+		//add line
+		run.posTable.addStateChangedListener(listener);
+		assertEquals(1, run.posTable.addLine('1'));
+		assertEquals(1, counter[0]);
+		assertEquals(0, counter[1]);
+		
+		//remove line
+		assertEquals(0, run.posTable.removeLine('1'));
+		assertEquals(1, counter[0]);
+		assertEquals(1, counter[1]);
+		
+		//remove already removed line
+		assertEquals(0, run.posTable.removeLine('1'));
+		assertEquals(1, counter[0]);
+		assertEquals(1, counter[1]);
+		
+		run.posTable.removeStateChangedListener(listener);
+		assertEquals(1, run.posTable.addLine('0'));
+		assertEquals(1, counter[0]);
+		assertEquals(1, counter[1]);
+		assertEquals(0, run.posTable.removeLine('0'));
+		assertEquals(1, counter[0]);
+		assertEquals(1, counter[1]);
 	}
 }

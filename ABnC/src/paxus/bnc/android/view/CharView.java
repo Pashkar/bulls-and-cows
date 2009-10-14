@@ -70,6 +70,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		invalidate();
 	}
 
+	//TODO not Background (probably it's stretched), just draw. Use Prescale  
 	private void changeBackground(ENCharState state) {
 		switch (state) {
 		case NONE:
