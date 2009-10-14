@@ -9,6 +9,7 @@ import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
+import paxus.bnc.model.PosChar;
 import paxus.bnc.model.PositionTable;
 import paxus.bnc.model.Run;
 import paxus.bnc.model.PositionTable.PositionLine;
@@ -32,11 +33,16 @@ public class Main extends Activity implements IPositionTableListener {
 	//TODO replace explicit array with View.setId, -> findViewById
 	private final LinearLayout posLineLayouts[] = new LinearLayout[Run.MAX_WORD_LENGTH];
 	
-	private final HashMap<Character, LinearLayout> char2posLine = new HashMap<Character, LinearLayout>();
+	//FIXME improve!!!!
+	//TODO replace explicit array with View.-> findViewWithTag
+//	private final HashMap<Character, LinearLayout> char2posLineLayout = new HashMap<Character, LinearLayout>();
+//	private final HashMap<Character, Integer> char2posLine = new HashMap<Character, LinearLayout>();
 
 	private LayoutInflater layoutInflater;
 
 	private Paint paint;
+
+	private LinearLayout posTableLayout;
 	
 
 	/** Called when the activity is first created. */
@@ -57,12 +63,12 @@ public class Main extends Activity implements IPositionTableListener {
         inflateCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, run.wordLength, layoutInflater, paint);
         
         LinearLayout[] posLineLayout2 = posLineLayouts;
-        LinearLayout pl = (LinearLayout) findViewById(R.id.PositioningLayout);
+        posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
         for (int i = 0; i < run.wordLength; i++) {
         	posLineLayout2[i] = new LinearLayout(this);
         	posLineLayout2[i].setVisibility(View.INVISIBLE);
         	inflateEmptyPosLine(posLineLayout2[i], run.wordLength, layoutInflater, paint);
-        	pl.addView(posLineLayout2[i]);
+        	posTableLayout.addView(posLineLayout2[i]);
         }
         run.posTable.addStateChangedListener(this);
         
@@ -89,6 +95,16 @@ public class Main extends Activity implements IPositionTableListener {
         	la.addView(pcw);
         }
 	}
+	
+	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
+	private void showPosLine(LinearLayout pl, PosChar[] chars, int length) {
+		for (int i = 0; i < length && i < COLUMNS; i++) {
+			PosCharView pcw = (PosCharView) pl.getChildAt(i);
+			pcw.setPosChar(chars[i]);
+        }
+		pl.setVisibility(View.VISIBLE);
+	}
+
 
 	private Paint createPaint() {
 		Paint paint = new Paint();
@@ -112,25 +128,29 @@ public class Main extends Activity implements IPositionTableListener {
 		final PositionTable posTable = run.posTable;
 		int linesCount = posTable.lines.size();
 		if (insert) {
-//			inflateEmptyPosLine(posLineLayout[linesCount - 1], posTable.lines.get(linesCount - 1).chars, run.wordLength, layoutInflater, paint);
-//			showPosLine(posLineLayout[linesCount - 1], posTable.lines.get(linesCount - 1).chars, run.wordLength, layoutInflater, paint);
+			LinearLayout pl = (LinearLayout) posTableLayout.getChildAt(linesCount);
+			pl.setTag(ch);
+			showPosLine(pl, posTable.lines.get(linesCount - 1).chars, run.wordLength);
 		} else {
-			removePosLine(ch);
+			LinearLayout pl = removePosLine(ch);
+			pl.setTag(null);
 		}
 	}
 
-	private void removePosLine(Character ch) {
+	private LinearLayout removePosLine(Character ch) {
 		//clear PosCharViews
-		LinearLayout pll = char2posLine.get(ch);
+		LinearLayout pll = (LinearLayout) posTableLayout.findViewWithTag(ch);
 		for (int i = 0; i < run.wordLength; i++) {
 			PosCharView pcv = (PosCharView) pll.getChildAt(i);
 			pcv.clearPosChar();
 		}
 //		pll.setVisibility(View.INVISIBLE);
-		char2posLine.remove(ch);
+		
 		
 		//move PosLineLayout down
-		LinearLayout[] posLineLayouts2 = posLineLayouts;
+//		LinearLayout[] posLineLayouts2 = posLineLayouts;
+		
+		return pll;
 	}
     
 }
