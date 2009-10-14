@@ -50,13 +50,13 @@ public abstract class Alphabet implements IStatesCounter {
 	}
 	
 	/**
-	 * Use {@link Char#addStateChangedListener(ICharStateChangedListener)} to subcribe to exact Char instance notifications.
+	 * Use {@link Char#addStateChangedListener(ICharStateChangedListener)} to subscribe to exact Char instance notifications.
 	 */
-	public void addStateChangedListener(ICharStateChangedListener listener) {
+	public void addAllCharsStateChangedListener(ICharStateChangedListener listener) {
 		stateChangedListenerList.add(listener);
 	}
 	
-	public void removeStateChangedListener(ICharStateChangedListener listener) {
+	public void removeAllCharsStateCRhangedListener(ICharStateChangedListener listener) {
 		stateChangedListenerList.remove(listener);
 	}
 

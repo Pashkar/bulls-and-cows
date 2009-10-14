@@ -1,5 +1,7 @@
 package paxus.bnc.android;
 
+import java.util.HashMap;
+
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.PosCharView;
@@ -7,7 +9,6 @@ import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
-import paxus.bnc.model.PosChar;
 import paxus.bnc.model.PositionTable;
 import paxus.bnc.model.Run;
 import paxus.bnc.model.PositionTable.PositionLine;
@@ -16,17 +17,22 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 
 public class Main extends Activity implements IPositionTableListener {
 	
+	//TODO update
     private static final int COLUMNS = 9;
     
 	private final RunExecutor re = new RunExecutor();
 	
 	private Run run;
 	
-	private final LinearLayout posLineLayout[] = new LinearLayout[Run.MAX_WORD_LENGTH];
+	//TODO replace explicit array with View.setId, -> findViewById
+	private final LinearLayout posLineLayouts[] = new LinearLayout[Run.MAX_WORD_LENGTH];
+	
+	private final HashMap<Character, LinearLayout> char2posLine = new HashMap<Character, LinearLayout>();
 
 	private LayoutInflater layoutInflater;
 
@@ -46,15 +52,16 @@ public class Main extends Activity implements IPositionTableListener {
 		paint = createPaint();
 		layoutInflater = getLayoutInflater();
 		
-        fillCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
+        inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
         		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), COLUMNS, layoutInflater, paint);
-        fillCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, run.wordLength, layoutInflater, paint);
+        inflateCharsLine((LinearLayout) findViewById(R.id.SecretLayout), run.secret.chars, run.wordLength, layoutInflater, paint);
         
-        LinearLayout[] posLineLayout2 = posLineLayout;
+        LinearLayout[] posLineLayout2 = posLineLayouts;
         LinearLayout pl = (LinearLayout) findViewById(R.id.PositioningLayout);
         for (int i = 0; i < run.wordLength; i++) {
         	posLineLayout2[i] = new LinearLayout(this);
-        	fillPosCharsLine(posLineLayout2[i], null, run.wordLength, layoutInflater, paint);
+        	posLineLayout2[i].setVisibility(View.INVISIBLE);
+        	inflateEmptyPosLine(posLineLayout2[i], run.wordLength, layoutInflater, paint);
         	pl.addView(posLineLayout2[i]);
         }
         run.posTable.addStateChangedListener(this);
@@ -62,7 +69,7 @@ public class Main extends Activity implements IPositionTableListener {
         
     }
 
-	private void fillCharsLine(LinearLayout la, Char[] chars, int length, final LayoutInflater layoutInflater, 
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, final LayoutInflater layoutInflater, 
 			final Paint paint) {
 		la.removeAllViews();
 		for (int i = 0; i < length && i < COLUMNS; i++) {
@@ -73,14 +80,12 @@ public class Main extends Activity implements IPositionTableListener {
         }
 	}
 	
-	private void fillPosCharsLine(LinearLayout la, PosChar[] posChars, int length, final LayoutInflater layoutInflater, 
+	private void inflateEmptyPosLine(LinearLayout la, int length, final LayoutInflater layoutInflater, 
 			final Paint paint) {
 		la.removeAllViews();
 		for (int i = 0; i < length && i < COLUMNS; i++) {
-			PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
+			PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);
 			pcw.paint = paint;
-			if (posChars != null)
-				pcw.setPosChar(posChars[i]);
         	la.addView(pcw);
         }
 	}
@@ -107,10 +112,25 @@ public class Main extends Activity implements IPositionTableListener {
 		final PositionTable posTable = run.posTable;
 		int linesCount = posTable.lines.size();
 		if (insert) {
-			fillPosCharsLine(posLineLayout[linesCount - 1], posTable.lines.get(linesCount - 1).chars, run.wordLength, layoutInflater, paint);
+//			inflateEmptyPosLine(posLineLayout[linesCount - 1], posTable.lines.get(linesCount - 1).chars, run.wordLength, layoutInflater, paint);
+//			showPosLine(posLineLayout[linesCount - 1], posTable.lines.get(linesCount - 1).chars, run.wordLength, layoutInflater, paint);
 		} else {
-			
+			removePosLine(ch);
 		}
+	}
+
+	private void removePosLine(Character ch) {
+		//clear PosCharViews
+		LinearLayout pll = char2posLine.get(ch);
+		for (int i = 0; i < run.wordLength; i++) {
+			PosCharView pcv = (PosCharView) pll.getChildAt(i);
+			pcv.clearPosChar();
+		}
+//		pll.setVisibility(View.INVISIBLE);
+		char2posLine.remove(ch);
+		
+		//move PosLineLayout down
+		LinearLayout[] posLineLayouts2 = posLineLayouts;
 	}
     
 }

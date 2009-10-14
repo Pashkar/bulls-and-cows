@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import paxus.bnc.controller.IPosCharStateChangedListener;
 
-public final class PosChar {
+public class PosChar {
 	public final Character ch;
 	
 	ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char
@@ -48,6 +48,11 @@ public final class PosChar {
 		return "" + ch + state; 
 	}
 	
-	public static final PosChar NULL = new PosChar(Char.NULL_CHAR, -1, null);
+	public static final PosChar NULL = new PosChar(Char.NULL_CHAR, -1, null) {
+		@Override
+		public ENCharState movePosState() {
+			return ENCharState.NONE;
+		}
+	};
 
 }

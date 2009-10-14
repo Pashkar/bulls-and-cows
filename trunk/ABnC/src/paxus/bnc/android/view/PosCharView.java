@@ -21,21 +21,22 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		initView();
+		setOnClickListener(this);
 	}
 	
 	public PosCharView(Context context) {
 		super(context);
-		initView();
-	}
-
-	public void initView() {
 		setOnClickListener(this);
 	}
-	
+
 	public void setPosChar(PosChar pch) {
 		this.pch = pch;
 		pch.addPosStateChangedListener(this);
+	}
+	
+	public void clearPosChar() {
+		pch.removePosStateChangedListener(this);
+		pch = PosChar.NULL;
 	}
 	
     @Override
