@@ -7,7 +7,7 @@ import paxus.bnc.BncException;
 
 public final class Run {
 
-	public static final int MAX_WORD_LENGTH = 20;
+	public static final int MAX_WORD_LENGTH = 10;
 	
 	public final int wordLength;
 	

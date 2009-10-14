@@ -64,7 +64,7 @@ public class Char {
 	/**
 	 * Subscribe to stateChanged notifications for exact Char instance.
 	 * {@link #onStateChanged(Character, ENCharState)} will be invoked with Character argument from this instance.
-	 * Use {@link Alphabet#addStateChangedListener(ICharStateChangedListener)} to subscribe to all Char's state updates.
+	 * Use {@link Alphabet#addAllCharsStateChangedListener(ICharStateChangedListener)} to subscribe to all Char's state updates.
 	 */
 	public void addStateChangedListener(ICharStateChangedListener listener) {
 		stateChangedListenerList.add(listener);
