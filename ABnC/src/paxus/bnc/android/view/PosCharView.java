@@ -37,6 +37,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	public void clearPosChar() {
 		pch.removePosStateChangedListener(this);
 		pch = PosChar.NULL;
+		changeBackground(ENCharState.NONE); 
 	}
 	
     @Override
