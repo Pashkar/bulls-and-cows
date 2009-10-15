@@ -32,6 +32,24 @@ public class Main extends Activity implements IPositionTableListener {
 	
 	private LinearLayout posTableLayout;
 
+	private Paint createPaint() {
+		Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setTextSize(24);
+        paint.setTextAlign(Align.CENTER);
+        paint.setColor(0xFFFFFFFF);
+        return paint;
+	}
+    
+    private void startNewRun() throws BncException {
+    	//TODO can keep alphabet instance if not changed and just reinit().
+    	//alphabet.reinit();
+    	
+    	//TODO offer alphabet selecting for user
+    	
+    	run = re.startNewRun(new Alphabet.Digital(), "12345");
+    }
+	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,33 +103,6 @@ public class Main extends Activity implements IPositionTableListener {
         }
 		return line;
 	}
-	
-	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
-	private void showPosLine(LinearLayout pl, PosChar[] chars, int length) {
-		for (int i = 0; i < length && i < COLUMNS; i++) {
-			PosCharView pcw = (PosCharView) pl.getChildAt(i);
-			pcw.setPosChar(chars[i]);
-        }
-		posTableLayout.addView(pl);
-	}
-
-	private Paint createPaint() {
-		Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setTextSize(24);
-        paint.setTextAlign(Align.CENTER);
-        paint.setColor(0xFFFFFFFF);
-        return paint;
-	}
-    
-    private void startNewRun() throws BncException {
-    	//TODO can keep alphabet instance if not changed and just reinit().
-    	//alphabet.reinit();
-    	
-    	//TODO offer alphabet selecting for user
-    	
-    	run = re.startNewRun(new Alphabet.Digital(), "12345");
-    }
 
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
 		if (insert) {
@@ -124,17 +115,26 @@ public class Main extends Activity implements IPositionTableListener {
 			pl.setTag(null);
 		}
 	}
-
+	
+	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
+	private void showPosLine(LinearLayout pl, PosChar[] chars, int length) {
+		for (int i = 0; i < length && i < COLUMNS; i++) {
+			PosCharView pcw = (PosCharView) pl.getChildAt(i);
+			pcw.setPosChar(chars[i]);
+        }
+		posTableLayout.addView(pl);
+	}
+	
 	private LinearLayout removePosLine(Character ch) {
-		//clear PosCharViews
 		LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
+		//move PosLineLayout down
+		posTableLayout.removeView(line);
+
+		//clear PosCharViews
 		for (int i = 0; i < run.wordLength; i++) {
 			PosCharView pcv = (PosCharView) line.getChildAt(i);
 			pcv.clearPosChar();
 		}
-		
-		//move PosLineLayout down
-		posTableLayout.removeView(line);
 		
 		return line;
 	}
