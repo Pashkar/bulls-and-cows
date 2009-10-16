@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateChangedListener;
-import paxus.bnc.controller.ICharStateSequencer;
 
 
 public class Char {
@@ -120,7 +119,7 @@ public class Char {
 			private ENCharState state = ENCharState.NONE; 
 			@Override
 			public ENCharState moveState(ENCharState... forbidden) {
-				state = ICharStateSequencer.FORWARD.nextState(state, null, -1, forbidden);
+//				state = ICharStateSequencer.FORWARD.nextState(state, null, -1, forbidden);
 				return state;
 			}
 			@Override

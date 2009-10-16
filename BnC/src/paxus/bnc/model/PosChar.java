@@ -9,7 +9,7 @@ public class PosChar {
 	
 	ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char
 	
-	public final PositionTable table; //is used?
+	public final PositionTable table;
 	
 	public final int pos;
 	
@@ -38,10 +38,10 @@ public class PosChar {
 	}
 	
 	public void onPosStateChanged(PosChar pch, ENCharState newState) {
-		for (IPosCharStateChangedListener listener : stateChangedListenerList) 
+		for (IPosCharStateChangedListener listener : stateChangedListenerList) { 
 			listener.onPosCharStateChanged(pch, newState);		
+		}
 	}
-
 	
 	@Override
 	public String toString() {

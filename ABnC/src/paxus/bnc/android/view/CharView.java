@@ -3,8 +3,10 @@ package paxus.bnc.android.view;
 import paxus.bnc.BncException;
 import paxus.bnc.android.R;
 import paxus.bnc.controller.ICharStateChangedListener;
+import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.Char;
 import paxus.bnc.model.ENCharState;
+import paxus.bnc.model.PosChar;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -12,14 +14,21 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class CharView extends View implements OnClickListener, ICharStateChangedListener {
+public class CharView extends View implements OnClickListener, ICharStateChangedListener, 
+		IPosCharStateChangedListener {
 
 	private static final int WIDTH = 14;
 	private static final int HEIGHT = 14;
 	
 	public Paint paint;
 
-	private Char ch = Char.NULL; 
+	private Char ch = Char.NULL;
+	
+	//for "bull" when position of CharView pointed. Stores for the CharView instance position of it in word. 
+	//Compared to position in PosTable, marked by user
+	private int viewPos = -1;	
+	
+	private boolean posMatched = false;
 
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -41,8 +50,25 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		invalidate();
 	}
 	
-	public Char getCh() {
+	public Char getChar() {
 		return ch;
+	}
+	
+	public void resetChar() {
+		ch.removeStateChangedListener(this);
+		ch = Char.NULL;
+		posMatched = false;
+//		invalidate();
+	}
+	
+	public void setInitialPosMatched(boolean posMatched) {
+		this.posMatched = posMatched;
+//		invalidate();
+	}
+
+	public void setViewPos(int pos) {
+		this.viewPos = pos;
+		invalidate();
 	}
 
     @Override
@@ -72,8 +98,16 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	}
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) {
-//		setBackground(newState);
 		invalidate();
+	}
+
+	public void onPosCharStateChanged(PosChar ch, ENCharState newState) {
+		boolean oldMatched = posMatched;
+		if (viewPos != -1 && ch.ch == this.ch.ch && ch.pos == viewPos)
+			posMatched = (newState == ENCharState.PRESENT);
+		if (oldMatched != posMatched)
+//			postInvalidate();
+			invalidate();
 	}
 
 	//TODO not Background (probably it's stretched), just draw. Use Prescaled
@@ -86,7 +120,10 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-			setBackgroundResource(R.drawable.cow);
+			if (posMatched)
+				setBackgroundResource(R.drawable.bull);
+			else
+				setBackgroundResource(R.drawable.cow);
 			break;
 		}
 	}

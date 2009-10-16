@@ -2,6 +2,8 @@ package paxus.bnc.model;
 
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
+import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.RunExecutor;
 
 public class PosCharTest extends TestCase {
@@ -79,5 +81,38 @@ public class PosCharTest extends TestCase {
 		assertEquals(ENCharState.NONE, pchB3.movePosState());
 		assertEquals(ENCharState.ABSENT, pchB0.movePosState());
 		assertEquals(ENCharState.PRESENT, pchB0.movePosState());
+	}
+	
+	public void testPosStateChangedListener() throws BncException {
+		PositionTable table = new PositionTable(1, 3);
+		table.setCss(ICharStateSequencer.FORWARD);
+		Character charA = new Character('a');
+		table.addLine(charA);
+		final PosChar pchA0 = table.char2line.get(charA).chars[0];
+
+		final int[] counter = {0};
+		final IPosCharStateChangedListener listener = new IPosCharStateChangedListener() {
+			public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
+				counter[0]++;
+			}
+		};
+		
+		//no listeners
+		table.movePosStateForChar(charA, 0);
+		assertEquals(0, counter[0]);
+		
+		pchA0.addPosStateChangedListener(listener);
+		
+		//move by poschar
+		pchA0.movePosState();
+		assertEquals(1, counter[0]);
+		
+		//move by table
+		table.movePosStateForChar(charA, 0);
+		assertEquals(2, counter[0]);
+		
+		//another poschar
+		table.movePosStateForChar(charA, 1);
+		assertEquals(2, counter[0]);
 	}
 }

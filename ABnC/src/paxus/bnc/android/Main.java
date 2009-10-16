@@ -40,6 +40,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private LinearLayout enteringWordLayout2;
 
+	private Paint paint;
+
+	private LayoutInflater layoutInflater;
+
 	private Paint createPaint() {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -68,27 +72,27 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			startNewRun();
 		} catch (BncException e) {}
 		
-		Paint paint = createPaint();
-		LayoutInflater layoutInflater = getLayoutInflater();
+		paint = createPaint();
+		layoutInflater = getLayoutInflater();
 		
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
-		//inflate ntering word layout
+		//inflate entering word layout
 		inflateCharsLine(enteringWordLayout, 
-        		null, run.wordLength , layoutInflater, paint, false, -1);
+        		null, run.wordLength , -1, false, true);
 		
 		//inflate alphabet layout
         inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), COLUMNS, layoutInflater, paint, true, R.id.AlphabetCharView);
+        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), 10, R.id.AlphabetCharView, true, false);
         
         //inflate secret word layout
         inflateCharsLine((LinearLayout) findViewById(R.id.SecretLayout), 
-        		run.secret.chars, run.wordLength, layoutInflater, paint, false, -1);
+        		run.secret.chars, run.wordLength, -1, false, true);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
         posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
         for (int i = 0; i < run.wordLength; i++) {
-        	LinearLayout line = inflatePosLine(run.wordLength, layoutInflater, paint);
+        	LinearLayout line = inflatePosLine();
         	freePosLayoutList2.add(line);
         }
         
@@ -96,25 +100,29 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
     }
 
-	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, final LayoutInflater layoutInflater, 
-			final Paint paint, boolean addListener, int id) {
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId, 
+			boolean addOnClickListener, boolean addOnPosLostener) {
 		for (int i = 0; i < length && i < COLUMNS; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
         	if (chars != null)
         		cv.setChar(chars[i]);
-        	if (id != -1)
-        		cv.setId(id);
-        	if (addListener)
+        	if (viewId != -1)
+        		cv.setId(viewId);
+        	if (addOnClickListener)
         		cv.setOnClickListener(this);
+        	if(addOnPosLostener) {
+        		cv.setViewPos(i);
+        		run.posTable.addAllPosCharStateChangedListener(cv);
+        	}
         	la.addView(cv);
         }
 	}
 	
 	//inflate PosCharViews with PosChar.NULL values
-	private LinearLayout inflatePosLine(int length, final LayoutInflater layoutInflater, final Paint paint) {
+	private LinearLayout inflatePosLine() {
 		LinearLayout line = new LinearLayout(this);
-		for (int i = 0; i < length && i < COLUMNS; i++) {
+		for (int i = 0; i < run.wordLength && i < COLUMNS; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);
 			pcw.paint = paint;
         	line.addView(pcw);
@@ -163,22 +171,25 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			if (enteringWord.length() >= run.wordLength) {
 				offerWord(enteringWord.toString());
 				for (int i = 0; i < enteringWordLayout2.getChildCount(); i++) {
-					((CharView)enteringWordLayout2.getChildAt(i)).setChar(Char.NULL);
+					((CharView)enteringWordLayout2.getChildAt(i)).resetChar();	//just remove underlying Char obj, reuse CharView. viewPos remains correct 
 				}
+				enteringWordLayout2.invalidate();	//batch invalidate for entire layout at once
 				enteringWord = new StringBuffer();
 			}
 			
 			CharView cv = (CharView) v;
-			Character ch = cv.getCh().ch;
+			Character ch = cv.getChar().ch;
 			//duplicates are not allowed
 			if (enteringWord.indexOf("" + ch) != -1)
 				return;
 			//TODO show warning
 				
 			enteringWord.append(ch);
-			CharView ecv = (CharView)enteringWordLayout2.getChildAt(enteringWord.length() - 1);
-			ecv.setChar(cv.getCh());
-			ecv.invalidate();
+			int curPos = enteringWord.length() - 1;
+			CharView ecv = (CharView)enteringWordLayout2.getChildAt(curPos);
+			//for newly added char PosTable may have already set position and no updates will be sent - force posMatched
+			ecv.setInitialPosMatched(run.posTable.getPresentPos(ch) == curPos);
+			ecv.setChar(cv.getChar());
 		}
 	}
 
