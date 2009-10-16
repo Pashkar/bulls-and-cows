@@ -43,7 +43,7 @@ public class Char {
 	public static Char valueOf(Character ch, Alphabet alphabet) throws BncException {
 		if (alphabet == null) {
 			if (ch == NULL_CHAR)
-				return NO_ALPHA;
+				return NULL;
 			else
 				throw new NullPointerException("Alphabet must not be null"); 
 		}
@@ -113,7 +113,7 @@ public class Char {
 		return true;
 	}
 
-	public static final Char NO_ALPHA;
+	public static final Char NULL;
 	static {
 		Char ch = null;
 		ch = new Char(null, NULL_CHAR) {
@@ -134,6 +134,6 @@ public class Char {
 			public void removeStateChangedListener(ICharStateChangedListener listener) {
 			}
 		};
-		NO_ALPHA = ch;
+		NULL = ch;
 	}
 }
