@@ -76,7 +76,7 @@ public class PositionTableTest extends TestCase {
 		assertEquals(ENCharState.PRESENT, table.movePosStateForChar(new Character('b'), 0));
 	}
 	
-	public void testPosStateChangedListener() throws BncException {
+	public void testAllPosStateChangedListener() throws BncException {
 		PositionTable table = new PositionTable(1, 3);
 		table.setCss(ICharStateSequencer.FORWARD);
 		Character charA = new Character('a');
@@ -86,7 +86,8 @@ public class PositionTableTest extends TestCase {
 		final int[] counter = {0};
 		final IPosCharStateChangedListener listener = new IPosCharStateChangedListener() {
 			public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
-				counter[0]++;
+				if (pch.ch.equals(new Character('a')) && pch.pos == 0)
+					counter[0]++;
 			}
 		};
 		
@@ -94,7 +95,7 @@ public class PositionTableTest extends TestCase {
 		table.movePosStateForChar(charA, 0);
 		assertEquals(0, counter[0]);
 		
-		pchA0.addPosStateChangedListener(listener);
+		table.addAllPosCharStateChangedListener(listener);
 		
 		//move by poschar
 		pchA0.movePosState();
@@ -176,4 +177,6 @@ public class PositionTableTest extends TestCase {
 		assertEquals(1, counter[0]);
 		assertEquals(1, counter[1]);
 	}
+	
+	
 }

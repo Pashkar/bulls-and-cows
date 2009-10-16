@@ -12,10 +12,7 @@ public class CharTest extends TestCase {
 		assertEquals(new Character('?'), ch.ch);
 		assertEquals("?", ch.asString);
 		
-		assertEquals(ENCharState.ABSENT, ch.moveState());
-		assertEquals(ENCharState.PRESENT, ch.moveState());
 		assertEquals(ENCharState.NONE, ch.moveState());
-
 		assertEquals(ENCharState.NONE, ch.getState());
 		
 		//try null alphabet

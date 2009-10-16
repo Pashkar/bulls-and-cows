@@ -6,6 +6,7 @@ import java.util.HashMap;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.ICharStateSequencer;
+import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.IStatesCounter;
 
@@ -17,6 +18,8 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 	public final HashMap<Character, PositionLine> char2line = new HashMap<Character, PositionLine>(Run.MAX_WORD_LENGTH);
 	
 	private final ArrayList<IPositionTableListener> posTableListenerList = new ArrayList<IPositionTableListener>();
+	
+	private final ArrayList<IPosCharStateChangedListener> posStateChangedListenerList = new ArrayList<IPosCharStateChangedListener>();
 	
 	private ICharStateSequencer css;
 	public void setCss(ICharStateSequencer defaultCss) {
@@ -43,7 +46,7 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 		PositionLine line = new PositionLine(ch);
 		lines.add(line);
 		char2line.put(ch, line);
-		notifyListeners(true, ch, line);
+		notifyTableListeners(true, ch, line);
 		return lines.size();
 	}
 	
@@ -51,15 +54,9 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 		PositionLine line = char2line.remove(ch);
 		if (line != null) {		//ignore invocation for already removed line
 			lines.remove(line);
-			notifyListeners(false, ch, null);
+			notifyTableListeners(false, ch, null);
 		}
 		return lines.size();
-	}
-	
-	private void notifyListeners(boolean insert, Character ch, PositionLine line) {
-		for (IPositionTableListener listener : posTableListenerList) {
-			listener.onPosTableUpdate(insert, ch, line);
-		}
 	}
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) throws BncException {
@@ -80,6 +77,25 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 	
 	public void removeStateChangedListener(IPositionTableListener listener) {
 		posTableListenerList.remove(listener);
+	}
+	
+	private void notifyTableListeners(boolean insert, Character ch, PositionLine line) {
+		for (IPositionTableListener listener : posTableListenerList)
+			listener.onPosTableUpdate(insert, ch, line);
+	}
+	
+	
+	public void addAllPosCharStateChangedListener(IPosCharStateChangedListener listener) {
+		posStateChangedListenerList.add(listener);
+	}
+	
+	public void removeAllPosCharStateChangedListener(IPosCharStateChangedListener listener) {
+		posStateChangedListenerList.remove(listener);
+	}
+	
+	public void notifyAllPosCharListeners(PosChar ch, ENCharState newState) {
+		for (IPosCharStateChangedListener listener : posStateChangedListenerList)
+			listener.onPosCharStateChanged(ch, newState);
 	}
 	
 	@Override
@@ -115,6 +131,7 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 			return newState;
 		pch.state = newState;
 		pch.onPosStateChanged(pch, newState);	//notify exact PosChar
+		notifyAllPosCharListeners(pch, newState);
 		return newState;
 	}
 
@@ -150,16 +167,6 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 		return getPresentInColumn(pos) == null ? 0 : 1;
 	}
 
-	/*private Set<Char> getAbsentInColumn(int pos) {
-		Set<Char> chars = new HashSet<Char>();
-		for (PositionLine line : lines) {
-			PosChar posChar = line.chars[pos];
-			if (posChar.state == ENCharState.ABSENT)
-				chars.add(posChar.ch);
-		}
-		return chars;
-	}*/
-	
 	private int getAbsentCountInColumn(int pos) {
 		int res = 0;
 		for (PositionLine line : lines) {
@@ -169,7 +176,13 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 		}
 		return res;
 	}
-
+	
+	public int getPresentPos(Character ch) {
+		PositionLine line = char2line.get(ch);
+		if (line == null)
+			return -1;
+		return line.getPosPresent();
+	}
 	
 	public final class PositionLine {
 
@@ -204,16 +217,6 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 			}
 			return res;
 		}
-		
-/*		public Set<Integer> getPosAbsent() {
-			PosChar[] mChars = chars;
-			HashSet<Integer> res = new HashSet<Integer>();
-			for (int i = 0; i < maxLines; i++) {
-				if (mChars[i].state == ENCharState.ABSENT)
-					res.add(i);
-			}
-			return res;
-		}*/
 		
 		@Override
 		public String toString() {
