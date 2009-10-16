@@ -17,9 +17,11 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 
-public class Main extends Activity implements IPositionTableListener {
+public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
 	//TODO update
     private static final int COLUMNS = 9;
@@ -31,6 +33,12 @@ public class Main extends Activity implements IPositionTableListener {
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 	
 	private LinearLayout posTableLayout;
+	
+	private StringBuffer enteringWord = new StringBuffer();
+
+	private LinearLayout enteringWordLayout;
+
+	private LinearLayout enteringWordLayout2;
 
 	private Paint createPaint() {
 		Paint paint = new Paint();
@@ -63,14 +71,18 @@ public class Main extends Activity implements IPositionTableListener {
 		Paint paint = createPaint();
 		LayoutInflater layoutInflater = getLayoutInflater();
 		
+		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
+		//inflate ntering word layout
+		inflateCharsLine(enteringWordLayout, 
+        		null, run.wordLength , layoutInflater, paint, false, -1);
+		
 		//inflate alphabet layout
         inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), COLUMNS, layoutInflater, paint);
+        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), COLUMNS, layoutInflater, paint, true, R.id.AlphabetCharView);
         
         //inflate secret word layout
         inflateCharsLine((LinearLayout) findViewById(R.id.SecretLayout), 
-        		run.secret.chars, run.wordLength, layoutInflater, paint);
-        
+        		run.secret.chars, run.wordLength, layoutInflater, paint, false, -1);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
@@ -81,14 +93,20 @@ public class Main extends Activity implements IPositionTableListener {
         }
         
         run.posTable.addStateChangedListener(this);
+
     }
 
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, final LayoutInflater layoutInflater, 
-			final Paint paint) {
+			final Paint paint, boolean addListener, int id) {
 		for (int i = 0; i < length && i < COLUMNS; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
-        	cv.setChar(chars[i]);
+        	if (chars != null)
+        		cv.setChar(chars[i]);
+        	if (id != -1)
+        		cv.setId(id);
+        	if (addListener)
+        		cv.setOnClickListener(this);
         	la.addView(cv);
         }
 	}
@@ -127,7 +145,7 @@ public class Main extends Activity implements IPositionTableListener {
 	
 	private LinearLayout removePosLine(Character ch) {
 		LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
-		//move PosLineLayout down
+		//hide PosLineLayout
 		posTableLayout.removeView(line);
 
 		//clear PosCharViews
@@ -138,5 +156,34 @@ public class Main extends Activity implements IPositionTableListener {
 		
 		return line;
 	}
-    
+
+	public void onClick(View v) {
+		if (v.getId() == R.id.AlphabetCharView) {
+			LinearLayout enteringWordLayout2 = enteringWordLayout;
+			if (enteringWord.length() >= run.wordLength) {
+				offerWord(enteringWord.toString());
+				for (int i = 0; i < enteringWordLayout2.getChildCount(); i++) {
+					((CharView)enteringWordLayout2.getChildAt(i)).setChar(Char.NULL);
+				}
+				enteringWord = new StringBuffer();
+			}
+			
+			CharView cv = (CharView) v;
+			Character ch = cv.getCh().ch;
+			//duplicates are not allowed
+			if (enteringWord.indexOf("" + ch) != -1)
+				return;
+			//TODO show warning
+				
+			enteringWord.append(ch);
+			CharView ecv = (CharView)enteringWordLayout2.getChildAt(enteringWord.length() - 1);
+			ecv.setChar(cv.getCh());
+			ecv.invalidate();
+		}
+	}
+
+	private void offerWord(String string) {
+		// TODO Auto-generated method stub
+		
+	}
 }

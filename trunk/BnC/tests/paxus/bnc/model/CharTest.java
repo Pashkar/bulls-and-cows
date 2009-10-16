@@ -7,7 +7,7 @@ import paxus.bnc.controller.ICharStateChangedListener;
 public class CharTest extends TestCase {
 
 	public void testNull() throws BncException {
-		Char ch = Char.NO_ALPHA;
+		Char ch = Char.NULL;
 		
 		assertEquals(new Character('?'), ch.ch);
 		assertEquals("?", ch.asString);
@@ -32,7 +32,7 @@ public class CharTest extends TestCase {
 		assertTrue(ch == la.getCharInstance('a'));
 		
 		assertNotNull(la.getCharInstance('b'));	//not instantiated explicitly, is actually created by alphabet constructor
-		assertTrue(Char.NO_ALPHA == Char.valueOf(Char.NULL_CHAR, null));
+		assertTrue(Char.NULL == Char.valueOf(Char.NULL_CHAR, null));
 	}
 	
 	public void testWrongAlphabet() throws BncException {

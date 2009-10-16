@@ -19,7 +19,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	
 	public Paint paint;
 
-	private Char ch = Char.NO_ALPHA; 
+	private Char ch = Char.NULL; 
 
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -38,8 +38,13 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	public void setChar(Char ch) {
 		this.ch = ch;
 		ch.addStateChangedListener(this);
+		invalidate();
 	}
 	
+	public Char getCh() {
+		return ch;
+	}
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(measureWidth(widthMeasureSpec),
@@ -56,6 +61,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        drawBackground(canvas);
         canvas.drawText("" + ch.ch, getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
     }
 
@@ -66,13 +72,13 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	}
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) {
-		changeBackground(newState);
+//		setBackground(newState);
 		invalidate();
 	}
 
 	//TODO not Background (probably it's stretched), just draw. Use Prescaled
-	private void changeBackground(ENCharState state) {
-		switch (state) {
+	private void drawBackground(Canvas canvas) {
+		switch (ch.getState()) {
 		case NONE:
 			setBackgroundResource(R.drawable.noth);
 			break;
@@ -84,7 +90,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			break;
 		}
 	}
-
+	
 	@Override
 	public String toString() {
 		return ch + "";

@@ -16,15 +16,7 @@
 
 <resources>
 
-  <item type="id" name="PosLine0" />
-  <item type="id" name="PosLine1" />
-  <item type="id" name="PosLine2" />
-  <item type="id" name="PosLine3" />
-  <item type="id" name="PosLine4" />
-  <item type="id" name="PosLine5" />
-  <item type="id" name="PosLine6" />
-  <item type="id" name="PosLine7" />
-  <item type="id" name="PosLine8" />
-  <item type="id" name="PosLine9" />
+  <item type="id" name="AlphabetCharView" />
+
   
 </resources>
