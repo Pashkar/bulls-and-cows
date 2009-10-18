@@ -45,5 +45,14 @@
 		android:paddingBottom="5dp">
 	</LinearLayout>
 	
+	<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
+	<LinearLayout
+		android:id="@+id/OfferedsLayout"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" 
+		android:orientation="vertical"
+		android:paddingTop="5dp"
+		android:paddingBottom="5dp">
+	</LinearLayout>
 
 </LinearLayout>

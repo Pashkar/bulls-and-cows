@@ -45,7 +45,7 @@ public class PosChar {
 	
 	@Override
 	public String toString() {
-		return "" + ch + state; 
+		return "" + ch + state + "[" + pos + "]"; 
 	}
 	
 	public static final PosChar NULL = new PosChar(Char.NULL_CHAR, -1, null) {
