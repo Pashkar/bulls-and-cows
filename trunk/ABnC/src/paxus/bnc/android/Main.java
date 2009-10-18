@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
-	//TODO update
+	//FIXME update
     private static final int COLUMNS = 9;
     
 	private final RunExecutor re = new RunExecutor();
@@ -33,6 +33,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 	
 	private LinearLayout posTableLayout;
+	
+	private LinearLayout offeredsLayout;
 	
 	private StringBuffer enteringWord = new StringBuffer();
 
@@ -78,15 +80,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
 		//inflate entering word layout
 		inflateCharsLine(enteringWordLayout, 
-        		null, run.wordLength , -1, false, true);
+        		null, run.wordLength , -1);
 		
 		//inflate alphabet layout
         inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), 10, R.id.AlphabetCharView, true, false);
+        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), 10, R.id.AlphabetCharView);
         
         //inflate secret word layout
         inflateCharsLine((LinearLayout) findViewById(R.id.SecretLayout), 
-        		run.secret.chars, run.wordLength, -1, false, true);
+        		run.secret.chars, run.wordLength, -1);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
@@ -97,11 +99,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         }
         
         run.posTable.addStateChangedListener(this);
+        
+        offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
 
     }
 
-	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId, 
-			boolean addOnClickListener, boolean addOnPosLostener) {
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
 		for (int i = 0; i < length && i < COLUMNS; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
@@ -109,11 +112,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         		cv.setChar(chars[i]);
         	if (viewId != -1)
         		cv.setId(viewId);
-        	if (addOnClickListener)
-        		cv.setOnClickListener(this);
-        	if(addOnPosLostener) {
-        		cv.setViewPos(i);
-        		run.posTable.addAllPosCharStateChangedListener(cv);
+        	if (viewId == R.id.AlphabetCharView)
+        		cv.setOnClickListener(this);	//enter new word by clicks, not tate changes 
+        	if(la.getId() == R.id.EnteringLayout || 
+        	   la.getId() == R.id.SecretLayout) {
+        		cv.setViewPos(i);				//to mark "bull" in these words
+        		run.posTable.addAllPosCharStateChangedListener(cv);		
         	}
         	la.addView(cv);
         }
@@ -121,7 +125,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	//inflate PosCharViews with PosChar.NULL values
 	private LinearLayout inflatePosLine() {
-		LinearLayout line = new LinearLayout(this);
+		LinearLayout line = new LinearLayout(this);		//TODO maybe inflate from xml?
 		for (int i = 0; i < run.wordLength && i < COLUMNS; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);
 			pcw.paint = paint;
@@ -169,9 +173,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		if (v.getId() == R.id.AlphabetCharView) {
 			LinearLayout enteringWordLayout2 = enteringWordLayout;
 			if (enteringWord.length() >= run.wordLength) {
-				offerWord(enteringWord.toString());
+				try {
+					offerWord(enteringWord.toString());
+				} catch (BncException e) {}
+				
+				//just remove underlying Char obj, reuse CharView. Member CharView.viewPos remains correct
 				for (int i = 0; i < enteringWordLayout2.getChildCount(); i++) {
-					((CharView)enteringWordLayout2.getChildAt(i)).resetChar();	//just remove underlying Char obj, reuse CharView. viewPos remains correct 
+					((CharView)enteringWordLayout2.getChildAt(i)).resetChar();	 
 				}
 				enteringWordLayout2.invalidate();	//batch invalidate for entire layout at once
 				enteringWord = new StringBuffer();
@@ -182,19 +190,31 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			//duplicates are not allowed
 			if (enteringWord.indexOf("" + ch) != -1)
 				return;
-			//TODO show warning
+	//TODO show warning
 				
 			enteringWord.append(ch);
 			int curPos = enteringWord.length() - 1;
 			CharView ecv = (CharView)enteringWordLayout2.getChildAt(curPos);
 			//for newly added char PosTable may have already set position and no updates will be sent - force posMatched
-			ecv.setInitialPosMatched(run.posTable.getPresentPos(ch) == curPos);
-			ecv.setChar(cv.getChar());
+			ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);
 		}
 	}
 
-	private void offerWord(String string) {
-		// TODO Auto-generated method stub
-		
+	private void offerWord(String offered) throws BncException {
+		offeredsLayout.addView(inflateOfferedLine(offered.toCharArray()));
 	}
+	
+	private LinearLayout inflateOfferedLine(char[] chars) throws BncException {
+		LinearLayout line = new LinearLayout(this);		//TODO maybe inflate from xml?
+		for (int i = 0; i < run.wordLength && i < COLUMNS; i++) {
+			CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);
+			cv.setChar(Char.valueOf(chars[i], run.alphabet), run.posTable.getPresentPos(chars[i]) == i);
+			cv.setViewPos(i);
+			cv.paint = paint;
+        	run.posTable.addAllPosCharStateChangedListener(cv);
+			line.addView(cv);
+        }
+		return line;
+	}
+
 }

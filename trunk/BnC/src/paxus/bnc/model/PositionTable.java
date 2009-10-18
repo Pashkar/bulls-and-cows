@@ -53,8 +53,15 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 	public int removeLine(Character ch) throws BncException {
 		PositionLine line = char2line.remove(ch);
 		if (line != null) {		//ignore invocation for already removed line
+			//notify posChar state listener (allPosCharListeners, not exact PosChar as in setPosCharState() - not required)
+			for (int i = 0; i < wordLength; i++) {
+				PosChar pch = line.chars[i];
+				if (pch.state != ENCharState.NONE)
+					notifyAllPosCharListeners(pch, ENCharState.NONE);
+			}
 			lines.remove(line);
-			notifyTableListeners(false, ch, null);
+			//notify table structure listeners
+			notifyTableListeners(false, ch, null);		
 		}
 		return lines.size();
 	}

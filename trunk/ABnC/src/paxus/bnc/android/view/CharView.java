@@ -24,8 +24,10 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	private Char ch = Char.NULL;
 	
-	//for "bull" when position of CharView pointed. Stores for the CharView instance position of it in word. 
-	//Compared to position in PosTable, marked by user
+	/**
+	 *	For "bull" when position of CharView pointed. Stores for the CharView instance position of it in word.
+	 *	Compared to position in PosTable, marked by user 
+	 */
 	private int viewPos = -1;	
 	
 	private boolean posMatched = false;
@@ -49,6 +51,13 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		ch.addStateChangedListener(this);
 		invalidate();
 	}
+
+	public void setChar(Char ch, boolean posMatched) {
+		this.ch = ch;
+		this.posMatched = posMatched;
+		ch.addStateChangedListener(this);
+		invalidate();
+	}
 	
 	public Char getChar() {
 		return ch;
@@ -61,14 +70,18 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 //		invalidate();
 	}
 	
-	public void setInitialPosMatched(boolean posMatched) {
+/*	public void setInitialPosMatched(boolean posMatched) {
 		this.posMatched = posMatched;
 //		invalidate();
-	}
+	}*/
 
+	/**
+	 *	For "bull" when position of CharView pointed. Stores for the CharView instance position of it in word.
+	 *	Compared to position in PosTable, marked by user 
+	 */
 	public void setViewPos(int pos) {
 		this.viewPos = pos;
-		invalidate();
+//		invalidate();
 	}
 
     @Override
@@ -120,10 +133,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-			if (posMatched)
-				setBackgroundResource(R.drawable.bull);
-			else
-				setBackgroundResource(R.drawable.cow);
+			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
 			break;
 		}
 	}

@@ -178,5 +178,40 @@ public class PositionTableTest extends TestCase {
 		assertEquals(1, counter[1]);
 	}
 	
-	
+	public void testAllPosListenerOnLineRemove() throws BncException {
+		final Alphabet da = new Alphabet.Digital();
+		RunExecutor re = new RunExecutor();
+		Run run = re.startNewRun(da, "012");
+		
+		final int[] counter = {0, 0, 0};
+		final IPosCharStateChangedListener charListener = new IPosCharStateChangedListener() {
+			public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
+				counter[pch.ch - '0']++;
+			}
+		};
+		
+		//add line
+		run.posTable.addLine('0');
+		run.posTable.addLine('1');
+		run.posTable.addLine('2');
+		assertEquals(0, counter[0]);
+		assertEquals(0, counter[1]);
+		assertEquals(0, counter[2]);
+		
+		//mark positions
+		run.posTable.movePosStateForChar('1', 0);
+		run.posTable.movePosStateForChar('2', 0);
+		run.posTable.movePosStateForChar('2', 1);
+		
+		//when line with pos marked removed listened on posChar must be notified 
+		run.posTable.addAllPosCharStateChangedListener(charListener);
+
+		//remove line '0' - no updates expected
+		run.posTable.removeLine('0');
+		run.posTable.removeLine('1');
+		run.posTable.removeLine('2');
+		assertEquals(0, counter[0]);
+		assertEquals(1, counter[1]);
+		assertEquals(2, counter[2]);
+	}
 }
