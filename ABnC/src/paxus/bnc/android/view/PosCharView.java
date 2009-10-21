@@ -1,11 +1,11 @@
 package paxus.bnc.android.view;
 
-import paxus.bnc.android.R;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.ENCharState;
 import paxus.bnc.model.PosChar;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -37,7 +37,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	public void clearPosChar() {
 		pch.removePosStateChangedListener(this);
 		pch = PosChar.NULL;
-		changeBackground(ENCharState.NONE); 
+		invalidate();
 	}
 	
     @Override
@@ -56,6 +56,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
     
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        drawBackground(canvas);
         canvas.drawText("[" + pch.ch + "]", getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
     }
 
@@ -66,20 +67,23 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
 		if (this.pch != pch)
 			return;
-		changeBackground(newState);
+//		changeBackground(newState);
 		invalidate();
 	}
 
-	private void changeBackground(ENCharState state) {
-		switch (state) {
+	private void drawBackground(Canvas canvas) {
+		switch (pch.state) {
 		case NONE:
-			setBackgroundResource(R.drawable.noth);
+			setBackgroundColor(Color.GREEN);
+//			setBackgroundResource(R.drawable.noth);
 			break;
 		case ABSENT:
-			setBackgroundResource(R.drawable.wrong);
+			setBackgroundColor(Color.RED);
+//			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-			setBackgroundResource(R.drawable.cow);
+			setBackgroundColor(Color.GRAY);
+//			setBackgroundResource(R.drawable.cow);
 			break;
 		}
 	}

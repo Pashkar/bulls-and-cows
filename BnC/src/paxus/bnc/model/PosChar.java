@@ -7,7 +7,7 @@ import paxus.bnc.controller.IPosCharStateChangedListener;
 public class PosChar {
 	public final Character ch;
 	
-	ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char
+	public ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char
 	
 	public final PositionTable table;
 	

@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
@@ -100,7 +101,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         
         run.posTable.addStateChangedListener(this);
         
+        
         offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
+        ScrollView scroll = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
 
     }
 
