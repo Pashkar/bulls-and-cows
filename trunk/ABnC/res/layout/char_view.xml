@@ -5,7 +5,10 @@
 	android:id="@+id/CharView"
 	android:layout_width="wrap_content" 
 	android:layout_height="wrap_content"
-	android:background="@drawable/noth"
 	android:padding="10dip" 
 	android:fadingEdge="vertical"
 	/>
+	
+	<!-- 	android:background="@drawable/noth"
+	 -->
+	

@@ -1,7 +1,6 @@
 package paxus.bnc.android.view;
 
 import paxus.bnc.BncException;
-import paxus.bnc.android.R;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.Char;
@@ -9,6 +8,7 @@ import paxus.bnc.model.ENCharState;
 import paxus.bnc.model.PosChar;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -70,11 +70,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 //		invalidate();
 	}
 	
-/*	public void setInitialPosMatched(boolean posMatched) {
-		this.posMatched = posMatched;
-//		invalidate();
-	}*/
-
 	/**
 	 *	For "bull" when position of CharView pointed. Stores for the CharView instance position of it in word.
 	 *	Compared to position in PosTable, marked by user 
@@ -127,13 +122,16 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private void drawBackground(Canvas canvas) {
 		switch (ch.getState()) {
 		case NONE:
-			setBackgroundResource(R.drawable.noth);
+			setBackgroundColor(Color.GREEN);
+//			setBackgroundResource(R.drawable.noth);
 			break;
 		case ABSENT:
-			setBackgroundResource(R.drawable.wrong);
+			setBackgroundColor(Color.RED);
+//			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
+			setBackgroundColor(posMatched ? Color.DKGRAY : Color.GRAY);
+//			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
 			break;
 		}
 	}
