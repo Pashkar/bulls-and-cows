@@ -4,9 +4,12 @@
 	class="paxus.bnc.android.view.PosCharView"
 	android:id="@+id/PosCharView"
 	android:layout_width="wrap_content" 
-	android:layout_height="wrap_content"
-	android:padding="10dip" 
+	android:layout_height="@dimen/char_height"
+	android:padding="0px" 
 	android:fadingEdge="vertical"
 	/>
-	
+	<!--
+	android:minHeight=
+	android:minWidth=
+	-->
 	<!-- android:background="@drawable/noth" -->
