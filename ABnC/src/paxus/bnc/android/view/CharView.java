@@ -79,24 +79,50 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 //		invalidate();
 	}
 
-    @Override
+	@Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(measureWidth(widthMeasureSpec),
                 measureHeight(heightMeasureSpec));
     }
-    
+     
     private int measureWidth(int measureSpec) {
-        return WIDTH + getPaddingLeft() + getPaddingRight();
-    }
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
 
+        if (specMode == MeasureSpec.EXACTLY) {
+            // We were told how big to be
+            return specSize;
+        } else {
+        	int desiredWidth = WIDTH + getPaddingLeft() + getPaddingRight();
+        	if (specMode == MeasureSpec.AT_MOST) {
+        		return desiredWidth < specSize ? desiredWidth : specSize;
+        	} else {
+        		return desiredWidth;
+        	}
+        }
+    }
+    
     private int measureHeight(int measureSpec) {
-        return HEIGHT + getPaddingTop() + getPaddingBottom();
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        if (specMode == MeasureSpec.EXACTLY) {
+            // We were told how big to be
+            return specSize;
+        } else {
+        	int desiredHeight = HEIGHT + getPaddingTop() + getPaddingBottom();
+        	if (specMode == MeasureSpec.AT_MOST) {
+        		return desiredHeight < specSize ? desiredHeight : specSize;
+        	} else {
+        		return desiredHeight;
+        	}
+        }
     }
     
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         drawBackground(canvas);
-        canvas.drawText("" + ch.ch, getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
+        canvas.drawText("" + ch.ch, getPaddingLeft() + getWidth() / 2, getPaddingTop() + getHeight(), paint);
     }
 
 	public void onClick(View v) {

@@ -17,8 +17,8 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	
 	public Paint paint;
 
-	private PosChar pch = PosChar.NULL; 
-
+	private PosChar pch = PosChar.NULL;
+	
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		setOnClickListener(this);
@@ -45,13 +45,39 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
         setMeasuredDimension(measureWidth(widthMeasureSpec),
                 measureHeight(heightMeasureSpec));
     }
-    
+     
     private int measureWidth(int measureSpec) {
-        return WIDTH + getPaddingLeft() + getPaddingRight();
-    }
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
 
+        if (specMode == MeasureSpec.EXACTLY) {
+            // We were told how big to be
+            return specSize;
+        } else {
+        	int desiredWidth = WIDTH + getPaddingLeft() + getPaddingRight();
+        	if (specMode == MeasureSpec.AT_MOST) {
+        		return desiredWidth < specSize ? desiredWidth : specSize;
+        	} else {
+        		return desiredWidth;
+        	}
+        }
+    }
+    
     private int measureHeight(int measureSpec) {
-        return HEIGHT + getPaddingTop() + getPaddingBottom();
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+
+        if (specMode == MeasureSpec.EXACTLY) {
+            // We were told how big to be
+            return specSize;
+        } else {
+        	int desiredHeight = HEIGHT + getPaddingTop() + getPaddingBottom();
+        	if (specMode == MeasureSpec.AT_MOST) {
+        		return desiredHeight < specSize ? desiredHeight : specSize;
+        	} else {
+        		return desiredHeight;
+        	}
+        }
     }
     
     protected void onDraw(Canvas canvas) {
@@ -67,7 +93,6 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
 		if (this.pch != pch)
 			return;
-//		changeBackground(newState);
 		invalidate();
 	}
 

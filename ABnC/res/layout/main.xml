@@ -3,37 +3,44 @@
 	android:id="@+id/MainLayout"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
-	android:orientation="vertical"
-	>
-
-	<LinearLayout
-		android:id="@+id/EnteringLayout"
+	android:orientation="vertical">
+	
+	<!--
+	TODO	Try to simplify hierarchy - put everything to the only Relative Layout
+	-->
+	
+	<RelativeLayout
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:orientation="horizontal"
-		android:paddingTop="5dp"
-		android:paddingBottom="5dp">
-	</LinearLayout>
+		android:paddingTop="0px"
+		android:paddingBottom="0px">
 
-	<!-- May be replaced by custom "Word" layout -->
-	<LinearLayout
-		android:id="@+id/SecretLayout"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content" 
-		android:orientation="horizontal"
-		android:paddingTop="5dp"
-		android:paddingBottom="5dp">
-	</LinearLayout>
+		<LinearLayout
+			android:id="@+id/SecretLayout"
+			android:gravity="left"
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true" 
+			android:orientation="horizontal"
+			android:paddingTop="0px"
+			android:paddingBottom="0px">
+		</LinearLayout>
+		
+		
+		<LinearLayout
+			android:id="@+id/EnteringLayout"
+			android:gravity="right"
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true" 
+			android:orientation="horizontal"
+			android:paddingTop="0px"
+			android:paddingBottom="0px">
+		</LinearLayout>
+		
 
-	<!-- To contain various number of LinearLayouts of PosTable-->
-	<LinearLayout
-		android:id="@+id/PositioningLayout"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content" 
-		android:orientation="vertical"
-		android:paddingTop="5dp"
-		android:paddingBottom="5dp">
-	</LinearLayout>
+	</RelativeLayout>
 
 	<!-- There must be independent layout for each predefined alphabets -->
 	<LinearLayout
@@ -41,25 +48,35 @@
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:orientation="horizontal"
-		android:paddingTop="5dp"
-		android:paddingBottom="5dp">
+		android:paddingTop="0px"
+		android:paddingBottom="0px">
 	</LinearLayout>
 	
+	<!-- To contain various number of LinearLayouts of PosTable-->
+	<LinearLayout
+		android:id="@+id/PositioningLayout"
+		android:layout_width="300dp" 
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingTop="0px"
+		android:paddingBottom="0px">
+	</LinearLayout>
+
 	<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
 	<ScrollView
 		android:id="@+id/ScrollOfferedsLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
-		android:paddingTop="5dp"
-		android:paddingBottom="5dp">
+		android:paddingTop="0px"
+		android:paddingBottom="0px">
 	 
 		<LinearLayout
 			android:id="@+id/OfferedsLayout"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" 
 			android:orientation="vertical"
-			android:paddingTop="5dp"
-			android:paddingBottom="5dp">
+			android:paddingTop="0px"
+			android:paddingBottom="0px">
 		</LinearLayout>
 	
 	</ScrollView>

@@ -3,6 +3,7 @@ package paxus.bnc.android;
 import java.util.LinkedList;
 
 import paxus.bnc.BncException;
+import paxus.bnc.android.view.CharLineLayout;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPositionTableListener;
@@ -20,13 +21,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
-	//FIXME update
-    private static final int COLUMNS = 9;
-    
 	private final RunExecutor re = new RunExecutor();
 	
 	private Run run;
@@ -41,8 +38,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private LinearLayout enteringWordLayout;
 
-	private LinearLayout enteringWordLayout2;
-
 	private Paint paint;
 
 	private LayoutInflater layoutInflater;
@@ -50,9 +45,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private Paint createPaint() {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setTextSize(24);
+        paint.setTextSize(16);
+        paint.setFakeBoldText(true);
         paint.setTextAlign(Align.CENTER);
-        paint.setColor(0xFFFFFFFF);
+        paint.setColor(getResources().getColor(R.drawable.paint_color));
         return paint;
 	}
     
@@ -79,36 +75,36 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		layoutInflater = getLayoutInflater();
 		
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
+		Run run2 = run;
 		//inflate entering word layout
 		inflateCharsLine(enteringWordLayout, 
-        		null, run.wordLength , -1);
+        		null, run2.wordLength , -1);
 		
 		//inflate alphabet layout
         inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-        		run.alphabet.getAllChars().toArray(new Char[COLUMNS]), 10, R.id.AlphabetCharView);
+        		run2.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
         
         //inflate secret word layout
         inflateCharsLine((LinearLayout) findViewById(R.id.SecretLayout), 
-        		run.secret.chars, run.wordLength, -1);
+        		run2.secret.chars, run2.wordLength, -1);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
         posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
-        for (int i = 0; i < run.wordLength; i++) {
+        for (int i = 0; i < run2.wordLength; i++) {
         	LinearLayout line = inflatePosLine();
         	freePosLayoutList2.add(line);
         }
         
-        run.posTable.addStateChangedListener(this);
-        
+        run2.posTable.addStateChangedListener(this);
         
         offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
-        ScrollView scroll = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
+//        ScrollView scroll = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
 
     }
 
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
-		for (int i = 0; i < length && i < COLUMNS; i++) {
+		for (int i = 0; i < length; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
         	if (chars != null)
@@ -128,30 +124,34 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	//inflate PosCharViews with PosChar.NULL values
 	private LinearLayout inflatePosLine() {
-		LinearLayout line = new LinearLayout(this);		//TODO maybe inflate from xml?
-		for (int i = 0; i < run.wordLength && i < COLUMNS; i++) {
-			PosCharView pcw = (PosCharView) layoutInflater.inflate(R.layout.poschar_view, null);
+		LayoutInflater layoutInflater2 = layoutInflater;
+		int wordLength = run.wordLength;
+		CharLineLayout line = (CharLineLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
+		for (int i = 0; i < wordLength; i++) {
+			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
 			pcw.paint = paint;
+			line.setWordLength(wordLength);
         	line.addView(pcw);
         }
 		return line;
 	}
 
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
+		LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
 		if (insert) {
-			LinearLayout pl = freePosLayoutList.removeFirst();
+			LinearLayout pl = freePosLayoutList2.removeFirst();
 			showPosLine(pl, line.chars, run.wordLength);
 			pl.setTag(ch);
 		} else {
 			LinearLayout pl = removePosLine(ch);
-			freePosLayoutList.add(pl);
+			freePosLayoutList2.add(pl);
 			pl.setTag(null);
 		}
 	}
 	
 	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
 	private void showPosLine(LinearLayout pl, PosChar[] chars, int length) {
-		for (int i = 0; i < length && i < COLUMNS; i++) {
+		for (int i = 0; i < length; i++) {
 			PosCharView pcw = (PosCharView) pl.getChildAt(i);
 			pcw.setPosChar(chars[i]);
         }
@@ -209,12 +209,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private LinearLayout inflateOfferedLine(char[] chars) throws BncException {
 		LinearLayout line = new LinearLayout(this);		//TODO maybe inflate from xml?
-		for (int i = 0; i < run.wordLength && i < COLUMNS; i++) {
+		Run run2 = run;
+		for (int i = 0; i < run2.wordLength; i++) {
 			CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);
-			cv.setChar(Char.valueOf(chars[i], run.alphabet), run.posTable.getPresentPos(chars[i]) == i);
+			cv.setChar(Char.valueOf(chars[i], run2.alphabet), run2.posTable.getPresentPos(chars[i]) == i);
 			cv.setViewPos(i);
 			cv.paint = paint;
-        	run.posTable.addAllPosCharStateChangedListener(cv);
+        	run2.posTable.addAllPosCharStateChangedListener(cv);
 			line.addView(cv);
         }
 		return line;
