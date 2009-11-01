@@ -29,8 +29,11 @@ public class CharLineLayout extends LinearLayout {
 		//width - distribute children evenly 
 		measureChildren(getChildMeasureSpec(widthMeasureSpec, 0, width / (wordLength > 0 ? wordLength : 1)),
 				getChildMeasureSpec(heightMeasureSpec, 0, height));
-		
-		setMeasuredDimension(width, height);
+		View ch = getChildAt(0);
+		if (ch != null && wordLength > 0)
+			setMeasuredDimension(ch.getMeasuredWidth() * wordLength, height);
+		else 
+			setMeasuredDimension(width, height);
 	}
 
 	@Override

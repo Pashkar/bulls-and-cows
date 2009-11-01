@@ -39,46 +39,59 @@
 			android:paddingBottom="0px">
 		</LinearLayout>
 		
-
 	</RelativeLayout>
 
-	<!-- There must be independent layout for each predefined alphabets -->
-	<LinearLayout
-		android:id="@+id/DigitalAlphabetLayout"		
+	<RelativeLayout
 		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content" 
+		android:layout_height="fill_parent" 
 		android:orientation="horizontal"
 		android:paddingTop="0px"
 		android:paddingBottom="0px">
-	</LinearLayout>
-	
-	<!-- To contain various number of LinearLayouts of PosTable-->
-	<LinearLayout
-		android:id="@+id/PositioningLayout"
-		android:layout_width="300dp" 
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:paddingTop="0px"
-		android:paddingBottom="0px">
-	</LinearLayout>
 
-	<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
-	<ScrollView
-		android:id="@+id/ScrollOfferedsLayout"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content" 
-		android:paddingTop="0px"
-		android:paddingBottom="0px">
-	 
+		<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
+		<ScrollView
+			android:id="@+id/ScrollOfferedsLayout"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"  
+			android:paddingTop="0px"
+			android:paddingBottom="0px">
+		 
+			<LinearLayout
+				android:id="@+id/OfferedsLayout"
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" 
+				android:orientation="vertical"
+				android:paddingTop="0px"
+				android:paddingBottom="0px">
+			</LinearLayout>
+		
+		</ScrollView>
+		
+		
+		<!-- To contain various number of LinearLayouts of PosTable-->
 		<LinearLayout
-			android:id="@+id/OfferedsLayout"
-			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content" 
+			android:id="@+id/PositioningLayout"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
 			android:orientation="vertical"
 			android:paddingTop="0px"
 			android:paddingBottom="0px">
 		</LinearLayout>
-	
-	</ScrollView>
+		
+		<!-- There must be independent layout for each predefined alphabets -->
+		<LinearLayout
+			android:id="@+id/DigitalAlphabetLayout"		
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentBottom="true" 
+			android:orientation="horizontal"
+			android:paddingTop="0px"
+			android:paddingBottom="0px">
+		</LinearLayout>
+		
+	</RelativeLayout>
 	
 </LinearLayout>
