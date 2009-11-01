@@ -3,4 +3,6 @@
 <resources>
 	<dimen name="char_width">30px</dimen>
 	<dimen name="char_height">30px</dimen>
+	<dimen name="char_left_padding">2px</dimen>
+	<dimen name="line_top_padding">2px</dimen>
 </resources>

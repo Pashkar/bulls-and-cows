@@ -5,7 +5,7 @@
 	android:id="@+id/CharView"
 	android:layout_width="@dimen/char_width" 
 	android:layout_height="@dimen/char_height"
-	android:padding="0px" 
+	android:paddingLeft="@dimen/char_left_padding" 
 	/>
 	
 	<!--
