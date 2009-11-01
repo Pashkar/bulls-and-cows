@@ -13,6 +13,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 public class CharView extends View implements OnClickListener, ICharStateChangedListener, 
 		IPosCharStateChangedListener {
@@ -31,19 +33,22 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private int viewPos = -1;	
 	
 	private boolean posMatched = false;
+	private Animation an;
 
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		initView();
+		initView(context);
 	}
 	
 	public CharView(Context context) {
 		super(context);
-		initView();
+		initView(context);
 	}
 
-	public void initView() {
+	public void initView(Context context) {
 		setOnClickListener(this);
+        an = AnimationUtils.loadAnimation(context, R.anim.wave_scale);
+//        setAnimation(an);
 	}
 	
 	public void setChar(Char ch) {
@@ -133,6 +138,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) {
 		invalidate();
+		startAnimation(an);
 	}
 
 	public void onPosCharStateChanged(PosChar ch, ENCharState newState) {
