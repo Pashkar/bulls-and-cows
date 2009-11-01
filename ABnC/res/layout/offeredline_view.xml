@@ -7,4 +7,5 @@
 	android:orientation="horizontal"
 	android:paddingTop="@dimen/line_top_padding"
 	android:paddingBottom="0px"
+	android:animationCache="true"
 	/>
