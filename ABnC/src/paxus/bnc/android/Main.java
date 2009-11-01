@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
@@ -40,6 +41,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private Paint paint;
 
 	private LayoutInflater layoutInflater;
+
+	private Toast duplicateToast;
 
 	private Paint createPaint() {
 		Paint paint = new Paint();
@@ -72,6 +75,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
 		paint = createPaint();
 		layoutInflater = getLayoutInflater();
+		duplicateToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
 		
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
 		Run run2 = run;
@@ -94,7 +98,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         	LinearLayout line = inflatePosLine();
         	freePosLayoutList2.add(line);
         }
-        
         run2.posTable.addStateChangedListener(this);
         
         offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
@@ -148,9 +151,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			CharView cv = (CharView) v;
 			Character ch = cv.getChar().ch;
 			//duplicates are not allowed
-			if (enteringWord.indexOf("" + ch) != -1)
+			if (enteringWord.indexOf("" + ch) != -1) {
+				duplicateToast.show();
 				return;
-	//TODO show warning
+			}
 				
 			enteringWord.append(ch);
 			int curPos = enteringWord.length() - 1;
