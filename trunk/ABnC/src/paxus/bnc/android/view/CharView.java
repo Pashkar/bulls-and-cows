@@ -21,6 +21,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	public static final int WIDTH = 20;
 	public static final int HEIGHT = 20;
+	static Animation anim;
 	
 	public Paint paint;
 
@@ -33,7 +34,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private int viewPos = -1;	
 	
 	private boolean posMatched = false;
-	private Animation an;
+	
 
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -47,21 +48,23 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	public void initView(Context context) {
 		setOnClickListener(this);
-        an = AnimationUtils.loadAnimation(context, R.anim.wave_scale);
-//        setAnimation(an);
+        if (anim == null)
+        	anim = AnimationUtils.loadAnimation(context, R.anim.char_anim);
 	}
 	
 	public void setChar(Char ch) {
 		this.ch = ch;
 		ch.addStateChangedListener(this);
-		invalidate();
+//		invalidate();
+		startAnimation(anim);
 	}
 
 	public void setChar(Char ch, boolean posMatched) {
 		this.ch = ch;
 		this.posMatched = posMatched;
 		ch.addStateChangedListener(this);
-		invalidate();
+//		invalidate();
+		startAnimation(anim);
 	}
 	
 	public Char getChar() {
@@ -73,6 +76,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		ch = Char.NULL;
 		posMatched = false;
 //		invalidate();
+		startAnimation(anim);
 	}
 	
 	/**
@@ -137,8 +141,8 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	}
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) {
-		invalidate();
-		startAnimation(an);
+//		invalidate();
+		startAnimation(anim);
 	}
 
 	public void onPosCharStateChanged(PosChar ch, ENCharState newState) {
@@ -146,22 +150,21 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		if (viewPos != -1 && ch.ch == this.ch.ch && ch.pos == viewPos)
 			posMatched = (newState == ENCharState.PRESENT);
 		if (oldMatched != posMatched)
-			invalidate();
+//			invalidate();
+			startAnimation(anim);
 	}
 
 	//TODO not Background (probably it's stretched), just draw. Use Prescaled
+	//TODO use 9 points pictures
 	private void drawBackground(Canvas canvas) {
 		switch (ch.getState()) {
 		case NONE:
-//			setBackgroundColor(Color.GREEN);
 			setBackgroundResource(R.drawable.noth);
 			break;
 		case ABSENT:
-//			setBackgroundColor(Color.RED);
 			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-//			setBackgroundColor(posMatched ? Color.DKGRAY : Color.GRAY);
 			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
 			break;
 		}

@@ -2,6 +2,7 @@ package paxus.bnc.android.view;
 
 import static paxus.bnc.android.view.CharView.HEIGHT;
 import static paxus.bnc.android.view.CharView.WIDTH;
+import static paxus.bnc.android.view.CharView.anim;
 import paxus.bnc.android.R;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.ENCharState;
@@ -19,16 +20,24 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 
 	private PosChar pch = PosChar.NULL;
 	
+//	private static Animation anim;
+	
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		setOnClickListener(this);
-	}
-	
-	public PosCharView(Context context) {
-		super(context);
-		setOnClickListener(this);
+		initView(context);
 	}
 
+	public PosCharView(Context context) {
+		super(context);
+		initView(context);
+	}
+
+	private void initView(Context context) {
+		setOnClickListener(this);
+/*        if (anim == null)
+        	anim = AnimationUtils.loadAnimation(context, R.anim.poschar_anim);
+*/	}
+	
 	public void setPosChar(PosChar pch) {
 		this.pch = pch;
 		pch.addPosStateChangedListener(this);
@@ -57,7 +66,6 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
         	int desiredWidth = WIDTH + getPaddingLeft() + getPaddingRight();
         	if (specMode == MeasureSpec.AT_MOST) {
         		return desiredWidth < specSize ? desiredWidth : specSize;
-//        		return specSize;	//fill parent 
         	} else {
         		return desiredWidth;
         	}
@@ -94,21 +102,19 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
 		if (this.pch != pch)
 			return;
-		invalidate();
+//		invalidate();
+		startAnimation(anim);
 	}
 
 	private void drawBackground(Canvas canvas) {
 		switch (pch.state) {
 		case NONE:
-//			setBackgroundColor(Color.GREEN);
 			setBackgroundResource(R.drawable.noth);
 			break;
 		case ABSENT:
-//			setBackgroundColor(Color.RED);
 			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-//			setBackgroundColor(Color.GRAY);
 			setBackgroundResource(R.drawable.cow);
 			break;
 		}

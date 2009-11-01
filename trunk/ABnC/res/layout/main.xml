@@ -9,7 +9,7 @@
 	TODO	Try to simplify hierarchy - put everything to the only Relative Layout
 	-->
 	
-	<RelativeLayout
+	<RelativeLayout 
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content" 
 		android:orientation="horizontal"
@@ -25,19 +25,21 @@
 			android:layout_alignParentLeft="true" 
 			android:orientation="horizontal"
 			android:paddingTop="0px"
-			android:paddingBottom="0px">
+			android:paddingBottom="0px"
+			android:animationCache="true">
 		</LinearLayout>
 		
 		<!-- Entering -->
 		<LinearLayout
 			android:id="@+id/EnteringLayout"
 			android:gravity="right"
-			android:layout_width="wrap_content" 
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentRight="true" 
 			android:orientation="horizontal"
 			android:paddingTop="0px"
-			android:paddingBottom="0px">
+			android:paddingBottom="0px"
+			android:animationCache="true">
 		</LinearLayout>
 		
 	</RelativeLayout>
@@ -65,7 +67,8 @@
 				android:layout_height="wrap_content" 
 				android:orientation="vertical"
 				android:paddingTop="0px"
-				android:paddingBottom="0px">
+				android:paddingBottom="0px"
+				android:animationCache="true">
 			</LinearLayout>
 		
 		</ScrollView>
@@ -79,7 +82,8 @@
 			android:layout_alignParentRight="true"
 			android:orientation="vertical"
 			android:paddingTop="0px"
-			android:paddingBottom="0px">
+			android:paddingBottom="0px"
+			android:animationCache="true">
 		</LinearLayout>
 		
 		<!-- Alphabet: There must be independent layout for each predefined alphabets -->
@@ -91,7 +95,8 @@
 			android:layout_alignParentBottom="true" 
 			android:orientation="horizontal"
 			android:paddingTop="0px"
-			android:paddingBottom="0px">
+			android:paddingBottom="0px"
+			android:animationCache="true">
 		</LinearLayout>
 		
 	</RelativeLayout>
