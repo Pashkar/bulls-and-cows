@@ -3,7 +3,6 @@ package paxus.bnc.android;
 import java.util.LinkedList;
 
 import paxus.bnc.BncException;
-import paxus.bnc.android.view.CharLineLayout;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPositionTableListener;
@@ -99,7 +98,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         run2.posTable.addStateChangedListener(this);
         
         offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
-//        ScrollView scroll = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
     }
 
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
@@ -124,9 +122,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		posTableLayout.addView(pl);
 	}
 	
+	//hide PosLineLayout	
 	private LinearLayout removePosLine(Character ch) {
 		LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
-		//hide PosLineLayout
 		posTableLayout.removeView(line);
 		return line;
 	}
@@ -167,10 +165,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	
 	
-
+	//inflaters
+	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
 		for (int i = 0; i < length; i++) {
-        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
+        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, la, false);		//is it possible just to "clone" CharView? - inflate involves xml parsing
         	cv.paint = paint;
         	if (chars != null)
         		cv.setChar(chars[i]);
@@ -191,21 +190,21 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private LinearLayout inflatePosLine() {
 		LayoutInflater layoutInflater2 = layoutInflater;
 		int wordLength = run.wordLength;
-		CharLineLayout line = (CharLineLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
+		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
 		for (int i = 0; i < wordLength; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
 			pcw.paint = paint;
-			line.setWordLength(wordLength);
         	line.addView(pcw);
         }
 		return line;
 	}
 	
 	private LinearLayout inflateOfferedLine(char[] chars) throws BncException {
-		LinearLayout line = new LinearLayout(this);		//TODO maybe inflate from xml?
+		LayoutInflater layoutInflater2 = layoutInflater;
+		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.offeredline_view, offeredsLayout, false);
 		Run run2 = run;
 		for (int i = 0; i < run2.wordLength; i++) {
-			CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);
+			CharView cv = (CharView) layoutInflater2.inflate(R.layout.char_view, line, false);
 			cv.setChar(Char.valueOf(chars[i], run2.alphabet), run2.posTable.getPresentPos(chars[i]) == i);
 			cv.setViewPos(i);
 			cv.paint = paint;

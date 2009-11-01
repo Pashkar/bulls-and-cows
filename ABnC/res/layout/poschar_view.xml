@@ -3,10 +3,9 @@
 <view xmlns:android="http://schemas.android.com/apk/res/android"
 	class="paxus.bnc.android.view.PosCharView"
 	android:id="@+id/PosCharView"
-	android:layout_width="wrap_content" 
+	android:layout_width="@dimen/char_width" 
 	android:layout_height="@dimen/char_height"
 	android:padding="0px" 
-	android:fadingEdge="vertical"
 	/>
 	<!--
 	android:minHeight=
