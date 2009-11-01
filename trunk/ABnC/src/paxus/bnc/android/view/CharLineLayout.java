@@ -5,6 +5,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
+/**
+ *	Designed to distribute child evenly by stretching child to fill parent.
+ *	
+ *	Currently not used 
+ */
 public class CharLineLayout extends LinearLayout {
 
 	private int wordLength;

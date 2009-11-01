@@ -1,6 +1,7 @@
 package paxus.bnc.android.view;
 
 import paxus.bnc.BncException;
+import paxus.bnc.android.R;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.Char;
@@ -8,7 +9,6 @@ import paxus.bnc.model.ENCharState;
 import paxus.bnc.model.PosChar;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
@@ -17,8 +17,8 @@ import android.view.View.OnClickListener;
 public class CharView extends View implements OnClickListener, ICharStateChangedListener, 
 		IPosCharStateChangedListener {
 
-	private static final int WIDTH = 14;
-	private static final int HEIGHT = 14;
+	public static final int WIDTH = 20;
+	public static final int HEIGHT = 20;
 	
 	public Paint paint;
 
@@ -140,7 +140,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		if (viewPos != -1 && ch.ch == this.ch.ch && ch.pos == viewPos)
 			posMatched = (newState == ENCharState.PRESENT);
 		if (oldMatched != posMatched)
-//			postInvalidate();
 			invalidate();
 	}
 
@@ -148,16 +147,16 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private void drawBackground(Canvas canvas) {
 		switch (ch.getState()) {
 		case NONE:
-			setBackgroundColor(Color.GREEN);
-//			setBackgroundResource(R.drawable.noth);
+//			setBackgroundColor(Color.GREEN);
+			setBackgroundResource(R.drawable.noth);
 			break;
 		case ABSENT:
-			setBackgroundColor(Color.RED);
-//			setBackgroundResource(R.drawable.wrong);
+//			setBackgroundColor(Color.RED);
+			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-			setBackgroundColor(posMatched ? Color.DKGRAY : Color.GRAY);
-//			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
+//			setBackgroundColor(posMatched ? Color.DKGRAY : Color.GRAY);
+			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
 			break;
 		}
 	}

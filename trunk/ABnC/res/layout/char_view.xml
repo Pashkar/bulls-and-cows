@@ -3,7 +3,7 @@
 <view xmlns:android="http://schemas.android.com/apk/res/android"
 	class="paxus.bnc.android.view.CharView"
 	android:id="@+id/CharView"
-	android:layout_width="fill_parent"
+	android:layout_width="@dimen/char_width" 
 	android:layout_height="@dimen/char_height"
 	android:padding="0px" 
 	/>
