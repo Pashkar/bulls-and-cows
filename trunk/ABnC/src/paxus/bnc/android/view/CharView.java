@@ -156,6 +156,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	//TODO not Background (probably it's stretched), just draw. Use Prescaled
 	//TODO use 9 points pictures
+	//TODO ImageView from xml and then "image.setImageResource(R.drawable.android);" or just from xml
 	private void drawBackground(Canvas canvas) {
 		switch (ch.getState()) {
 		case NONE:
