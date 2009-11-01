@@ -4,9 +4,8 @@
 	class="paxus.bnc.android.view.CharLineLayout"
 	android:id="@+id/PosLine"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
+	android:layout_height="@dimen/char_height"
 	android:orientation="horizontal"
 	android:paddingTop="0px"
 	android:paddingBottom="0px"
-	>
-</view>
+	/>

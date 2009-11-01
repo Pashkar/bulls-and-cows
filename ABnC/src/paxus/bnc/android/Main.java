@@ -100,41 +100,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         
         offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
 //        ScrollView scroll = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
-
     }
-
-	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
-		for (int i = 0; i < length; i++) {
-        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
-        	cv.paint = paint;
-        	if (chars != null)
-        		cv.setChar(chars[i]);
-        	if (viewId != -1)
-        		cv.setId(viewId);
-        	if (viewId == R.id.AlphabetCharView)
-        		cv.setOnClickListener(this);	//enter new word by clicks, not tate changes 
-        	if(la.getId() == R.id.EnteringLayout || 
-        	   la.getId() == R.id.SecretLayout) {
-        		cv.setViewPos(i);				//to mark "bull" in these words
-        		run.posTable.addAllPosCharStateChangedListener(cv);		
-        	}
-        	la.addView(cv);
-        }
-	}
-	
-	//inflate PosCharViews with PosChar.NULL values
-	private LinearLayout inflatePosLine() {
-		LayoutInflater layoutInflater2 = layoutInflater;
-		int wordLength = run.wordLength;
-		CharLineLayout line = (CharLineLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
-		for (int i = 0; i < wordLength; i++) {
-			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
-			pcw.paint = paint;
-			line.setWordLength(wordLength);
-        	line.addView(pcw);
-        }
-		return line;
-	}
 
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
 		LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
@@ -162,13 +128,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
 		//hide PosLineLayout
 		posTableLayout.removeView(line);
-
-		//clear PosCharViews
-		for (int i = 0; i < run.wordLength; i++) {
-			PosCharView pcv = (PosCharView) line.getChildAt(i);
-			pcv.clearPosChar();
-		}
-		
 		return line;
 	}
 
@@ -205,6 +164,41 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private void offerWord(String offered) throws BncException {
 		offeredsLayout.addView(inflateOfferedLine(offered.toCharArray()));
+	}
+	
+	
+
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
+		for (int i = 0; i < length; i++) {
+        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, null);		//is it possible just to "clone" CharView? - inflate involves xml parsing
+        	cv.paint = paint;
+        	if (chars != null)
+        		cv.setChar(chars[i]);
+        	if (viewId != -1)
+        		cv.setId(viewId);
+        	if (viewId == R.id.AlphabetCharView)
+        		cv.setOnClickListener(this);	//enter new word by clicks
+        	if(la.getId() == R.id.EnteringLayout || 
+        	   la.getId() == R.id.SecretLayout) {
+        		cv.setViewPos(i);				//to mark "bull" in these words
+        		run.posTable.addAllPosCharStateChangedListener(cv);		
+        	}
+        	la.addView(cv);
+        }
+	}
+	
+	//inflate PosCharViews with PosChar.NULL values
+	private LinearLayout inflatePosLine() {
+		LayoutInflater layoutInflater2 = layoutInflater;
+		int wordLength = run.wordLength;
+		CharLineLayout line = (CharLineLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
+		for (int i = 0; i < wordLength; i++) {
+			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
+			pcw.paint = paint;
+			line.setWordLength(wordLength);
+        	line.addView(pcw);
+        }
+		return line;
 	}
 	
 	private LinearLayout inflateOfferedLine(char[] chars) throws BncException {
