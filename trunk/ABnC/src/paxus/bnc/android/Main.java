@@ -19,6 +19,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -53,6 +57,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         paint.setColor(getResources().getColor(R.drawable.paint_color));
         return paint;
 	}
+	
+	//TODO try android:persistentDrawingCache for frequent animation
+	//TODO try android:drawingCacheQuality 
     
     private void startNewRun() throws BncException {
     	//TODO can keep alphabet instance if not changed and just reinit().
@@ -123,12 +130,30 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			pcw.setPosChar(chars[i]);
         }
 		posTableLayout.addView(pl);
+		pl.startLayoutAnimation();
 	}
 	
 	//hide PosLineLayout	
 	private LinearLayout removePosLine(Character ch) {
-		LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
-		posTableLayout.removeView(line);
+		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
+		line.setLayoutAnimation(new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.fade_out_anim)));
+		line.setLayoutAnimationListener(new AnimationListener() {
+			public void onAnimationStart(Animation animation) {}
+			public void onAnimationRepeat(Animation animation) {}
+			public void onAnimationEnd(Animation animation) {
+				posTableLayout.removeView(line);
+				synchronized (line) {
+					line.notifyAll();
+				}
+			}
+		});
+		line.startLayoutAnimation();
+/*		synchronized (line) {
+			try {
+				line.wait();
+			} catch (InterruptedException e) {
+			}
+		}*/
 		return line;
 	}
 

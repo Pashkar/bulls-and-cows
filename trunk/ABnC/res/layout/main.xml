@@ -25,8 +25,7 @@
 			android:layout_alignParentLeft="true" 
 			android:orientation="horizontal"
 			android:paddingTop="0px"
-			android:paddingBottom="0px"
-			android:animationCache="true">
+			android:paddingBottom="0px">
 		</LinearLayout>
 		
 		<!-- Entering -->
@@ -38,8 +37,7 @@
 			android:layout_alignParentRight="true" 
 			android:orientation="horizontal"
 			android:paddingTop="0px"
-			android:paddingBottom="0px"
-			android:animationCache="true">
+			android:paddingBottom="0px">
 		</LinearLayout>
 		
 	</RelativeLayout>
@@ -52,6 +50,7 @@
 		android:paddingBottom="0px">
 
 		<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
+		<!--  TODO play with cache -->
 		<ScrollView
 			android:id="@+id/ScrollOfferedsLayout"
 			android:layout_width="wrap_content" 
@@ -67,8 +66,7 @@
 				android:layout_height="wrap_content" 
 				android:orientation="vertical"
 				android:paddingTop="0px"
-				android:paddingBottom="0px"
-				android:animationCache="true">
+				android:paddingBottom="0px">
 			</LinearLayout>
 		
 		</ScrollView>
@@ -82,8 +80,7 @@
 			android:layout_alignParentRight="true"
 			android:orientation="vertical"
 			android:paddingTop="0px"
-			android:paddingBottom="0px"
-			android:animationCache="true">
+			android:paddingBottom="0px">
 		</LinearLayout>
 		
 		<!-- Alphabet: There must be independent layout for each predefined alphabets -->
@@ -95,8 +92,7 @@
 			android:layout_alignParentBottom="true" 
 			android:orientation="horizontal"
 			android:paddingTop="0px"
-			android:paddingBottom="0px"
-			android:animationCache="true">
+			android:paddingBottom="0px">
 		</LinearLayout>
 		
 	</RelativeLayout>

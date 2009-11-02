@@ -7,12 +7,3 @@
 	android:layout_height="@dimen/char_height"
 	android:paddingLeft="@dimen/char_left_padding" 
 	/>
-	
-	<!--
-	android:minHeight=
-	android:minWidth=
-	-->
-	
-	<!-- 	android:background="@drawable/noth"
-	 -->
-	
