@@ -49,7 +49,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	public void initView(Context context) {
 		setOnClickListener(this);
         if (anim == null)
-        	anim = AnimationUtils.loadAnimation(context, R.anim.char_anim);
+        	anim = AnimationUtils.loadAnimation(context, R.anim.char_fade_in_anim);
 	}
 	
 	public void setChar(Char ch) {

@@ -20,8 +20,6 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 
 	private PosChar pch = PosChar.NULL;
 	
-//	private static Animation anim;
-	
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView(context);
@@ -34,9 +32,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 
 	private void initView(Context context) {
 		setOnClickListener(this);
-/*        if (anim == null)
-        	anim = AnimationUtils.loadAnimation(context, R.anim.poschar_anim);
-*/	}
+	}
 	
 	public void setPosChar(PosChar pch) {
 		this.pch = pch;
