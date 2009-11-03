@@ -115,6 +115,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			pl.setTag(ch);
 		} else {
 			LinearLayout pl = hidePosLine(ch);
+			if (pl == null)
+				return;
 			freePosLayoutList2.add(pl);
 			pl.setTag(null);
 		}
@@ -134,6 +136,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	//hide PosLineLayout	
 	private LinearLayout hidePosLine(Character ch) {
 		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
+		if (line == null)
+			return null;
 		line.setLayoutAnimationListener(new AnimationListener() {
 			public void onAnimationStart(Animation animation) {}
 			public void onAnimationRepeat(Animation animation) {}

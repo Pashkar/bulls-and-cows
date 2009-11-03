@@ -8,6 +8,5 @@
         android:duration="200"
         android:fillEnabled="true"
         android:fillAfter="true"
-        android:fillBefore="true"
         />
 </set>

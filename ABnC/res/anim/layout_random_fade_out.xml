@@ -20,5 +20,4 @@
         android:animation="@anim/fade_out_anim"
         android:fillEnabled="true"
         android:fillAfter="true"
-        android:fillBefore="true"
         />
