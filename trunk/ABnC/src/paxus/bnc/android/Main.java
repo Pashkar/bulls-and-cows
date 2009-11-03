@@ -29,25 +29,20 @@ import android.widget.Toast;
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
 	private final RunExecutor re = new RunExecutor();
-	
 	private Run run;
-	
-	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
-	
-	private LinearLayout posTableLayout;
-	
-	private LinearLayout offeredsLayout;
-	
 	private StringBuffer enteringWord = new StringBuffer();
-
+	
+	private LayoutInflater layoutInflater;
+	private LinearLayout offeredsLayout;
 	private LinearLayout enteringWordLayout;
+	private LinearLayout posTableLayout;
+	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private Paint paint;
-
-	private LayoutInflater layoutInflater;
-
 	private Toast duplicateToast;
-
+	private LayoutAnimationController layoutInAnimation;
+	private LayoutAnimationController layoutOutAnimation;
+	
 	private Paint createPaint() {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -76,13 +71,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        try {
-			startNewRun();
-		} catch (BncException e) {}
-		
 		paint = createPaint();
 		layoutInflater = getLayoutInflater();
 		duplicateToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
+		layoutInAnimation = new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.fade_in_anim));
+		layoutOutAnimation = new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.fade_out_anim));
+		
+		try {
+			startNewRun();
+		} catch (BncException e) {}
 		
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
 		Run run2 = run;
@@ -117,43 +114,41 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			showPosLine(pl, line.chars, run.wordLength);
 			pl.setTag(ch);
 		} else {
-			LinearLayout pl = removePosLine(ch);
+			LinearLayout pl = hidePosLine(ch);
 			freePosLayoutList2.add(pl);
 			pl.setTag(null);
 		}
 	}
 	
 	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
-	private void showPosLine(LinearLayout pl, PosChar[] chars, int length) {
+	private void showPosLine(LinearLayout line, PosChar[] chars, int length) {
 		for (int i = 0; i < length; i++) {
-			PosCharView pcw = (PosCharView) pl.getChildAt(i);
+			PosCharView pcw = (PosCharView) line.getChildAt(i);
 			pcw.setPosChar(chars[i]);
         }
-		posTableLayout.addView(pl);
-		pl.startLayoutAnimation();
+		posTableLayout.addView(line);
+		line.setLayoutAnimation(layoutInAnimation);
+		line.invalidate(); //start layout animation	
 	}
 	
 	//hide PosLineLayout	
-	private LinearLayout removePosLine(Character ch) {
+	private LinearLayout hidePosLine(Character ch) {
 		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
-		line.setLayoutAnimation(new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.fade_out_anim)));
 		line.setLayoutAnimationListener(new AnimationListener() {
 			public void onAnimationStart(Animation animation) {}
 			public void onAnimationRepeat(Animation animation) {}
 			public void onAnimationEnd(Animation animation) {
 				posTableLayout.removeView(line);
-				synchronized (line) {
-					line.notifyAll();
-				}
 			}
 		});
-		line.startLayoutAnimation();
-/*		synchronized (line) {
-			try {
-				line.wait();
-			} catch (InterruptedException e) {
-			}
-		}*/
+		
+		//TODO move animation logic into custom layout class
+		line.setLayoutAnimation(layoutOutAnimation);
+		for (int i = 0; i < line.getChildCount(); i++)	//hide child after layout animation+ 
+			((PosCharView)line.getChildAt(i)).setHideOnDraw(true);
+		line.invalidate();	//start layout animation
+		
+		//TODO - try to add transition animation - soft disappearing for row
 		return line;
 	}
 
