@@ -9,10 +9,11 @@
 	android:orientation="horizontal"
 	android:paddingTop="@dimen/line_top_padding"
 	android:paddingBottom="0px"
-	android:layoutAnimation="@anim/layout_random_fade_in"
 	android:animationCache="false"
 	android:persistentDrawingCache="animation"
+	android:layoutAnimation="@anim/layout_random_fade_in"
 	android:clipChildren="false"
 	/>
+
 	
 	<!--  TODO try android:clipChildren to draw by child outside their bounds-->

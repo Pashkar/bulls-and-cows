@@ -66,7 +66,8 @@
 				android:layout_height="wrap_content" 
 				android:orientation="vertical"
 				android:paddingTop="0px"
-				android:paddingBottom="0px">
+				android:paddingBottom="0px"
+				android:paddingRight="5px">
 			</LinearLayout>
 		
 		</ScrollView>

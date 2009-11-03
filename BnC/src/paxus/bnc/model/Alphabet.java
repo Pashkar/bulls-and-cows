@@ -102,6 +102,7 @@ public abstract class Alphabet implements IStatesCounter {
 		return newState;
 	}
 	
+	//TODO extract new Thread
 	private void notifyCharStateChangedListeners(Character ch, ENCharState newState) throws BncException {
 		for (ICharStateChangedListener listener : stateChangedListenerList)
 			listener.onCharStateChanged(ch, newState);

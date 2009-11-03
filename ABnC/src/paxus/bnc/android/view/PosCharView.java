@@ -19,6 +19,8 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	public Paint paint;
 
 	private PosChar pch = PosChar.NULL;
+
+	private boolean hideOnDraw = false;
 	
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -37,11 +39,13 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	public void setPosChar(PosChar pch) {
 		this.pch = pch;
 		pch.addPosStateChangedListener(this);
+		hideOnDraw = false;
 	}
 	
 	public void clearPosChar() {
 		pch.removePosStateChangedListener(this);
 		pch = PosChar.NULL;
+		hideOnDraw = false;
 		invalidate();
 	}
 	
@@ -87,6 +91,10 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
     
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if (hideOnDraw) {
+        	setVisibility(View.INVISIBLE);
+        	return;
+        }
         drawBackground(canvas);
         canvas.drawText("[" + pch.ch + "]", getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
     }
@@ -119,5 +127,10 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	@Override
 	public String toString() {
 		return pch + "";
+	}
+
+	public void setHideOnDraw(boolean hideOnDraw) {
+		this.hideOnDraw = hideOnDraw;
+		
 	}
 }

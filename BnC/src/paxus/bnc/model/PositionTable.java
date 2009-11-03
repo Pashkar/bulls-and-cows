@@ -100,6 +100,7 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 		posStateChangedListenerList.remove(listener);
 	}
 	
+	//TODO extract new Thread
 	public void notifyAllPosCharListeners(PosChar ch, ENCharState newState) {
 		for (IPosCharStateChangedListener listener : posStateChangedListenerList)
 			listener.onPosCharStateChanged(ch, newState);
