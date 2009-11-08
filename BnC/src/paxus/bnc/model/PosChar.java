@@ -1,20 +1,27 @@
 package paxus.bnc.model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 
 import paxus.bnc.controller.IPosCharStateChangedListener;
 
-public class PosChar {
-	public final Character ch;
+public class PosChar implements Externalizable {
+	public Character ch;
 	
 	public ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char
 	
-	public final PositionTable table;
+	public PositionTable table;
 	
-	public final int pos;
+	public int pos;
 	
-	private final ArrayList<IPosCharStateChangedListener> stateChangedListenerList = new ArrayList<IPosCharStateChangedListener>();
+	private transient final ArrayList<IPosCharStateChangedListener> stateChangedListenerList = new ArrayList<IPosCharStateChangedListener>();
 
+	public PosChar() {
+	}
+	
 	//package-private
 	//to create from PositionTable or test
 	PosChar(Character ch, int pos, PositionTable table) {
@@ -54,5 +61,18 @@ public class PosChar {
 			return ENCharState.NONE;
 		}
 	};
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		ch = in.readChar();
+		state = (ENCharState) in.readObject();
+		pos = in.readInt();
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeChar(ch);
+		out.writeObject(state);
+		out.writeInt(pos);
+	}
 
 }

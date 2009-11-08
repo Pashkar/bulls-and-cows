@@ -5,7 +5,10 @@ import java.util.ArrayList;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateChangedListener;
 
-
+/*
+ * Would be better to have Char as a nested class for Alphabet. 
+ * Anyway, may not be serialized itself, only by Alphabet which cares of Char instances.  
+*/
 public class Char {
 	 
 	static final char NULL_CHAR = '?';
@@ -14,22 +17,9 @@ public class Char {
 	
 	public final String asString;
 	
-	public final Alphabet alphabet;
+	public transient final Alphabet alphabet;
 	
-	private final ArrayList<ICharStateChangedListener> stateChangedListenerList = new ArrayList<ICharStateChangedListener>();
-
-	/*//List - since there is only one Char instance for several CharView instances
-	private ArrayList<IStateChangedListener> stateChangedListenerList = new ArrayList<IStateChangedListener>();
-	*/
-/*	private Char(char ch, Alphabet alphabet) throws BncException {
-		if (alphabet == null && ch != NULL_CHAR)
-			throw new NullPointerException("Alphabet must not be null");
-		if (alphabet != null && !alphabet.isCharValid(ch))
-			throw new BncException("\"" + ch + "\" isn't allowed in alphabet \"" + alphabet.getName() + "\"");
-		this.alphabet = alphabet;
-		this.ch = ch;
-		this.asString = ch + "";
-	}*/
+	private transient final ArrayList<ICharStateChangedListener> stateChangedListenerList = new ArrayList<ICharStateChangedListener>();
 	
 	//package-private
 	//for init from alphabet only - no checks needed

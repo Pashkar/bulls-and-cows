@@ -1,5 +1,9 @@
 package paxus.bnc.model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -10,7 +14,7 @@ import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IStatesCounter;
 
-public abstract class Alphabet implements IStatesCounter {
+public abstract class Alphabet implements Externalizable, IStatesCounter {
 	
 	private final HashSet<Character> symbols = new HashSet<Character>();
 	
@@ -18,7 +22,7 @@ public abstract class Alphabet implements IStatesCounter {
 	final HashMap<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
 	
 	//TODO Optimization : replace map with ordinal array by char->int
-	final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
+	transient final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
 	
 	private final ArrayList<ICharStateChangedListener> stateChangedListenerList = new ArrayList<ICharStateChangedListener>();
 	
@@ -123,6 +127,22 @@ public abstract class Alphabet implements IStatesCounter {
 	
 	public Char getCharInstance(char ch) {
 		return char2char.get(ch);
+	}
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		final HashMap<Character, ENCharState> char2state2 = char2state;
+		for (Character ch : char2state2.keySet())
+			char2state2.put(ch, (ENCharState) in.readObject());
+		presentStateCount = in.readInt();
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		final Collection<ENCharState> states = char2state.values();
+		for (ENCharState state : states) 
+			out.writeObject(state);
+		out.writeInt(presentStateCount);
+		//TODO store listeners; store css 
 	}
 
 	public static class Latin extends Alphabet {

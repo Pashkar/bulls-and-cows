@@ -1,23 +1,30 @@
 package paxus.bnc.model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.LinkedList;
 import java.util.List;
 
 import paxus.bnc.BncException;
 
-public final class Run {
+public final class Run implements Externalizable {
 
 	public static final int MAX_WORD_LENGTH = 10;
 	
-	public final int wordLength;
+	public int wordLength;
 	
-	public final Alphabet alphabet;
+	public Alphabet alphabet;
 	
-	public final Word secret;
+	public Word secret;
 	
-	public final PositionTable posTable;
+	public PositionTable posTable;
 	
 	public final List<WordCompared> wordsCompared = new LinkedList<WordCompared>();
+	
+	public Run() {
+	}
 	
 	public Run(Alphabet alphabet, String secret) throws BncException {
 		this.alphabet = alphabet;
@@ -28,6 +35,23 @@ public final class Run {
 	
 	public void addWordCompared(WordCompared wordCompared) {
 		wordsCompared.add(wordCompared);
+	}
+	
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		wordLength = in.readInt();
+		alphabet = (Alphabet) in.readObject();
+		posTable = (PositionTable) in.readObject();
+		try { secret = Word.read(in, wordLength, alphabet); } catch (BncException e) {
+		} 
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(wordLength);
+		out.writeObject(alphabet);
+		out.writeObject(posTable);
+		secret.write(out);
+		//TODO wordsCompared
 	}
 	
 	public final class WordCompared {
@@ -45,5 +69,4 @@ public final class Run {
 			return word + " -> " + result;
 		}
 	}
-
 }

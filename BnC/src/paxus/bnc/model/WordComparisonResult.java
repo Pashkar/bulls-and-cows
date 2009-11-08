@@ -1,9 +1,11 @@
 package paxus.bnc.model;
 
+import java.io.Serializable;
+
 /**
  * immutable
  */
-public final class WordComparisonResult {
+public final class WordComparisonResult implements Serializable {
 	
 	private final int wordLength;
 	

@@ -1,5 +1,10 @@
 package paxus.bnc.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.RunExecutor;
@@ -15,4 +20,32 @@ public class RunTest extends TestCase {
 		assertEquals(2, re.getRun().wordsCompared.size());
 		assertTrue(res.guessed());
 	}
+	
+	public void testSerialize() throws Exception {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream os = new ObjectOutputStream(baos);
+		
+		final Alphabet da = new Alphabet.Digital();
+		RunExecutor re = new RunExecutor();
+		re.startNewRun(da, "1234");
+		re.getRun().posTable.addLine('5');
+		
+		//TODO check offered words and comparison results
+//		re.offerWord("4321");
+//		WordComparisonResult res = re.offerWord("1234");
+
+		os.writeObject(re.getRun());
+		os.close();
+		
+		ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+		Run run = (Run) is.readObject();
+		is.close();
+		
+		
+		assertEquals(4, run.wordLength);
+		assertEquals("1234", run.secret.asString());
+		assertEquals("Digital", run.alphabet.getName());
+		assertEquals(1, run.posTable.getLinesCount());
+	}
+
 }

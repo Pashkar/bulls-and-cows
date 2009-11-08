@@ -1,5 +1,10 @@
 package paxus.bnc.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateChangedListener;
@@ -75,5 +80,23 @@ public class AlphabetTest extends TestCase {
 		la.removeAllCharsStateCRhangedListener(listenerA);
 		chA.moveState();
 		assertEquals(2, counterA[0]);		
+	}
+	
+	public void testSerialize() throws Exception {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream os = new ObjectOutputStream(baos);
+
+		final Alphabet la = new Alphabet.Latin();
+		assertEquals(ENCharState.ABSENT, la.getCharInstance('x').moveState());
+		os.writeObject(la);
+		os.close();
+		
+		ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+		Alphabet a = (Alphabet) is.readObject();
+		is.close();
+		
+		assertEquals("Latin", a.getName());
+		assertEquals(ENCharState.NONE, a.getCharInstance('a').getState());
+		assertEquals(ENCharState.ABSENT, a.getCharInstance('x').getState());
 	}
 }

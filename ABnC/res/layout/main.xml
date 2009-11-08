@@ -25,8 +25,8 @@
 			android:layout_alignParentLeft="true" 
 			android:orientation="horizontal"
 			android:paddingTop="0px"
-			android:paddingBottom="0px">
-		</LinearLayout>
+			android:paddingBottom="0px"
+			/>
 		
 		<!-- Entering -->
 		<LinearLayout
@@ -67,8 +67,9 @@
 				android:orientation="vertical"
 				android:paddingTop="0px"
 				android:paddingBottom="0px"
-				android:paddingRight="5px">
-			</LinearLayout>
+				android:paddingRight="5px"
+				android:clipChildren="false"
+				/>
 		
 		</ScrollView>
 		

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- <view xmlns:android="http://schemas.android.com/apk/res/android"
-	class="paxus.bnc.android.view.CharLineLayout" -->
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" -->
+ <view xmlns:android="http://schemas.android.com/apk/res/android"
+	class="paxus.bnc.android.view.CharLineLayout" 
 	android:id="@+id/PosLine"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
@@ -13,7 +13,5 @@
 	android:persistentDrawingCache="animation"
 	android:layoutAnimation="@anim/layout_random_fade_in"
 	android:clipChildren="false"
-	/>
-
 	
-	<!--  TODO try android:clipChildren to draw by child outside their bounds-->
+	/>
