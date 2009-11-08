@@ -1,5 +1,10 @@
 package paxus.bnc.model;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
@@ -47,7 +52,8 @@ public class PositionTableTest extends TestCase {
 		assertEquals(ENCharState.ABSENT, table.movePosStateForChar(new Character('a'), 0));
 		
 		assertEquals(3, table.removeLine(new Character('a')));
-		assertEquals(4, table.addLine(new Character('a')));
+		table.addLine(new Character('a'));
+		assertEquals(4, table.getLinesCount());
 		
 		//all ABSENT in line not allowed
 		assertEquals(ENCharState.ABSENT, table.movePosStateForChar(new Character('a'), 0));
@@ -146,7 +152,7 @@ public class PositionTableTest extends TestCase {
 		};
 		
 		//check w/o listeners
-		assertEquals(1, run.posTable.addLine('0'));
+		run.posTable.addLine('0');
 		assertEquals(0, counter[0]);
 		assertEquals(0, counter[1]);
 		assertEquals(0, run.posTable.removeLine('0'));
@@ -155,7 +161,7 @@ public class PositionTableTest extends TestCase {
 		
 		//add line
 		run.posTable.addStateChangedListener(listener);
-		assertEquals(1, run.posTable.addLine('1'));
+		run.posTable.addLine('1');
 		assertEquals(1, counter[0]);
 		assertEquals(0, counter[1]);
 		
@@ -170,7 +176,7 @@ public class PositionTableTest extends TestCase {
 		assertEquals(1, counter[1]);
 		
 		run.posTable.removeStateChangedListener(listener);
-		assertEquals(1, run.posTable.addLine('0'));
+		run.posTable.addLine('0');
 		assertEquals(1, counter[0]);
 		assertEquals(1, counter[1]);
 		assertEquals(0, run.posTable.removeLine('0'));
@@ -213,5 +219,33 @@ public class PositionTableTest extends TestCase {
 		assertEquals(0, counter[0]);
 		assertEquals(1, counter[1]);
 		assertEquals(2, counter[2]);
+	}
+	
+	public void testSerialize() throws Exception {
+		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream os = new ObjectOutputStream(baos);
+
+		
+		RunExecutor re = new RunExecutor();
+		final Alphabet da = new Alphabet.Digital();
+		Run run = re.startNewRun(da, "012");
+		
+		run.posTable.addLine('7');
+		run.posTable.addLine('0');
+		assertEquals(ENCharState.ABSENT, run.posTable.movePosStateForChar('7', 2));
+		
+		os.writeObject(run.posTable);
+		os.close();
+		
+		ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+		PositionTable t = (PositionTable) is.readObject();
+		is.close();
+		
+		assertEquals(2, t.getLinesCount());
+		assertTrue(t.char2line.get('7') == t.lines.get(0));
+		assertEquals(ENCharState.NONE, t.lines.get(0).chars[0].state);
+		assertEquals(ENCharState.ABSENT, t.lines.get(0).chars[2].state);
+		assertTrue(t.char2line.get('0') == t.lines.get(1));
+		assertEquals(ENCharState.NONE, t.lines.get(1).chars[0].state);
 	}
 }

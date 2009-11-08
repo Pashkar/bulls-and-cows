@@ -16,13 +16,12 @@ import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -40,8 +39,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private Paint paint;
 	private Toast duplicateToast;
-	private LayoutAnimationController layoutInAnimation;
-	private LayoutAnimationController layoutOutAnimation;
+	private LayoutAnimationController lineInAnimation;
+	private LayoutAnimationController lineOutAnimation;
 	
 	private Paint createPaint() {
 		Paint paint = new Paint();
@@ -56,26 +55,19 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	//TODO try android:persistentDrawingCache for frequent animation
 	//TODO try android:drawingCacheQuality 
     
-    private void startNewRun() throws BncException {
-    	//TODO can keep alphabet instance if not changed and just reinit().
-    	//alphabet.reinit();
-    	
-    	//TODO offer alphabet selecting for user
-    	
-    	run = re.startNewRun(new Alphabet.Digital(), "12345");
-    }
-	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		Log.v("Main", "onCreate");
+		
         setContentView(R.layout.main);
         
 		paint = createPaint();
 		layoutInflater = getLayoutInflater();
 		duplicateToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
-		layoutInAnimation = new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.fade_in_anim));
-		layoutOutAnimation = new LayoutAnimationController(AnimationUtils.loadAnimation(this, R.anim.fade_out_anim));
+		lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
+		lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
 		
 		try {
 			startNewRun();
@@ -106,7 +98,34 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         
         offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
     }
+    
+    @Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.v("Main", "onSaveInstanceState");
+	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Log.v("Main", "onPause");
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.v("Main", "onResume");
+	}
+
+	private void startNewRun() throws BncException {
+    	//TODO can keep alphabet instance if not changed and just reinit().
+    	//alphabet.reinit();
+    	
+    	//TODO offer alphabet selecting for user
+    	
+    	run = re.startNewRun(new Alphabet.Digital(), "12345");
+    }
+    
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
 		LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
 		if (insert) {
@@ -129,28 +148,16 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			pcw.setPosChar(chars[i]);
         }
 		posTableLayout.addView(line);
-		line.setLayoutAnimation(layoutInAnimation);
+		line.setLayoutAnimation(lineInAnimation);
 		line.invalidate(); //start layout animation	
 	}
 	
-	//hide PosLineLayout	
+	//hide PosLineLayout - moved to CharLineLayout
 	private LinearLayout hidePosLine(Character ch) {
 		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
 		if (line == null)
 			return null;
-		line.setLayoutAnimationListener(new AnimationListener() {
-			public void onAnimationStart(Animation animation) {}
-			public void onAnimationRepeat(Animation animation) {}
-			public void onAnimationEnd(Animation animation) {
-				posTableLayout.removeView(line);
-			}
-		});
-		
-		//TODO move animation logic into custom layout class
-		line.setLayoutAnimation(layoutOutAnimation);
-		for (int i = 0; i < line.getChildCount(); i++)	//hide child after layout animation+ 
-			((PosCharView)line.getChildAt(i)).setHideOnDraw(true);
-		line.invalidate();	//start layout animation
+		posTableLayout.removeView(line);
 		
 		//TODO - try to add transition animation - soft disappearing for row
 		return line;

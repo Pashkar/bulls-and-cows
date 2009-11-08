@@ -2,7 +2,6 @@ package paxus.bnc.android.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.LinearLayout;
 
 /**
@@ -12,7 +11,7 @@ import android.widget.LinearLayout;
  */
 public class CharLineLayout extends LinearLayout {
 
-	private int wordLength;
+//	private int wordLength;
 
 	public CharLineLayout(Context context) {
 		super(context);
@@ -21,12 +20,38 @@ public class CharLineLayout extends LinearLayout {
 	public CharLineLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
+	
+	//TODO create new activity and check out how charView and posLine view are animated. Try to zoom in charView when pressed
+	
+	
+/*	private LinearLayout hidePosLine(Character ch) {
+		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
+		if (line == null)
+			return null;
+		line.setLayoutAnimationListener(new AnimationListener() {
+			public void onAnimationStart(Animation animation) {}
+			public void onAnimationRepeat(Animation animation) {}
+			public void onAnimationEnd(Animation animation) {
+				posTableLayout.removeView(line);
+			}
+		});
+		
+		//TODO move animation logic into custom layout class
+		line.setLayoutAnimation(layoutOutAnimation);
+		for (int i = 0; i < line.getChildCount(); i++)	//hide child after layout animation+ 
+			((PosCharView)line.getChildAt(i)).setHideOnDraw(true);
+		line.invalidate();	//start layout animation
 
-	public void setWordLength(int wordLength) {
+		posTableLayout.removeView(line);
+		
+		//TODO - try to add transition animation - soft disappearing for row
+		return line;
+	}*/
+
+	/*public void setWordLength(int wordLength) {
 		this.wordLength = wordLength;
 	}
 
-	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		int width = MeasureSpec.getSize(widthMeasureSpec);
 		int height = MeasureSpec.getSize(heightMeasureSpec);
@@ -60,5 +85,5 @@ public class CharLineLayout extends LinearLayout {
                         );
             }
         }
-	}
+	}*/
 }

@@ -1,5 +1,10 @@
 package paxus.bnc.model;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,26 +15,30 @@ import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.IStatesCounter;
 
-public class PositionTable implements IStatesCounter, ICharStateChangedListener {
+public class PositionTable implements Externalizable, IStatesCounter, ICharStateChangedListener {
 
 	public final ArrayList<PositionLine> lines = new ArrayList<PositionLine>(Run.MAX_WORD_LENGTH);
 	
 	//TODO replace Map with ordinal array by char -> int
 	public final HashMap<Character, PositionLine> char2line = new HashMap<Character, PositionLine>(Run.MAX_WORD_LENGTH);
 	
-	private final ArrayList<IPositionTableListener> posTableListenerList = new ArrayList<IPositionTableListener>();
+	private transient final ArrayList<IPositionTableListener> posTableListenerList = new ArrayList<IPositionTableListener>();
 	
-	private final ArrayList<IPosCharStateChangedListener> posStateChangedListenerList = new ArrayList<IPosCharStateChangedListener>();
+	private transient final ArrayList<IPosCharStateChangedListener> posStateChangedListenerList = new ArrayList<IPosCharStateChangedListener>();
 	
 	private ICharStateSequencer css;
 	public void setCss(ICharStateSequencer defaultCss) {
 		this.css = defaultCss;
 	}
 	
-	public final int maxLines;
+	public int maxLines;
 
-	public final int wordLength;
+	public int wordLength;
 
+	//for deserialization only
+	public PositionTable() {
+	}
+	
 	//package-private
 	//for use from Run and tests
 	PositionTable(int maxLines, int wordLength) {
@@ -192,7 +201,8 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 		return line.getPosPresent();
 	}
 	
-	public final class PositionLine {
+	public final class PositionLine implements Serializable 
+	/*implements Externalizable - can't be deserialized by default constructor*/ {
 
 		public final PosChar[] chars = new PosChar[Run.MAX_WORD_LENGTH];
 		
@@ -236,5 +246,31 @@ public class PositionTable implements IStatesCounter, ICharStateChangedListener 
 			}
 			return sb.toString();
 		}
+	}
+
+	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		wordLength = in.readInt();
+		maxLines = in.readInt();
+		int linesCount = in.readInt();
+		for (int i = 0; i < linesCount; i++) {
+			Character ch = in.readChar();
+			final PositionLine line = (PositionLine) in.readObject();
+			lines.add(line);
+			char2line.put(ch, line);
+		}
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(wordLength);
+		out.writeInt(maxLines);
+		out.writeInt(lines.size());
+		final HashMap<Character, PositionLine> char2line2 = char2line;
+		for (Character ch : char2line2.keySet()) {
+			out.writeChar(ch);
+			final PositionLine line = char2line2.get(ch);
+			out.writeObject(line);	//default writer - no special logic. PosChar will use overriden methods
+		}
+		//TODO store listeners and css 
 	}
 }

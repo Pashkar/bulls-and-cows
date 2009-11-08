@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+	class="paxus.bnc.android.view.CharLineLayout" 
 	android:id="@+id/OfferedLine"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
 	android:paddingTop="@dimen/line_top_padding"
 	android:paddingBottom="0px"
-	android:animationCache="true"
-	android:persistentDrawingCache="all"
+	android:animationCache="false"
+	android:persistentDrawingCache="animation"
+	android:layoutAnimation="@anim/layout_random_fade_in"
+	android:clipChildren="false"
 	/>
