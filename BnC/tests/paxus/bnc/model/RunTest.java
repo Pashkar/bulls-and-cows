@@ -30,9 +30,8 @@ public class RunTest extends TestCase {
 		re.startNewRun(da, "1234");
 		re.getRun().posTable.addLine('5');
 		
-		//TODO check offered words and comparison results
-//		re.offerWord("4321");
-//		WordComparisonResult res = re.offerWord("1234");
+		Word w = new Word(re.getRun().alphabet, "1243");
+		WordComparisonResult comparisonResult = re.offerWord(w);
 
 		os.writeObject(re.getRun());
 		os.close();
@@ -41,11 +40,12 @@ public class RunTest extends TestCase {
 		Run run = (Run) is.readObject();
 		is.close();
 		
-		
 		assertEquals(4, run.wordLength);
 		assertEquals("1234", run.secret.asString());
 		assertEquals("Digital", run.alphabet.getName());
 		assertEquals(1, run.posTable.getLinesCount());
+		assertEquals(1, run.wordsCompared.size());
+		assertEquals(comparisonResult.toString(), run.wordsCompared.get(0).result.toString());
+		assertEquals(w.toString(), run.wordsCompared.get(0).word.toString());
 	}
-
 }

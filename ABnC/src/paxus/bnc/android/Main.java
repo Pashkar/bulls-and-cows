@@ -109,6 +109,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	protected void onPause() {
 		super.onPause();
 		Log.v("Main", "onPause");
+		
 	}
 	
 	@Override
