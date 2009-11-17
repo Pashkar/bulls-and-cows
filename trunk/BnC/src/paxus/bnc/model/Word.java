@@ -53,7 +53,6 @@ public final class Word
 		}
 		return sb.toString();
 	}
-	
 
 	public static Word read(ObjectInput in, int wordLength, Alphabet alphabet) throws IOException, BncException {
 		StringBuilder sb = new StringBuilder(wordLength);

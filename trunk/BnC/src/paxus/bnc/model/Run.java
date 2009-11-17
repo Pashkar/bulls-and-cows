@@ -42,8 +42,13 @@ public final class Run implements Externalizable {
 		wordLength = in.readInt();
 		alphabet = (Alphabet) in.readObject();
 		posTable = (PositionTable) in.readObject();
-		try { secret = Word.read(in, wordLength, alphabet); } catch (BncException e) {
-		} 
+		try { secret = Word.read(in, wordLength, alphabet); } catch (BncException e) {}
+		wordsCompared.clear();
+		int wcSize = in.readInt();
+		for (int i = 0; i < wcSize; i++) {
+			WordCompared wc = WordCompared.read(in, wordLength, alphabet);
+			wordsCompared.add(wc);
+		}
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -51,22 +56,8 @@ public final class Run implements Externalizable {
 		out.writeObject(alphabet);
 		out.writeObject(posTable);
 		secret.write(out);
-		//TODO wordsCompared
-	}
-	
-	public final class WordCompared {
-		public final Word word;
-		public final WordComparisonResult result;
-
-		public WordCompared(Word word, WordComparisonResult result) {
-			super();
-			this.word = word;
-			this.result = result;
-		}
-
-		@Override
-		public String toString() {
-			return word + " -> " + result;
-		}
+		out.writeInt(wordsCompared.size());
+		for (WordCompared wc : wordsCompared)
+			wc.write(out);
 	}
 }
