@@ -87,7 +87,7 @@ public class PositionTable implements Externalizable, IStatesCounter, ICharState
 		return lines.size();
 	}
 	
-	public void addStateChangedListener(IPositionTableListener listener) {
+	public void addPosTableListener(IPositionTableListener listener) {
 		posTableListenerList.add(listener);
 	}
 	

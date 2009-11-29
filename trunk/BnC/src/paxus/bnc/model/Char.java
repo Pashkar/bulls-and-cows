@@ -11,7 +11,7 @@ import paxus.bnc.controller.ICharStateChangedListener;
 */
 public class Char {
 	 
-	static final char NULL_CHAR = '?';
+	static final char NULL_CHAR = ' ';
 
 	public final Character ch;
 	
@@ -36,9 +36,11 @@ public class Char {
 			else
 				throw new NullPointerException("Alphabet must not be null"); 
 		}
+		if (ch == Char.NULL_CHAR)
+			return Char.NULL;
 		if (!alphabet.isValidSymbol(ch))
 			throw new BncException("Symbol " + ch + " is not allowed in alphabet " + alphabet);
-		return alphabet.char2char.get(ch);	//all char must be initialized on alphabet load
+		return alphabet.char2char.get(ch);	//all char must have been initialized on alphabet load
 	}
 
 	public ENCharState getState() {
@@ -109,7 +111,6 @@ public class Char {
 			private ENCharState state = ENCharState.NONE; 
 			@Override
 			public ENCharState moveState(ENCharState... forbidden) {
-//				state = ICharStateSequencer.FORWARD.nextState(state, null, -1, forbidden);
 				return state;
 			}
 			@Override

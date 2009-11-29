@@ -15,10 +15,12 @@ import java.util.List;
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.PosCharView;
+import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
+import paxus.bnc.model.ENCharState;
 import paxus.bnc.model.PosChar;
 import paxus.bnc.model.PositionTable;
 import paxus.bnc.model.Run;
@@ -53,6 +55,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private LinearLayout offeredsLayout;
 	private LinearLayout enteringWordLayout;
 	private LinearLayout posTableLayout;
+	private SecretWordLayoutWrapper secretLayout;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private Paint paint;
@@ -121,13 +124,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		inflateCharsLine(enteringWordLayout, 
         		null, run2.wordLength , -1);
 		
+		//TODO any alphabets
 		//inflate alphabet layout
         inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
         		run2.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
         
         //inflate secret word layout
-        inflateCharsLine((LinearLayout) findViewById(R.id.SecretLayout), 
-        		run2.secret.chars, run2.wordLength, -1);
+        LinearLayout layout = (LinearLayout) findViewById(R.id.SecretLayout);
+		inflateCharsLine(layout, null, run2.wordLength, -1);
+		secretLayout = new SecretWordLayoutWrapper(layout);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
@@ -135,7 +140,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         	LinearLayout line = inflatePosLine();
         	freePosLayoutList2.add(line);
         }
-        posTable.addStateChangedListener(this);
+        posTable.addPosTableListener(this);
         
         //restore offered words
         try {
@@ -292,7 +297,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			final File savedStateFile = getFileStreamPath(FNAME_PERSISTENCE);
 			if (savedStateFile != null && savedStateFile.exists())
 				savedStateFile.delete();
-//			onCreate(new Bundle());
 			initActivity();
 			break;
 		}
@@ -351,4 +355,38 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return line;
 	}
 	
+	private class SecretWordLayoutWrapper implements IPosCharStateChangedListener {
+		
+		public LinearLayout layout;
+
+		public SecretWordLayoutWrapper(LinearLayout layout) {
+			this.layout = layout;
+			final Run run2 = run;
+			Char[] secretLine = run2.secretLine;
+			for (int i = 0; i < run2.wordLength; i++) {
+				CharView cv = (CharView) layout.getChildAt(i);
+				cv.setChar(secretLine[i], true);
+			}
+			run2.posTable.addAllPosCharStateChangedListener(this);
+		}
+
+		public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
+			CharView cv = (CharView) layout.getChildAt(pch.pos);	//TODO replace with array
+			final Char[] secretLine = run.secretLine;
+			if (newState == ENCharState.PRESENT) {
+				try { 
+					final Char ch = Char.valueOf(pch.ch, run.alphabet);
+					cv.setChar(ch, true);
+					secretLine[pch.pos] = ch;
+				} catch (BncException e) {}
+			} else {
+				final Char ch = cv.getChar();
+				final Char nullChar = Char.NULL;
+				if (pch.ch == ch.ch && ch != nullChar) {
+					cv.setChar(nullChar, false);
+					secretLine[pch.pos] = nullChar;
+				}
+			}
+		}
+	}
 }

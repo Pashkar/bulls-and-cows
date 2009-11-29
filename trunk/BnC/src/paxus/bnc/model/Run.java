@@ -18,6 +18,8 @@ public final class Run implements Externalizable {
 	
 	public Word secret;
 	
+	public Char[] secretLine = new Char[MAX_WORD_LENGTH];
+	
 	public PositionTable posTable;
 	
 	public LinkedList<WordCompared> wordsCompared = new LinkedList<WordCompared>();
@@ -30,6 +32,8 @@ public final class Run implements Externalizable {
 		this.secret = new Word(alphabet, secret);
 		this.wordLength = secret.length();
 		this.posTable = new PositionTable(wordLength, wordLength);
+		for (int i = 0; i < wordLength; i++)
+			this.secretLine[i] = Char.NULL;
 	}
 	
 	public void addWordCompared(WordCompared wordCompared) {
@@ -49,6 +53,11 @@ public final class Run implements Externalizable {
 		int wcCount = in.readInt();
 		for (int i = 0; i < wcCount; i++)
 			wordsCompared.add(readWordCompared(in, wordLength, alphabet));
+		
+		try {
+			for (int i = 0; i < wordLength; i++)
+				secretLine[i] = Char.valueOf(in.readChar(), alphabet);
+		} catch (BncException e) {} 
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -61,6 +70,9 @@ public final class Run implements Externalizable {
 		out.writeInt(wordsCompared2.size());
 		for (WordCompared wc : wordsCompared2) 
 			writeWordCompared(out, wc);
+		
+		for (int i = 0; i < wordLength; i++)
+			out.writeChar(secretLine[i].ch);
 	}
 	
 	public WordCompared readWordCompared(ObjectInput in, int wordLength,
