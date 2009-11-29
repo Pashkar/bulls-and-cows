@@ -30,14 +30,11 @@ public class RunTest extends TestCase {
 		re.startNewRun(da, "1234");
 		re.run.posTable.addLine('5');
 		
-		WordComparisonResult wcr = re.offerWord("1245").result;
-		assertEquals(2, wcr.bullsCount);
-		assertEquals(1, wcr.cowsCount);
-	
+		Word w = new Word(re.run.alphabet, "1243");
+		WordComparisonResult comparisonResult = re.offerWord("1243").result;
+
 		os.writeObject(re.run);
 		os.close();
-		System.out.println(this.getClass().getSimpleName() + "."+ getName() + ": " 
-				+ baos.toByteArray().length + " bytes stored");
 		
 		ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
 		Run run = (Run) is.readObject();
@@ -48,9 +45,7 @@ public class RunTest extends TestCase {
 		assertEquals("Digital", run.alphabet.getName());
 		assertEquals(1, run.posTable.getLinesCount());
 		assertEquals(1, run.wordsCompared.size());
-		assertEquals("1245", run.wordsCompared.get(0).word.asString());
-		assertEquals(2, run.wordsCompared.get(0).result.bullsCount);
-		assertEquals(1, run.wordsCompared.get(0).result.cowsCount);
+		assertEquals(comparisonResult.toString(), run.wordsCompared.get(0).result.toString());
+		assertEquals(w.toString(), run.wordsCompared.get(0).word.toString());
 	}
-
 }
