@@ -35,7 +35,7 @@ public class PositionTable implements Externalizable, IStatesCounter, ICharState
 
 	public int wordLength;
 
-	//for deserialization and tests only
+	//for deserialization only
 	public PositionTable() {
 	}
 	
@@ -201,24 +201,18 @@ public class PositionTable implements Externalizable, IStatesCounter, ICharState
 		return line.getPosPresent();
 	}
 	
-	public final class PositionLine implements Serializable 
-	/*implements Externalizable - can't be deserialized by default constructor*/ {
+	public final class PositionLine implements Serializable {
 
 		public final PosChar[] chars = new PosChar[Run.MAX_WORD_LENGTH];
-		
-		//for deserialization only
+
 		PositionLine() {
 		}
-		
+	
 		public PositionLine(Character ch) {
 			PosChar[] mChars = this.chars;
 			for (int i = 0; i < wordLength; i++) {
 				mChars[i] = new PosChar(ch, i, PositionLine.this);
 			}
-		}
-		
-		public PositionTable getPosTable() {
-			return PositionTable.this;
 		}
 		
 		public int getPosPresent() {
@@ -254,50 +248,48 @@ public class PositionTable implements Externalizable, IStatesCounter, ICharState
 			}
 			return sb.toString();
 		}
+
+		public PositionTable getTable() {
+			return PositionTable.this;
+		}
 	}
 
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
 		wordLength = in.readInt();
 		maxLines = in.readInt();
-		css = (ICharStateSequencer) in.readObject();
-		
 		int linesCount = in.readInt();
 		for (int i = 0; i < linesCount; i++) {
-			Character ch = in.readChar();
-			final PositionLine line = readPosLine(in);
+			PositionLine line = readPosLine(in);
 			lines.add(line);
-			char2line.put(ch, line);
+			char2line.put(line.chars[0].ch, line);
 		}
+		css = (ICharStateSequencer) in.readObject();
 	}
-	
+
 	public void writeExternal(ObjectOutput out) throws IOException {
 		out.writeInt(wordLength);
 		out.writeInt(maxLines);
-		out.writeObject(css);
-		
 		out.writeInt(lines.size());
 		final HashMap<Character, PositionLine> char2line2 = char2line;
 		for (Character ch : char2line2.keySet()) {
-			out.writeChar(ch);
-			final PositionLine line = char2line2.get(ch);
-			writePosLine(out, line);
+			writePosLine(out, char2line2.get(ch));	
 		}
-		//TODO store listeners and css 
-	}
-	
-	private void writePosLine(ObjectOutput out, PositionLine line) throws IOException {
-		for (int i = 0; i < wordLength; i++)
-			out.writeObject(line.chars[i]);
+		out.writeObject(css);
 	}
 
 	private PositionLine readPosLine(ObjectInput in) throws ClassNotFoundException, IOException {
-		PositionLine line = new PositionLine();
-		final PosChar[] chars = line.chars;
+		PositionLine line = new PositionLine(); 
+		PosChar[] chars = line.chars;
 		for (int i = 0; i < wordLength; i++) {
 			chars[i] = (PosChar) in.readObject();
 			chars[i].line = line;
 		}
 		return line;
+	}
+	
+	private void writePosLine(ObjectOutput out, PositionLine line) throws IOException {
+		for (int i = 0; i < wordLength; i++)
+			out.writeObject(line.chars[i]);
 	}
 }
