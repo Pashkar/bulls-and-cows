@@ -224,14 +224,13 @@ public class PositionTableTest extends TestCase {
 	public void testSerialize() throws Exception {
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ObjectOutputStream os = new ObjectOutputStream(baos);
-
 		
 		RunExecutor re = new RunExecutor();
 		final Alphabet da = new Alphabet.Digital();
 		Run run = re.startNewRun(da, "012");
 		
-		run.posTable.addLine('0');
 		run.posTable.addLine('7');
+		run.posTable.addLine('0');
 		assertEquals(ENCharState.ABSENT, run.posTable.movePosStateForChar('7', 2));
 		
 		os.writeObject(run.posTable);
@@ -242,10 +241,11 @@ public class PositionTableTest extends TestCase {
 		is.close();
 		
 		assertEquals(2, t.getLinesCount());
-		assertTrue(t.char2line.get('0') == t.lines.get(0));
+		assertTrue(t.char2line.get('7') == t.lines.get(0));
 		assertEquals(ENCharState.NONE, t.lines.get(0).chars[0].state);
-		assertTrue(t.char2line.get('7') == t.lines.get(1));
+		assertEquals(ENCharState.ABSENT, t.lines.get(0).chars[2].state);
+		assertTrue(t.char2line.get('0') == t.lines.get(1));
 		assertEquals(ENCharState.NONE, t.lines.get(1).chars[0].state);
-		assertEquals(ENCharState.ABSENT, t.lines.get(1).chars[2].state);
+		assertSame(t.lines.get(0), t.lines.get(0).chars[0].line);
 	}
 }

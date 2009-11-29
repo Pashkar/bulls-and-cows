@@ -5,15 +5,11 @@ import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.ENCharState;
 import paxus.bnc.model.Run;
 import paxus.bnc.model.Word;
-import paxus.bnc.model.WordCompared;
 import paxus.bnc.model.WordComparisonResult;
 
 public final class RunExecutor {
 	
-	private Run run;
-	public Run getRun() {
-		return run;
-	}	
+	public Run run;
 	
 	private final static WordComparator wc = new WordComparator(); 
 	
@@ -44,17 +40,14 @@ public final class RunExecutor {
 		return this.run; 
 	}
 	
-	public WordComparisonResult offerWord(String str) throws BncException {
+	public Run.WordCompared offerWord(String str) throws BncException {
 		Word word = new Word(run.alphabet, str);
-		return offerWord(word);
-	}
-	
-	public WordComparisonResult offerWord(Word word) throws BncException {
 		WordComparisonResult res = wc.compare(run.secret, word);
-		run.addWordCompared(new WordCompared(word, res));
+		final Run.WordCompared wordCompared = run.new WordCompared(word, res);
+		run.addWordCompared(wordCompared);
 		
 		//TODO fail game when limit exceeds? or endless?
-		return res;
+		return wordCompared;
 	}
 
 	private void winGame() {

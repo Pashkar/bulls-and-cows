@@ -11,8 +11,9 @@ public class PosCharTest extends TestCase {
 	public void testPosChar() throws BncException {
 		Alphabet.Latin la = new Alphabet.Latin();
 		PositionTable table = new PositionTable(1, 5);
-		PosChar pchA = new PosChar(new Character('a'), 0, table);
-		PosChar pchB = new PosChar(new Character('a'), 0, table);
+		table.addLine('a');
+		PosChar pchA = new PosChar(new Character('a'), 0, table.char2line.get('a'));
+		PosChar pchB = new PosChar(new Character('b'), 0, table.char2line.get('a'));
 		assertNotNull(pchA);
 		assertNotNull(pchB);
 		assertTrue(pchA != pchB);	//check not one instance, possible to put several PosChar in s PosLine

@@ -1,11 +1,12 @@
 package paxus.bnc.controller;
 
 
+import java.io.Serializable;
 import java.util.HashSet;
 
 import paxus.bnc.model.ENCharState;
 
-public interface ICharStateSequencer {
+public interface ICharStateSequencer extends Serializable {
 	
 	public ENCharState nextState(ENCharState curState, Character ch, int pos, ENCharState... forbidden);
 	

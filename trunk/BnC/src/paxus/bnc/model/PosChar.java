@@ -7,13 +7,14 @@ import java.io.ObjectOutput;
 import java.util.ArrayList;
 
 import paxus.bnc.controller.IPosCharStateChangedListener;
+import paxus.bnc.model.PositionTable.PositionLine;
 
 public class PosChar implements Externalizable {
 	public Character ch;
 	
 	public ENCharState state = ENCharState.NONE;	//to be manipulated in special way as it's not an ordinal Char
 	
-	public PositionTable table;
+	public PositionLine line;
 	
 	public int pos;
 	
@@ -24,16 +25,16 @@ public class PosChar implements Externalizable {
 	
 	//package-private
 	//to create from PositionTable or test
-	PosChar(Character ch, int pos, PositionTable table) {
-		if (table == null && ch != Char.NULL_CHAR)
+	PosChar(Character ch, int pos, PositionLine line) {
+		if (line == null && ch != Char.NULL_CHAR)
 			throw new NullPointerException("PositionTable cannot be null");
 		this.ch = ch;
-		this.table = table;
+		this.line = line;
 		this.pos = pos;
 	}
 	
 	public ENCharState movePosState() {
-		return table.movePosState(this);
+		return line.getPosTable().movePosState(this);
 	}
 
 	public void addPosStateChangedListener(IPosCharStateChangedListener listener) {

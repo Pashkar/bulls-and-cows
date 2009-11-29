@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Bulls and Cows</string>
     <string name="diplicated_msg">Duplicated symbol</string>
+    <string name="new_game">Start new game</string>
 </resources>
