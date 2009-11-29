@@ -160,7 +160,7 @@ public class PositionTableTest extends TestCase {
 		assertEquals(0, counter[1]);
 		
 		//add line
-		run.posTable.addStateChangedListener(listener);
+		run.posTable.addPosTableListener(listener);
 		run.posTable.addLine('1');
 		assertEquals(1, counter[0]);
 		assertEquals(0, counter[1]);

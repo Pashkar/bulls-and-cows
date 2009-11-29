@@ -9,8 +9,8 @@ public class CharTest extends TestCase {
 	public void testNull() throws BncException {
 		Char ch = Char.NULL;
 		
-		assertEquals(new Character('?'), ch.ch);
-		assertEquals("?", ch.asString);
+		assertEquals((Character)Char.NULL_CHAR, ch.ch);
+		assertEquals(((Character)Char.NULL_CHAR).toString(), ch.asString);
 		
 		assertEquals(ENCharState.NONE, ch.moveState());
 		assertEquals(ENCharState.NONE, ch.getState());

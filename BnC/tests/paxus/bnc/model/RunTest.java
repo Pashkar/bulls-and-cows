@@ -33,6 +33,8 @@ public class RunTest extends TestCase {
 		Word w = new Word(re.run.alphabet, "1243");
 		WordComparisonResult comparisonResult = re.offerWord("1243").result;
 
+		re.run.secretLine[1] = new Char(da, '5');
+		
 		os.writeObject(re.run);
 		os.close();
 		
@@ -47,5 +49,7 @@ public class RunTest extends TestCase {
 		assertEquals(1, run.wordsCompared.size());
 		assertEquals(comparisonResult.toString(), run.wordsCompared.get(0).result.toString());
 		assertEquals(w.toString(), run.wordsCompared.get(0).word.toString());
+		assertEquals(new Character('5'), run.secretLine[1].ch);
+		assertEquals((Character)Char.NULL_CHAR, run.secretLine[0].ch);
 	}
 }
