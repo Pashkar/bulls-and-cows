@@ -1,6 +1,16 @@
 package paxus.bnc.android;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
@@ -10,15 +20,21 @@ import paxus.bnc.controller.RunExecutor;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
 import paxus.bnc.model.PosChar;
+import paxus.bnc.model.PositionTable;
 import paxus.bnc.model.Run;
 import paxus.bnc.model.PositionTable.PositionLine;
+import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
@@ -26,6 +42,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
+	
+	private static final String FNAME_PERSISTENCE = "persistence.dat";
 	
 	private final RunExecutor re = new RunExecutor();
 	private Run run;
@@ -38,10 +56,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private Paint paint;
-	private Toast duplicateToast;
+	private Toast duplicateSymbolToast;
 	private LayoutAnimationController lineInAnimation;
 	private LayoutAnimationController lineOutAnimation;
-	
+
 	private Paint createPaint() {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -60,21 +78,40 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		Log.v("Main", "onCreate");
-		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
         
 		paint = createPaint();
 		layoutInflater = getLayoutInflater();
-		duplicateToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
+		duplicateSymbolToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
 		lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
 		lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
-		
-		try {
-			startNewRun();
-		} catch (BncException e) {}
-		
+		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
+		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
+		
+		initRun();
+		
+		initAllViews();
+    }
+
+	private void initRun() {
+		try {
+			run = restoreSavedState();
+		} catch (Exception e) {
+			Log.i("Main", "restoreSavedState failed");
+			try { run = startNewRun();
+			} catch (BncException e1) { Log.e("Main", "startNewRun failed", e1); }
+		}
+		
+		re.run = run;
+	}
+
+	private void initAllViews() {
 		Run run2 = run;
+		PositionTable posTable = run2.posTable;
+		
+		//TODO hide chars and show only when entered 
 		//inflate entering word layout
 		inflateCharsLine(enteringWordLayout, 
         		null, run2.wordLength , -1);
@@ -89,20 +126,27 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
-        posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
         for (int i = 0; i < run2.wordLength; i++) {
         	LinearLayout line = inflatePosLine();
         	freePosLayoutList2.add(line);
         }
-        run2.posTable.addStateChangedListener(this);
+        posTable.addStateChangedListener(this);
         
-        offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
-    }
-    
-    @Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		Log.v("Main", "onSaveInstanceState");
+        //restore offered words
+        try {
+	        final List<WordCompared> wordsCompared = run2.wordsCompared;
+			if (wordsCompared != null && wordsCompared.size() > 0)
+	        	for (WordCompared wc : wordsCompared)
+						addOfferedWord(wc);
+		} catch (BncException e) {
+			Log.e("Main", "restore offered words failed", e);
+		}
+		
+		//restore PosTable
+		ArrayList<PositionLine> lines = posTable.lines;
+		if (lines != null && lines.size() > 0)
+        	for (PositionLine line : lines)
+        		onPosTableUpdate(true, line.chars[0].ch, line); 
 	}
 
 	@Override
@@ -110,21 +154,43 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		super.onPause();
 		Log.v("Main", "onPause");
 		
+		ObjectOutputStream oos = null;
+		try {
+			FileOutputStream fos = openFileOutput(FNAME_PERSISTENCE, MODE_PRIVATE);
+			oos = new ObjectOutputStream(new BufferedOutputStream(fos));
+			oos.writeObject(run);
+		} catch (Exception e) {
+			Log.e("Main", "onPause", e);
+		}
+		finally {
+			if (oos != null)
+				try { oos.close(); } catch (IOException e) {}
+		}
 	}
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Log.v("Main", "onResume");
+	private Run restoreSavedState() throws Exception {
+		Log.v("Main", "restoreSavedState");
+		ObjectInputStream ois = null;
+		Run run = null;
+		try {
+			FileInputStream fis = openFileInput(FNAME_PERSISTENCE);
+			ois = new ObjectInputStream(new BufferedInputStream(fis));
+			run = (Run) ois.readObject();
+		}
+		finally {
+			if (ois != null)
+				try { ois.close(); } catch (IOException e) {}
+		}
+		return run;
 	}
-
-	private void startNewRun() throws BncException {
+	
+	private Run startNewRun() throws BncException {
     	//TODO can keep alphabet instance if not changed and just reinit().
     	//alphabet.reinit();
     	
     	//TODO offer alphabet selecting for user
     	
-    	run = re.startNewRun(new Alphabet.Digital(), "12345");
+    	return re.startNewRun(new Alphabet.Digital(), "12345");
     }
     
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
@@ -133,7 +199,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			LinearLayout pl = freePosLayoutList2.removeFirst();
 			showPosLine(pl, line.chars, run.wordLength);
 			pl.setTag(ch);
-		} else {
+		} else {				//line == null
 			LinearLayout pl = hidePosLine(ch);
 			if (pl == null)
 				return;
@@ -168,9 +234,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		if (v.getId() == R.id.AlphabetCharView) {
 			LinearLayout enteringWordLayout2 = enteringWordLayout;
 			if (enteringWord.length() >= run.wordLength) {
-				try {
-					offerWord(enteringWord.toString());
-				} catch (BncException e) {}
+				offerWord(enteringWord.toString());
 				
 				//just remove underlying Char obj, reuse CharView. Member CharView.viewPos remains correct
 				for (int i = 0; i < enteringWordLayout2.getChildCount(); i++) {
@@ -184,7 +248,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			Character ch = cv.getChar().ch;
 			//duplicates are not allowed
 			if (enteringWord.indexOf("" + ch) != -1) {
-				duplicateToast.show();
+				duplicateSymbolToast.show();
 				return;
 			}
 				
@@ -196,12 +260,43 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
 	}
 
-	private void offerWord(String offered) throws BncException {
-		offeredsLayout.addView(inflateOfferedLine(offered.toCharArray()));
+	private void offerWord(String word) {
+		try {
+			WordCompared wc = re.offerWord(word);
+			addOfferedWord(wc);
+		} catch (BncException e) {
+			Log.e("Main", "offerWord", e);
+		}
+	}
+
+	private void addOfferedWord(WordCompared wc) throws BncException {
+		offeredsLayout.addView(inflateOfferedLine(wc.word.asString().toCharArray()));
 	}
 	
-	
-	//inflaters
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.title_icon, menu);
+        return true;
+    }
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.MenuNewGame:
+			final File savedStateFile = getFileStreamPath(FNAME_PERSISTENCE);
+			if (savedStateFile != null && savedStateFile.exists())
+				savedStateFile.delete();
+			onCreate(new Bundle());
+			break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+
+	///////////////////////////////////////////////////////////
+	//Inflaters
+	///////////////////////////////////////////////////////////
 	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
 		for (int i = 0; i < length; i++) {
@@ -249,5 +344,5 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         }
 		return line;
 	}
-
+	
 }
