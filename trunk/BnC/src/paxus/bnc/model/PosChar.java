@@ -27,14 +27,14 @@ public class PosChar implements Externalizable {
 	//to create from PositionTable or test
 	PosChar(Character ch, int pos, PositionLine line) {
 		if (line == null && ch != Char.NULL_CHAR)
-			throw new NullPointerException("PositionTable cannot be null");
+			throw new NullPointerException("PositionLine cannot be null");
 		this.ch = ch;
 		this.line = line;
 		this.pos = pos;
 	}
 	
 	public ENCharState movePosState() {
-		return line.getPosTable().movePosState(this);
+		return line.getTable().movePosState(this);
 	}
 
 	public void addPosStateChangedListener(IPosCharStateChangedListener listener) {
