@@ -35,7 +35,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	
 	private boolean posMatched = false;
 	
-
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView(context);

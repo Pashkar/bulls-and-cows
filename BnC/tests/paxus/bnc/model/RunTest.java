@@ -16,8 +16,8 @@ public class RunTest extends TestCase {
 		RunExecutor re = new RunExecutor();
 		re.startNewRun(da, "1234");
 		re.offerWord("4321");
-		WordComparisonResult res = re.offerWord("1234");
-		assertEquals(2, re.getRun().wordsCompared.size());
+		WordComparisonResult res = re.offerWord("1234").result;
+		assertEquals(2, re.run.wordsCompared.size());
 		assertTrue(res.guessed());
 	}
 	
@@ -28,13 +28,16 @@ public class RunTest extends TestCase {
 		final Alphabet da = new Alphabet.Digital();
 		RunExecutor re = new RunExecutor();
 		re.startNewRun(da, "1234");
-		re.getRun().posTable.addLine('5');
+		re.run.posTable.addLine('5');
 		
-		Word w = new Word(re.getRun().alphabet, "1243");
-		WordComparisonResult comparisonResult = re.offerWord(w);
-
-		os.writeObject(re.getRun());
+		WordComparisonResult wcr = re.offerWord("1245").result;
+		assertEquals(2, wcr.bullsCount);
+		assertEquals(1, wcr.cowsCount);
+	
+		os.writeObject(re.run);
 		os.close();
+		System.out.println(this.getClass().getSimpleName() + "."+ getName() + ": " 
+				+ baos.toByteArray().length + " bytes stored");
 		
 		ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
 		Run run = (Run) is.readObject();
@@ -45,7 +48,9 @@ public class RunTest extends TestCase {
 		assertEquals("Digital", run.alphabet.getName());
 		assertEquals(1, run.posTable.getLinesCount());
 		assertEquals(1, run.wordsCompared.size());
-		assertEquals(comparisonResult.toString(), run.wordsCompared.get(0).result.toString());
-		assertEquals(w.toString(), run.wordsCompared.get(0).word.toString());
+		assertEquals("1245", run.wordsCompared.get(0).word.asString());
+		assertEquals(2, run.wordsCompared.get(0).result.bullsCount);
+		assertEquals(1, run.wordsCompared.get(0).result.cowsCount);
 	}
+
 }

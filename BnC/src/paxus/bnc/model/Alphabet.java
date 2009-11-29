@@ -135,6 +135,7 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 		for (Character ch : char2state2.keySet())
 			char2state2.put(ch, (ENCharState) in.readObject());
 		presentStateCount = in.readInt();
+		css = (ICharStateSequencer) in.readObject();
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -142,7 +143,7 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 		for (ENCharState state : states) 
 			out.writeObject(state);
 		out.writeInt(presentStateCount);
-		//TODO store listeners; store css 
+		out.writeObject(css);
 	}
 
 	public static class Latin extends Alphabet {

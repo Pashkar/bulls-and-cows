@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.LinkedList;
-import java.util.List;
 
 import paxus.bnc.BncException;
 
@@ -21,7 +20,7 @@ public final class Run implements Externalizable {
 	
 	public PositionTable posTable;
 	
-	public final List<WordCompared> wordsCompared = new LinkedList<WordCompared>();
+	public LinkedList<WordCompared> wordsCompared = new LinkedList<WordCompared>();
 	
 	public Run() {
 	}
@@ -42,13 +41,14 @@ public final class Run implements Externalizable {
 		wordLength = in.readInt();
 		alphabet = (Alphabet) in.readObject();
 		posTable = (PositionTable) in.readObject();
+		alphabet.addAllCharsStateChangedListener(posTable);
 		try { secret = Word.read(in, wordLength, alphabet); } catch (BncException e) {}
-		wordsCompared.clear();
-		int wcSize = in.readInt();
-		for (int i = 0; i < wcSize; i++) {
-			WordCompared wc = WordCompared.read(in, wordLength, alphabet);
-			wordsCompared.add(wc);
-		}
+		
+		final LinkedList<WordCompared> wordsCompared2 = wordsCompared;
+		wordsCompared2.clear();
+		int wcCount = in.readInt();
+		for (int i = 0; i < wcCount; i++)
+			wordsCompared.add(readWordCompared(in, wordLength, alphabet));
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -56,8 +56,41 @@ public final class Run implements Externalizable {
 		out.writeObject(alphabet);
 		out.writeObject(posTable);
 		secret.write(out);
-		out.writeInt(wordsCompared.size());
-		for (WordCompared wc : wordsCompared)
-			wc.write(out);
+		
+		LinkedList<WordCompared> wordsCompared2 = wordsCompared;
+		out.writeInt(wordsCompared2.size());
+		for (WordCompared wc : wordsCompared2) 
+			writeWordCompared(out, wc);
+	}
+	
+	public WordCompared readWordCompared(ObjectInput in, int wordLength,
+			Alphabet alphabet) throws IOException, ClassNotFoundException {
+		Word word = null;
+		try {
+			word = Word.read(in, wordLength, alphabet);
+		} catch (BncException e) {
+		}
+		WordComparisonResult result = (WordComparisonResult) in.readObject();
+		return this.new WordCompared(word, result);
+	}
+
+	public void writeWordCompared(ObjectOutput out, WordCompared wc) throws IOException {
+		wc.word.write(out);
+		out.writeObject(wc.result);
+	}
+	
+	public final class WordCompared {
+		public Word word;
+		public WordComparisonResult result;
+
+		public WordCompared(Word word, WordComparisonResult result) {
+			this.word = word;
+			this.result = result;
+		}
+
+		@Override
+		public String toString() {
+			return word + " -> " + result;
+		}
 	}
 }
