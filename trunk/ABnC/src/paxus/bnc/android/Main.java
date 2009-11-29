@@ -262,7 +262,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private void offerWord(String word) {
 		try {
-			WordCompared wc = re.offerWord(word);
+			Run.WordCompared wc = re.offerWord(word);
 			addOfferedWord(wc);
 		} catch (BncException e) {
 			Log.e("Main", "offerWord", e);
