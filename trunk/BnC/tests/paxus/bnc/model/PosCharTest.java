@@ -5,15 +5,15 @@ import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.RunExecutor;
+import paxus.bnc.model.PositionTable.PositionLine;
 
 public class PosCharTest extends TestCase {
 
 	public void testPosChar() throws BncException {
-		Alphabet.Latin la = new Alphabet.Latin();
 		PositionTable table = new PositionTable(1, 5);
-		table.addLine('a');
-		PosChar pchA = new PosChar(new Character('a'), 0, table.char2line.get('a'));
-		PosChar pchB = new PosChar(new Character('b'), 0, table.char2line.get('a'));
+		PositionLine line = table.new PositionLine('a');
+		PosChar pchA = new PosChar(new Character('a'), 0, line);
+		PosChar pchB = new PosChar(new Character('b'), 0, line);
 		assertNotNull(pchA);
 		assertNotNull(pchB);
 		assertTrue(pchA != pchB);	//check not one instance, possible to put several PosChar in s PosLine
@@ -22,8 +22,6 @@ public class PosCharTest extends TestCase {
 	public void testNull() throws BncException {
 		assertNotNull(PosChar.NULL);
 		assertTrue(PosChar.NULL.ch == Char.NULL_CHAR);
-		
-		Alphabet.Latin la = new Alphabet.Latin();
 		
 		boolean ok = false;
 		try { new PosChar(new Character('a'), 0, null);}
