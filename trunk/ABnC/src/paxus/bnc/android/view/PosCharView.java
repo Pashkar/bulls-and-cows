@@ -119,7 +119,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 			setBackgroundResource(R.drawable.wrong);
 			break;
 		case PRESENT:
-			setBackgroundResource(R.drawable.cow);
+			setBackgroundResource(R.drawable.bull);
 			break;
 		}
 	}

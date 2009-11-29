@@ -47,7 +47,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private final RunExecutor re = new RunExecutor();
 	private Run run;
-	private StringBuffer enteringWord = new StringBuffer();
+	private StringBuffer enteringWord;
 	
 	private LayoutInflater layoutInflater;
 	private LinearLayout offeredsLayout;
@@ -79,8 +79,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         super.onCreate(savedInstanceState);
 		Log.v("Main", "onCreate");
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.main);
         
+		initActivity();
+    }
+
+	private void initActivity() {
+		setContentView(R.layout.main);
 		paint = createPaint();
 		layoutInflater = getLayoutInflater();
 		duplicateSymbolToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
@@ -90,10 +94,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		
+		enteringWord = new StringBuffer();
 		initRun();
 		
 		initAllViews();
-    }
+	}
 
 	private void initRun() {
 		try {
@@ -287,7 +292,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			final File savedStateFile = getFileStreamPath(FNAME_PERSISTENCE);
 			if (savedStateFile != null && savedStateFile.exists())
 				savedStateFile.delete();
-			onCreate(new Bundle());
+//			onCreate(new Bundle());
+			initActivity();
 			break;
 		}
 		
