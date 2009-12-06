@@ -4,4 +4,5 @@
     <string name="diplicated_msg">Duplicated symbol</string>
     <string name="word_too_long_msg">Word is too long</string>
     <string name="new_game">Start new game</string>
+    <string name="new_word">Guess...</string>
 </resources>

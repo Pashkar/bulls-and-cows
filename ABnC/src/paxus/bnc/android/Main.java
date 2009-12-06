@@ -43,6 +43,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
@@ -60,6 +61,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private Paint paint;
 	private LayoutAnimationController lineInAnimation;
 	private LayoutAnimationController lineOutAnimation;
+	private ScrollView scrollView;
 
 	public static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -71,10 +73,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         return paint;
 	}
 	
-	//TODO try android:persistentDrawingCache for frequent animation
-	//TODO try android:drawingCacheQuality 
-    
-	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,14 +85,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		setContentView(R.layout.main);
 		paint = createPaint(getResources());
 		layoutInflater = getLayoutInflater();
-//		duplicateSymbolToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
 		lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
 		lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
-//		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
+		scrollView = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
 		
-//		enteringWord = new StringBuffer();
 		initRun();
 		
 		initAllViews();
@@ -116,15 +112,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		Run run2 = run;
 		PositionTable posTable = run2.posTable;
 		
-/*		//inflate entering word layout
-		inflateCharsLine(enteringWordLayout, 
-        		null, run2.wordLength , -1);*/
-		
-		//TODO any alphabets
-		//inflate alphabet layout
-//        inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-//        		run2.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
-        
 		((Button)findViewById(R.id.ShowAlphabetButton)).setOnClickListener(this);
 		
         //inflate secret word layout
@@ -267,9 +254,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		try {
 			Run.WordCompared wc = re.offerWord(word);
 			addOfferedWord(wc);
-		} catch (BncException e) {
-			Log.e("Main", "offerWord", e);
-		}
+			scrollView.smoothScrollTo(0, 100000);
+		} catch (BncException e) {}
 	}
 
 	private void addOfferedWord(WordCompared wc) throws BncException {
@@ -310,10 +296,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         		cv.setChar(chars[i]);
         	if (viewId != -1)
         		cv.setId(viewId);
-/*        	if (viewId == R.id.AlphabetCharView)
-        		cv.setOnClickListener(this);	//enter new word by clicks
-*/        	if(/*la.getId() == R.id.EnteringLayout ||*/ 
-        	   la.getId() == R.id.SecretLayout) {
+        	if(la.getId() == R.id.SecretLayout) {
         		cv.setViewPos(i);				//to mark "bull" in these words
         		run.posTable.addAllPosCharStateChangedListener(cv);		
         	}
@@ -361,7 +344,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			//restore secret line serialized by Run object
 			for (int i = 0; i < run2.wordLength; i++) {
 				Char ch = run2.secretLine[i];
-				((CharView)layout.getChildAt(i)).setChar(ch, i == run2.posTable.getPresentPos(ch.ch));
+				CharView cv = (CharView)layout.getChildAt(i);
+				cv.setChar(ch, i == run2.posTable.getPresentPos(ch.ch));
+				cv.changeStateOnClick = false;	//secret word should not react on clicks, just listen to changes produced by others
 			}
 			run2.posTable.addAllPosCharStateChangedListener(this);
 		}
@@ -379,7 +364,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				final Char ch = cv.getChar();
 				final Char nullChar = Char.NULL;
 				if (pch.ch == ch.ch && ch != nullChar) {
-//					cv.setChar(nullChar, false);
 					cv.resetChar();
 					secretLine[pch.pos] = nullChar;
 				}
