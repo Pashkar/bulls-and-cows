@@ -50,11 +50,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
-//	private StringBuffer enteringWord;
 	
 	private LayoutInflater layoutInflater;
 	private LinearLayout offeredsLayout;
-//	private LinearLayout enteringWordLayout;
 	private LinearLayout posTableLayout;
 	private SecretWordLayoutWrapper secretLayout;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
@@ -242,33 +240,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.AlphabetCharView: 
-			/*LinearLayout enteringWordLayout2 = enteringWordLayout;
-			if (enteringWord.length() >= run.wordLength) {
-				offerWord(enteringWord.toString());
-				
-				//just remove underlying Char obj, reuse CharView. Member CharView.viewPos remains correct
-				for (int i = 0; i < enteringWordLayout2.getChildCount(); i++) {
-					((CharView)enteringWordLayout2.getChildAt(i)).resetChar();	 
-				}
-				enteringWordLayout2.invalidate();	//batch invalidate for entire layout at once
-				enteringWord = new StringBuffer();
-			}
-			
-			CharView cv = (CharView) v;
-			Character ch = cv.getChar().ch;
-			//duplicates are not allowed
-			if (enteringWord.indexOf("" + ch) != -1) {
-				duplicateSymbolToast.show();
-				return;
-			}
-				
-			enteringWord.append(ch);
-			int curPos = enteringWord.length() - 1;
-			CharView ecv = (CharView)enteringWordLayout2.getChildAt(curPos);
-			//for newly added char PosTable may have already set position and no updates will be sent - force posMatched
-			ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);*/
-			break;
 		case R.id.ShowAlphabetButton:
 			Intent intent = new Intent(this, DigitalAlphabetActivity.class);
             startActivityForResult(intent, RESULT_FIRST_USER + 1);	//doesn't matter what code to use
@@ -381,24 +352,26 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private class SecretWordLayoutWrapper implements IPosCharStateChangedListener {
 		
 		public LinearLayout layout;
+		private Run run2;
 
 		public SecretWordLayoutWrapper(LinearLayout layout) {
 			this.layout = layout;
-			final Run run2 = run;
-			Char[] secretLine = run2.secretLine;
+			run2 = run;
+			
+			//restore secret line serialized by Run object
 			for (int i = 0; i < run2.wordLength; i++) {
-				CharView cv = (CharView) layout.getChildAt(i);
-				cv.setChar(secretLine[i], true);
+				Char ch = run2.secretLine[i];
+				((CharView)layout.getChildAt(i)).setChar(ch, i == run2.posTable.getPresentPos(ch.ch));
 			}
 			run2.posTable.addAllPosCharStateChangedListener(this);
 		}
 
 		public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
 			CharView cv = (CharView) layout.getChildAt(pch.pos);	//TODO replace with array
-			final Char[] secretLine = run.secretLine;
+			final Char[] secretLine = run2.secretLine;
 			if (newState == ENCharState.PRESENT) {
 				try { 
-					final Char ch = Char.valueOf(pch.ch, run.alphabet);
+					final Char ch = Char.valueOf(pch.ch, run2.alphabet);
 					cv.setChar(ch, true);
 					secretLine[pch.pos] = ch;
 				} catch (BncException e) {}
@@ -406,7 +379,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				final Char ch = cv.getChar();
 				final Char nullChar = Char.NULL;
 				if (pch.ch == ch.ch && ch != nullChar) {
-					cv.setChar(nullChar, false);
+//					cv.setChar(nullChar, false);
+					cv.resetChar();
 					secretLine[pch.pos] = nullChar;
 				}
 			}

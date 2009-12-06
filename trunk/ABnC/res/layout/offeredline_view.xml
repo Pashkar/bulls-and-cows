@@ -10,5 +10,5 @@
 	android:persistentDrawingCache="animation"
 	android:layoutAnimation="@anim/layout_random_fade_in"
 	android:clipChildren="false"
-	android:layout_marginTop="@dimen/line_top_padding"
+	android:layout_marginTop="@dimen/line_top_margin"
 	/>
