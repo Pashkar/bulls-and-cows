@@ -37,6 +37,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
@@ -62,6 +63,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private LayoutAnimationController lineInAnimation;
 	private LayoutAnimationController lineOutAnimation;
 	private ScrollView scrollView;
+	
+	private OrientationEventListener orientationListener;
 
 	public static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -90,6 +93,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		scrollView = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
+		
+		//TODO separate layouts for portrait and landscape orientations
+/*		orientationListener = new OrientationEventListener(this) {
+			public void onOrientationChanged(int orientation) {
+				Log.v("Main", "onOrientationChanged");
+			}
+		};
+		orientationListener.enable();*/
 		
 		initRun();
 		
