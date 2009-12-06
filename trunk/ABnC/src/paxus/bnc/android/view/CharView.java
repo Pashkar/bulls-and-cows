@@ -130,11 +130,30 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     }
     
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         drawBackground(canvas);
-        canvas.drawText("" + ch.ch, getPaddingLeft() + getWidth() / 2, getPaddingTop() + getHeight(), paint);
+        if (ch != null && paint != null)
+        	canvas.drawText("" + ch.ch, getPaddingLeft() + getWidth() / 2, getPaddingTop() + getHeight(), paint);
     }
 
+	//TODO not Background (probably it's stretched), just draw. Use Prescaled
+	//TODO use 9 points pictures
+	//TODO ImageView from xml and then "image.setImageResource(R.drawable.android);" or just from xml
+	private void drawBackground(Canvas canvas) {
+		if (ch == null)
+			return;
+		switch (ch.getState()) {
+		case NONE:
+			setBackgroundResource(R.drawable.noth);
+			break;
+		case ABSENT:
+			setBackgroundResource(R.drawable.wrong);
+			break;
+		case PRESENT:
+			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
+			break;
+		}
+	}
+	
 	public void onClick(View v) {
 		try {
 			if (changeStateOnClick)
@@ -154,23 +173,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		if (oldMatched != posMatched)
 //			invalidate();
 			startAnimation(anim);
-	}
-
-	//TODO not Background (probably it's stretched), just draw. Use Prescaled
-	//TODO use 9 points pictures
-	//TODO ImageView from xml and then "image.setImageResource(R.drawable.android);" or just from xml
-	private void drawBackground(Canvas canvas) {
-		switch (ch.getState()) {
-		case NONE:
-			setBackgroundResource(R.drawable.noth);
-			break;
-		case ABSENT:
-			setBackgroundResource(R.drawable.wrong);
-			break;
-		case PRESENT:
-			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
-			break;
-		}
 	}
 	
 	@Override
