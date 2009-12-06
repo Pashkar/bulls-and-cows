@@ -9,11 +9,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
+import paxus.bnc.android.view.ComparisonResultView;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
@@ -27,6 +31,8 @@ import paxus.bnc.model.Run;
 import paxus.bnc.model.PositionTable.PositionLine;
 import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Paint;
@@ -37,7 +43,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
@@ -64,8 +69,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private LayoutAnimationController lineOutAnimation;
 	private ScrollView scrollView;
 	
-	private OrientationEventListener orientationListener;
-
 	public static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -90,7 +93,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		layoutInflater = getLayoutInflater();
 		lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
 		lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
-		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
+		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);	//TODO replace with GridLayout?
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		scrollView = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
 		
@@ -109,7 +112,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private void initRun() {
 		try {
-			run = restoreSavedState();
+			run = restoreSavedRun();
 		} catch (Exception e) {
 			Log.i("Main", "restoreSavedState failed");
 			try { run = startNewRun();
@@ -174,7 +177,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
 	}
 	
-	private Run restoreSavedState() throws Exception {
+	private Run restoreSavedRun() throws Exception {
 		Log.v("Main", "restoreSavedState");
 		ObjectInputStream ois = null;
 		Run run = null;
@@ -191,12 +194,34 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	
 	private Run startNewRun() throws BncException {
+		//TODO add menu to choose alphabet and wordLength
+		Alphabet.Digital alphabetChosen = new Alphabet.Digital();
+		int wordLength = 5;
+		
     	//TODO can keep alphabet instance if not changed and just reinit().
     	//alphabet.reinit();
     	
     	//TODO offer alphabet selecting for user
-    	
-    	return re.startNewRun(new Alphabet.Digital(), "12345");
+		
+		//TODO add menu - "give up"
+		
+		//TODO improve secret generating
+		String secret = "12345";
+		if (alphabetChosen instanceof Alphabet.Digital) {
+			secret = new String();
+			Random rnd = new Random();
+			Set<Character> secretSet = new HashSet<Character>(5);
+			for (int i = 0; i < wordLength; i++) {
+				Character c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
+				while (secretSet.contains(c))
+					c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
+				secretSet.add(c);
+				secret += c;
+			}
+		}
+
+		Log.i("Main", "Secret = " + secret);	//TODO remove
+		return re.startNewRun(alphabetChosen, secret);
     }
     
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
@@ -225,7 +250,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		line.invalidate(); //start layout animation	
 	}
 	
-	//hide PosLineLayout - moved to CharLineLayout
+	//hide PosLineLayout
 	private LinearLayout hidePosLine(Character ch) {
 		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
 		if (line == null)
@@ -266,11 +291,33 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			Run.WordCompared wc = re.offerWord(word);
 			addOfferedWord(wc);
 			scrollView.smoothScrollTo(0, 100000);
+			Log.i("Main", "offerWord = " + wc);
+			if (wc.result.guessed())
+				winGame(wc);
 		} catch (BncException e) {}
 	}
 
+	private void winGame(WordCompared wc) {
+		new AlertDialog.Builder(this)
+        .setIcon(android.R.drawable.ic_dialog_alert)
+        .setTitle("You win!")
+        .setMessage("Congratulations! You guessed the word \"" + wc.word.asString() + "\" in ??? steps!")
+        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        })
+/*        .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                 User clicked Cancel so do some stuff 
+            }
+        })*/
+        .create()
+        .show();
+	}
+
 	private void addOfferedWord(WordCompared wc) throws BncException {
-		offeredsLayout.addView(inflateOfferedLine(wc.word.asString().toCharArray()));
+		offeredsLayout.addView(inflateOfferedLine(wc));
 	}
 	
 	@Override
@@ -328,10 +375,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return line;
 	}
 	
-	private LinearLayout inflateOfferedLine(char[] chars) throws BncException {
-		LayoutInflater layoutInflater2 = layoutInflater;
-		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.offeredline_view, offeredsLayout, false);
+	private LinearLayout inflateOfferedLine(WordCompared wc) throws BncException {
+		final LayoutInflater layoutInflater2 = layoutInflater;
+		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.offered_line_view, offeredsLayout, false);
 		Run run2 = run;
+		char[] chars = wc.word.asString().toCharArray();
 		for (int i = 0; i < run2.wordLength; i++) {
 			CharView cv = (CharView) layoutInflater2.inflate(R.layout.char_view, line, false);
 			cv.setChar(Char.valueOf(chars[i], run2.alphabet), run2.posTable.getPresentPos(chars[i]) == i);
@@ -339,7 +387,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			cv.paint = paint;
         	run2.posTable.addAllPosCharStateChangedListener(cv);
 			line.addView(cv);
-        }
+		}
+		ComparisonResultView crv = (ComparisonResultView) layoutInflater2.inflate(R.layout.comp_result_view, line, false);
+		crv.setResult(wc.result);
+		crv.setPaint(paint);
+		line.addView(crv);
 		return line;
 	}
 	

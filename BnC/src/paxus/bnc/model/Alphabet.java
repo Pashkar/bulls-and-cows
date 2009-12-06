@@ -166,5 +166,5 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 		protected String getSymbolsLine() {
 			return "0123456789";
 		}
-	};
+	}
 }
