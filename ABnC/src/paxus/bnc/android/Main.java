@@ -27,6 +27,8 @@ import paxus.bnc.model.Run;
 import paxus.bnc.model.PositionTable.PositionLine;
 import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
@@ -36,40 +38,38 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener {
 	
 	private static final String FNAME_PERSISTENCE = "persistence.dat";
-	
+
 	private final RunExecutor re = new RunExecutor();
-	private Run run;
-	private StringBuffer enteringWord;
+	public static Run run;
+//	private StringBuffer enteringWord;
 	
 	private LayoutInflater layoutInflater;
 	private LinearLayout offeredsLayout;
-	private LinearLayout enteringWordLayout;
+//	private LinearLayout enteringWordLayout;
 	private LinearLayout posTableLayout;
 	private SecretWordLayoutWrapper secretLayout;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private Paint paint;
-	private Toast duplicateSymbolToast;
 	private LayoutAnimationController lineInAnimation;
 	private LayoutAnimationController lineOutAnimation;
 
-	private Paint createPaint() {
+	public static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(16);
         paint.setFakeBoldText(true);
         paint.setTextAlign(Align.CENTER);
-        paint.setColor(getResources().getColor(R.drawable.paint_color));
+        paint.setColor(resources.getColor(R.drawable.paint_color));
         return paint;
 	}
 	
@@ -81,23 +81,22 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		Log.v("Main", "onCreate");
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
         
 		initActivity();
     }
 
 	private void initActivity() {
 		setContentView(R.layout.main);
-		paint = createPaint();
+		paint = createPaint(getResources());
 		layoutInflater = getLayoutInflater();
-		duplicateSymbolToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
+//		duplicateSymbolToast = Toast.makeText(this, R.string.diplicated_msg, Toast.LENGTH_SHORT);
 		lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
 		lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
-		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
+//		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		
-		enteringWord = new StringBuffer();
+//		enteringWord = new StringBuffer();
 		initRun();
 		
 		initAllViews();
@@ -119,16 +118,17 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		Run run2 = run;
 		PositionTable posTable = run2.posTable;
 		
-		//TODO hide chars and show only when entered 
-		//inflate entering word layout
+/*		//inflate entering word layout
 		inflateCharsLine(enteringWordLayout, 
-        		null, run2.wordLength , -1);
+        		null, run2.wordLength , -1);*/
 		
 		//TODO any alphabets
 		//inflate alphabet layout
-        inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-        		run2.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
+//        inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
+//        		run2.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
         
+		((Button)findViewById(R.id.ShowAlphabetButton)).setOnClickListener(this);
+		
         //inflate secret word layout
         LinearLayout layout = (LinearLayout) findViewById(R.id.SecretLayout);
 		inflateCharsLine(layout, null, run2.wordLength, -1);
@@ -241,8 +241,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 
 	public void onClick(View v) {
-		if (v.getId() == R.id.AlphabetCharView) {
-			LinearLayout enteringWordLayout2 = enteringWordLayout;
+		switch (v.getId()) {
+		case R.id.AlphabetCharView: 
+			/*LinearLayout enteringWordLayout2 = enteringWordLayout;
 			if (enteringWord.length() >= run.wordLength) {
 				offerWord(enteringWord.toString());
 				
@@ -266,7 +267,28 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			int curPos = enteringWord.length() - 1;
 			CharView ecv = (CharView)enteringWordLayout2.getChildAt(curPos);
 			//for newly added char PosTable may have already set position and no updates will be sent - force posMatched
-			ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);
+			ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);*/
+			break;
+		case R.id.ShowAlphabetButton:
+			Intent intent = new Intent(this, DigitalAlphabetActivity.class);
+            startActivityForResult(intent, RESULT_FIRST_USER + 1);	//doesn't matter what code to use
+			break;
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.v("Main", "onActivityResult returned " + resultCode);
+		switch (resultCode) {
+			case RESULT_CANCELED:
+				//nothing to do
+				break;
+			case RESULT_OK:
+				String wordOffered = data.getAction();
+				Log.i("Main", "alphabetActivity returned \"" + wordOffered + "\"");
+				if (wordOffered != null && wordOffered.length() == run.wordLength)
+					offerWord(wordOffered);
+				break;
 		}
 	}
 
@@ -303,22 +325,23 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
 		return super.onOptionsItemSelected(item);
 	}
-
+	
+	
 	///////////////////////////////////////////////////////////
 	//Inflaters
 	///////////////////////////////////////////////////////////
 	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
 		for (int i = 0; i < length; i++) {
-        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, la, false);		//is it possible just to "clone" CharView? - inflate involves xml parsing
+        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, la, false);
         	cv.paint = paint;
         	if (chars != null)
         		cv.setChar(chars[i]);
         	if (viewId != -1)
         		cv.setId(viewId);
-        	if (viewId == R.id.AlphabetCharView)
+/*        	if (viewId == R.id.AlphabetCharView)
         		cv.setOnClickListener(this);	//enter new word by clicks
-        	if(la.getId() == R.id.EnteringLayout || 
+*/        	if(/*la.getId() == R.id.EnteringLayout ||*/ 
         	   la.getId() == R.id.SecretLayout) {
         		cv.setViewPos(i);				//to mark "bull" in these words
         		run.posTable.addAllPosCharStateChangedListener(cv);		
