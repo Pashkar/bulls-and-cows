@@ -4,5 +4,6 @@
 	<dimen name="char_width">30px</dimen>
 	<dimen name="char_height">30px</dimen>
 	<dimen name="char_margin_left">1px</dimen>
-	<dimen name="line_top_padding">1px</dimen>
+	<dimen name="line_top_margin">1px</dimen>
+	<dimen name="view_top_margin">10px</dimen>
 </resources>

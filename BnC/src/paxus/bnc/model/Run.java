@@ -18,7 +18,7 @@ public final class Run implements Externalizable {
 	
 	public Word secret;
 	
-	public Char[] secretLine = new Char[MAX_WORD_LENGTH];
+	public Char[] secretLine = new Char[MAX_WORD_LENGTH];	//store displayed secret line to serialize it in complex
 	
 	public PositionTable posTable;
 	

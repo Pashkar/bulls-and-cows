@@ -12,40 +12,21 @@
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
 		android:layout_alignParentLeft="true" 
-		android:orientation="horizontal" android:layout_marginTop="10px"/>
-	
-		<!-- Entering -->
-		<!--<LinearLayout
-			android:id="@+id/EnteringLayout"
-			android:gravity="right"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true" 
-			android:orientation="horizontal"
-			android:paddingTop="0px"
-			android:paddingBottom="0px">
-		</LinearLayout>-->
-
-
-	<RelativeLayout
-		android:layout_width="fill_parent" 
-		android:layout_height="fill_parent" 
-		android:orientation="horizontal"
-		android:paddingBottom="0px"
-		android:persistentDrawingCache="all"
-		android:drawingCacheQuality="high" android:animationCache="true" 
-		android:alwaysDrawnWithCache="true" android:layout_marginTop="10px">
-
+		android:orientation="horizontal" 
+		android:layout_marginTop="@dimen/view_top_margin"/>
+		
 		<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
-		<!--  TODO play with cache -->
 		<ScrollView
 			android:id="@+id/ScrollOfferedsLayout"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"  
 			android:persistentDrawingCache="all"
-			android:drawingCacheQuality="high" android:animationCache="true" 
-			android:alwaysDrawnWithCache="true">
+			android:drawingCacheQuality="high" 
+			android:animationCache="true" 
+			android:alwaysDrawnWithCache="true"
+			android:layout_weight="1.0"
+			android:layout_marginTop="@dimen/view_top_margin">
 		 	
 		 	<!-- Offers -->
 			<LinearLayout
@@ -53,42 +34,26 @@
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content" 
 				android:orientation="vertical"
-				android:clipChildren="false"
-				android:layout_marginTop="3px"/>
+				android:clipChildren="false"/>
 		
 		</ScrollView>
-		
 		
 		<!-- PosTable: To contain various number of LinearLayouts of PosTable-->
 		<LinearLayout
 			android:id="@+id/PositioningLayout"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
 			android:orientation="vertical"
-			android:paddingTop="0px"
-			android:paddingBottom="0px">
+			android:layout_marginTop="@dimen/view_top_margin">
 		</LinearLayout>
-		
-		<!-- Alphabet: There must be independent layout for each predefined alphabets -->
-		<!--<LinearLayout
-			android:id="@+id/DigitalAlphabetLayout"		
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_alignParentBottom="true" 
-			android:orientation="horizontal"
-			android:paddingTop="0px"
-			android:paddingBottom="0px">
-		</LinearLayout>-->
 		
 		<Button 
 			android:id="@+id/ShowAlphabetButton"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:text="123"
-			android:layout_alignParentRight="true" android:layout_alignParentBottom="true"/>
+			android:layout_alignParentBottom="true"/>
 		
-	</RelativeLayout>
+	<!--</RelativeLayout>-->
 	
 </LinearLayout>
