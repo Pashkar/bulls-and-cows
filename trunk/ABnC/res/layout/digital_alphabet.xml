@@ -16,8 +16,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:orientation="vertical" 
-		android:gravity="center_vertical|center_horizontal">
+		android:orientation="vertical"> 
+
+	<!-- Secret -->
+	<LinearLayout
+		android:id="@+id/SecretLayout"
+		android:gravity="left"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_marginTop="@dimen/view_top_margin"
+		android:layout_marginLeft="@dimen/total_left_margin"		
+		android:orientation="horizontal"/> 
 
 	<!-- Entering -->
 	<LinearLayout
@@ -26,8 +35,9 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:paddingTop="0px"
-			android:paddingBottom="0px">
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginLeft="@dimen/total_left_margin"
+			>
 	</LinearLayout>
 
 	<!-- Digital alphabet -->
@@ -36,7 +46,6 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:paddingBottom="0px" 
 			android:layout_marginTop="30px">
 	</LinearLayout>
 	
@@ -45,7 +54,8 @@
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:paddingBottom="0px" android:layout_marginTop="30px" android:gravity="right">
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:gravity="right">
 	
 			<Button 
 					android:id="@+id/DelButton"
@@ -53,7 +63,6 @@
 					android:layout_height="wrap_content"
 					android:text="del"
 					android:enabled="false"
-					android:gravity="left"
 			/>
 	
 			<Button 
@@ -61,7 +70,6 @@
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
 					android:text="Cancel"
-					android:gravity="right"
 			/>
 		
 			<Button 
@@ -69,7 +77,6 @@
 					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
 					android:text="OK"
-					android:gravity="right"
 					android:enabled="false"
 					android:layout_marginLeft="30px"/>
 	</LinearLayout>

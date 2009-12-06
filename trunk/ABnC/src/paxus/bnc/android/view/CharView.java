@@ -27,6 +27,8 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	private Char ch = Char.NULL;
 	
+	public boolean changeStateOnClick = true; 
+	
 	/**
 	 *	For "bull" when position of CharView pointed. Stores for the CharView instance position of it in word.
 	 *	Compared to position in PosTable, marked by user 
@@ -135,7 +137,8 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	public void onClick(View v) {
 		try {
-			ch.moveState();		//if state really changes - onStateChanged will be notified
+			if (changeStateOnClick)
+				ch.moveState();		//if state really changes - onStateChanged will be notified
 		} catch (BncException e) {};
 	}
 	

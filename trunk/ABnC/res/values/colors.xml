@@ -17,5 +17,5 @@
 <resources>
 	<drawable name="screen_background_white">#ffFFFFFF</drawable>
 	<drawable name="paint_color">#ffFFFFFF</drawable>
-    <drawable name="translucent_background">#cc999999</drawable>
+    <drawable name="translucent_background">#ee999999</drawable>
 </resources>

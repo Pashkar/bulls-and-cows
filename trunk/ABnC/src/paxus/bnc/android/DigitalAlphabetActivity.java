@@ -50,12 +50,25 @@ public class DigitalAlphabetActivity extends Activity implements OnClickListener
 	}
 	
 	private void initAllViews() {
+        //inflate secret word layout
+        LinearLayout layout = (LinearLayout) findViewById(R.id.SecretLayout);
+		final Run run2 = run;
+		inflateCharsLine(layout, null, run2.wordLength, -1);
+		//restore secret line serialized by Run object
+		for (int i = 0; i < run2.wordLength; i++) {
+			Char ch = run2.secretLine[i];
+			CharView cv = (CharView)layout.getChildAt(i);
+			cv.setChar(ch, i == run2.posTable.getPresentPos(ch.ch));
+			cv.changeStateOnClick = false;	//secret word should not react on clicks, just listen to changes produced by others
+		}
+		
 		//inflate entering word layout
 		inflateCharsLine(enteringWordLayout, 
-        		null, run.wordLength , -1);
+        		null, run2.wordLength , -1);
 		
+		//inflate alphabet layout
         inflateCharsLine((LinearLayout) findViewById(R.id.DigitalAlphabetLayout), 
-        		run.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
+        		run2.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
 	}
 	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
@@ -104,8 +117,7 @@ public class DigitalAlphabetActivity extends Activity implements OnClickListener
 				//for newly added char PosTable may have already set position and no updates will be sent - force posMatched
 				ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);
 				
-				okButton.setEnabled(enteringWord.length() >= run.wordLength);
-				delButton.setEnabled(enteringWord.length() > 0);
+				updateButtonsEnabled();
 				break;
 			case R.id.DelButton:
 				curPos = enteringWord.length() - 1;
@@ -114,7 +126,8 @@ public class DigitalAlphabetActivity extends Activity implements OnClickListener
 					ecv.resetChar();
 					enteringWord.deleteCharAt(curPos);
 				}
-				delButton.setEnabled(enteringWord.length() > 0);
+				
+				updateButtonsEnabled();
 				break;
 			case R.id.CancelButton:
 				setResult(RESULT_CANCELED, null);
@@ -125,6 +138,11 @@ public class DigitalAlphabetActivity extends Activity implements OnClickListener
 	            finish();
 			break;
 		}
+	}
+
+	private void updateButtonsEnabled() {
+		okButton.setEnabled(enteringWord.length() >= run.wordLength);
+		delButton.setEnabled(enteringWord.length() > 0);
 	}
 	
 }
