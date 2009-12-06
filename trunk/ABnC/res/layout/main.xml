@@ -5,31 +5,17 @@
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
 	
-	<!--
-	TODO	Try to simplify hierarchy - put everything to the only Relative Layout
-	-->
+	<!-- Secret -->
+	<LinearLayout
+		android:id="@+id/SecretLayout"
+		android:gravity="left"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true" 
+		android:orientation="horizontal" android:layout_marginTop="10px"/>
 	
-	<RelativeLayout 
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content" 
-		android:orientation="horizontal"
-		android:paddingTop="0px"
-		android:paddingBottom="0px">
-
-		<!-- Secret -->
-		<LinearLayout
-			android:id="@+id/SecretLayout"
-			android:gravity="left"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"
-			android:layout_alignParentLeft="true" 
-			android:orientation="horizontal"
-			android:paddingTop="0px"
-			android:paddingBottom="0px"
-			/>
-		
 		<!-- Entering -->
-		<LinearLayout
+		<!--<LinearLayout
 			android:id="@+id/EnteringLayout"
 			android:gravity="right"
 			android:layout_width="wrap_content"
@@ -38,16 +24,17 @@
 			android:orientation="horizontal"
 			android:paddingTop="0px"
 			android:paddingBottom="0px">
-		</LinearLayout>
-		
-	</RelativeLayout>
+		</LinearLayout>-->
+
 
 	<RelativeLayout
 		android:layout_width="fill_parent" 
 		android:layout_height="fill_parent" 
 		android:orientation="horizontal"
-		android:paddingTop="10px"
-		android:paddingBottom="0px">
+		android:paddingBottom="0px"
+		android:persistentDrawingCache="all"
+		android:drawingCacheQuality="high" android:animationCache="true" 
+		android:alwaysDrawnWithCache="true" android:layout_marginTop="10px">
 
 		<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
 		<!--  TODO play with cache -->
@@ -56,8 +43,9 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"  
-			android:paddingTop="0px"
-			android:paddingBottom="0px">
+			android:persistentDrawingCache="all"
+			android:drawingCacheQuality="high" android:animationCache="true" 
+			android:alwaysDrawnWithCache="true">
 		 	
 		 	<!-- Offers -->
 			<LinearLayout
@@ -65,11 +53,8 @@
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content" 
 				android:orientation="vertical"
-				android:paddingTop="0px"
-				android:paddingBottom="0px"
-				android:paddingRight="5px"
 				android:clipChildren="false"
-				/>
+				android:layout_marginTop="3px"/>
 		
 		</ScrollView>
 		
@@ -86,7 +71,7 @@
 		</LinearLayout>
 		
 		<!-- Alphabet: There must be independent layout for each predefined alphabets -->
-		<LinearLayout
+		<!--<LinearLayout
 			android:id="@+id/DigitalAlphabetLayout"		
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
@@ -95,7 +80,14 @@
 			android:orientation="horizontal"
 			android:paddingTop="0px"
 			android:paddingBottom="0px">
-		</LinearLayout>
+		</LinearLayout>-->
+		
+		<Button 
+			android:id="@+id/ShowAlphabetButton"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:text="123"
+			android:layout_alignParentRight="true" android:layout_alignParentBottom="true"/>
 		
 	</RelativeLayout>
 	
