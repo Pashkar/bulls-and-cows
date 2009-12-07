@@ -5,6 +5,7 @@
 		android:layout_height="@dimen/char_height"
 		android:gravity="left"
 		android:layout_marginTop="@dimen/line_top_margin"
+		android:layoutAnimation="@anim/layout_random_fade_in"
 		>
 	
 </LinearLayout>
