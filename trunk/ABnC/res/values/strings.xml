@@ -4,5 +4,13 @@
     <string name="diplicated_msg">Duplicated symbol</string>
     <string name="word_too_long_msg">Word is too long</string>
     <string name="new_game">Start new game</string>
+    <string name="new_game_conf">Do you really want to start new game?</string>
     <string name="new_word">Guess...</string>
+    <string name="win_msg">You win!</string>
+    <string name="clear_marks">Clear marks</string>
+    <string name="clear_marks_conf">Clear all marks?</string>
+    <string name="word_length">Puzzle size</string>
+    <string name="alphabet">Puzzle alphabet</string>
+    <string name="give_up">Give up</string>
+    <string name="give_up_conf">Are you sure you want to give up?</string>
 </resources>

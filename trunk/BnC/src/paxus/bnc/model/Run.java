@@ -10,7 +10,8 @@ import paxus.bnc.BncException;
 
 public final class Run implements Externalizable {
 
-	public static final int MAX_WORD_LENGTH = 10;
+	public static final int MIN_WORD_LENGTH = 3;
+	public static final int MAX_WORD_LENGTH = 7;
 	
 	public int wordLength;
 	
@@ -104,5 +105,10 @@ public final class Run implements Externalizable {
 		public String toString() {
 			return word + " -> " + result;
 		}
+	}
+
+	public void clearMarks() throws BncException {
+		for (Char ch : alphabet.getAllChars())
+			ch.moveState(ENCharState.ABSENT, ENCharState.PRESENT);
 	}
 }
