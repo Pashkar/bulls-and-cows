@@ -3,7 +3,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent" 
 		android:layout_height="@dimen/char_height"
-		android:gravity="left"
 		android:layout_marginTop="@dimen/line_top_margin"
 		android:layoutAnimation="@anim/layout_random_fade_in"
 		>

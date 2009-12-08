@@ -106,7 +106,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);	//TODO replace with GridLayout?
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		scrollView = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
-		
+		freePosLayoutList.clear();
 
 		//TODO separate layouts for portrait and landscape orientations
 /*		orientationListener = new OrientationEventListener(this) {
@@ -120,7 +120,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
 		Run run = initRun();
 		
-		if (run != null)	//no dialogs
+		if (run != null)	//no dialogs, restored saved run
 			initViews();
 	}
 
@@ -216,17 +216,18 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			run = null;
 			run = restoreSavedRun();	//not null if restored 
 			re.run = run;
-			
-		} catch (Exception e) {
+			return run;
+		} 
+		catch (Exception e) {
 			Log.i("Main", "restoreSavedState failed");
-			try { 
-				
-				startNewRun();	//invokes dialog chain, return null immediately
-				
-			} catch (BncException e1) { Log.e("Main", "startNewRun failed", e1); }
 		}
 		
-		return run;
+		//if failed to restore saved
+		try { 
+			startNewRun();	//invokes dialog chain, return null immediately
+		} 
+		catch (BncException e1) { Log.e("Main", "startNewRun failed", e1); }
+		return null;
 	}
 
 	private void initViews() {

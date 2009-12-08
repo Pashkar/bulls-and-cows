@@ -13,11 +13,14 @@
 		<LinearLayout
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
-			android:orientation="horizontal" 
+			android:orientation="horizontal"
+			android:gravity="center_horizontal" 
 			android:layout_marginTop="@dimen/view_top_margin"
-			android:layout_marginLeft="@dimen/total_left_margin"
 			>
-		
+			<!--
+			android:layout_marginLeft="@dimen/total_left_margin"
+			-->
+			
 			<!-- Secret -->
 			<LinearLayout
 				android:id="@+id/SecretLayout"
@@ -41,7 +44,7 @@
 	<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
 	<ScrollView
 		android:id="@+id/ScrollOfferedsLayout"
-		android:layout_width="wrap_content" 
+		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:persistentDrawingCache="all"
 		android:drawingCacheQuality="high" 
@@ -50,15 +53,16 @@
 		android:layout_weight="1.0"
 		android:scrollbarStyle="outsideInset"
 		android:layout_below="@id/SecretLayout"
-		android:layout_marginLeft="@dimen/total_left_margin"
+					android:gravity="center_horizontal" 
 		android:layout_marginTop="@dimen/view_top_margin">
 	 	
 	 	<!-- Offers -->
 		<LinearLayout
 			android:id="@+id/OfferedsLayout"
-			android:layout_width="wrap_content" 
+			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" 
 			android:orientation="vertical"
+			android:gravity="center_horizontal"
 			/>
 	
 	</ScrollView>
@@ -71,10 +75,10 @@
 	<!-- PosTable: To contain various number of LinearLayouts of PosTable-->
 	<LinearLayout
 		android:id="@+id/PositioningLayout"
-		android:layout_width="wrap_content" 
+		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:layout_marginLeft="@dimen/total_left_margin"
+					android:gravity="center_horizontal" 
 		android:layout_marginTop="@dimen/view_top_margin"/>
 		
 </LinearLayout>
