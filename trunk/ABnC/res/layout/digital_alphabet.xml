@@ -46,7 +46,9 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:layout_marginTop="30px">
+			android:layout_marginTop="30px"
+			android:layout_weight="1"
+			>
 	</LinearLayout>
 	
 	<!-- Buttons -->
@@ -55,30 +57,34 @@
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:layout_marginTop="@dimen/view_top_margin"
-			android:gravity="right">
+			android:background="@drawable/screen_background_white"
+			android:padding="5px"
+			android:gravity="fill_horizontal"
+			>
 	
 			<Button 
 					android:id="@+id/DelButton"
-					android:layout_width="wrap_content" 
+					android:layout_width="100px" 
 					android:layout_height="wrap_content"
-					android:text="del"
+					android:text="Del"
 					android:enabled="false"
 			/>
 	
 			<Button 
 					android:id="@+id/CancelButton"
-					android:layout_width="wrap_content" 
 					android:layout_height="wrap_content"
 					android:text="Cancel"
+					android:layout_width="fill_parent"
+					android:layout_weight="1.0"
 			/>
 		
 			<Button 
 					android:id="@+id/OkButton"
-					android:layout_width="wrap_content" 
+					android:layout_width="100px" 
 					android:layout_height="wrap_content"
 					android:text="OK"
 					android:enabled="false"
-					android:layout_marginLeft="30px"/>
+					/>
 	</LinearLayout>
 	
 
