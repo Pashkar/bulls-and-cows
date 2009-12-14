@@ -8,18 +8,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.LinearLayout.LayoutParams;
 
 public final class EnteringPanel implements OnClickListener {
 
 	private StringBuffer enteringWord;
 
 	private LinearLayout enteringWordLayout;
-
-	private LinearLayout alphabetLayout;
 
 	private Toast tooLongWordToast;
 
@@ -33,13 +33,17 @@ public final class EnteringPanel implements OnClickListener {
 
 	private final OnWordOfferedListener callback;
 
+	private LayoutParams digitalAlphaberCharLP;
+
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
 		Log.v("EnteringPanel", "<init>");
 		this.callback = callback;
 		this.run = Main.run;
 		Run run2 = run;
 		tooLongWordToast = Toast.makeText(context, R.string.word_too_long_msg, Toast.LENGTH_SHORT);
+		tooLongWordToast.setGravity(Gravity.TOP, 0, 50);
 		duplicatedCharToast = Toast.makeText(context, R.string.diplicated_msg, Toast.LENGTH_SHORT);
+		duplicatedCharToast.setGravity(Gravity.TOP, 0, 50);
 		
 		int alphabetLayoutId = -1;
 		if (Alphabet.DIGITAL.equals(run2.alphabet.getName()))
@@ -50,9 +54,8 @@ public final class EnteringPanel implements OnClickListener {
 		panelView = Main.layoutInflater.inflate(alphabetLayoutId, null);
 
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
-		inflateCharsLine(enteringWordLayout, null, run2.wordLength , -1);
-		alphabetLayout = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout);
-		inflateCharsLine(alphabetLayout, run2.alphabet.getAllChars().toArray(new Char[10]), 10, R.id.AlphabetCharView);
+		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.char_view, -1);
+		inflateAlphabetLines(alphabetLayoutId);
 		
         panelDialog = new AlertDialog.Builder(context)
 		.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -65,6 +68,18 @@ public final class EnteringPanel implements OnClickListener {
 		})
 		.setView(panelView)
 		.create();
+	}
+
+	private void inflateAlphabetLines(int alphabetLayoutId) {
+		Char[] chars = run.alphabet.getAllChars().toArray(new Char[10]);
+		switch (alphabetLayoutId) {
+			case R.layout.digital_alphabet_for_dialog:	//2 lines
+				LinearLayout line1 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
+				inflateCharsLine(line1, chars, 0, 5, R.layout.digital_alphabet_char_view, R.id.DigitalAlphabetCharView);
+				LinearLayout line2 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
+				inflateCharsLine(line2, chars, 5, 10, R.layout.digital_alphabet_char_view, R.id.DigitalAlphabetCharView);
+			break;
+		}
 	}
 
 	public void onClick(View v) {
@@ -88,16 +103,20 @@ public final class EnteringPanel implements OnClickListener {
 		ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);		
 	}
 
-	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
-		for (int i = 0; i < length; i++) {
-        	CharView cv = (CharView) Main.layoutInflater.inflate(R.layout.char_view, la, false);
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int from, int to, int layoutId, int viewId) {
+		for (int i = from; i < to; i++) {
+        	CharView cv = (CharView) Main.layoutInflater.inflate(layoutId, la, false);
         	cv.paint = Main.paint;
         	if (chars != null)
         		cv.setChar(chars[i]);
         	if (viewId != -1)
         		cv.setId(viewId);
-        	if (la.getId() == R.id.AlphabetLayout)
+        	if (viewId == R.id.DigitalAlphabetCharView) {
+        		if (digitalAlphaberCharLP == null)	//lazy init
+        			digitalAlphaberCharLP = new LayoutParams(40, 40);
+        		cv.setLayoutParams(digitalAlphaberCharLP);
         		cv.setOnClickListener(this);
+        	}
         	if (la.getId() == R.id.EnteringLayout) {
 				cv.setViewPos(i);
 				cv.changeStateOnClick = false;

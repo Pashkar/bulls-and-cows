@@ -1,20 +1,9 @@
 package paxus.bnc.android;
 
-import paxus.bnc.android.view.CharView;
-import paxus.bnc.model.Char;
-import paxus.bnc.model.Run;
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
-public class DigitalAlphabetActivity extends Activity implements OnClickListener{
+public class DigitalAlphabetActivity /* extends Activity implements OnClickListener*/{
 
-	private LinearLayout enteringWordLayout;
+	/*private LinearLayout enteringWordLayout;
 	private Run run; 
 
 	private StringBuffer enteringWord;
@@ -141,5 +130,5 @@ public class DigitalAlphabetActivity extends Activity implements OnClickListener
 		okButton.setEnabled(enteringWord.length() >= run.wordLength);
 		delButton.setEnabled(enteringWord.length() > 0);
 	}
-	
+*/	
 }

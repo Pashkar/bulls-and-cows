@@ -11,6 +11,8 @@ public class ComparisonResultView extends View {
 
 	private Paint paint;
 	private WordComparisonResult result;
+	private int xOffset = -1;
+	private int yOffset = -1;
 
 	public ComparisonResultView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -33,6 +35,11 @@ public class ComparisonResultView extends View {
 		if (result == null)
 			return;
 		String str = result.bullsCount + " : " + result.cowsCount;
-		canvas.drawText(str, getPaddingLeft() + getWidth() / 2, getPaddingTop() + getHeight(), paint);
+    	if (xOffset == -1)
+    		xOffset = getPaddingLeft() + getWidth() / 2;
+    	if (yOffset == -1)
+    		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
+
+		canvas.drawText(str, xOffset, yOffset, paint);
 	}
 }

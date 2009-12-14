@@ -16,7 +16,7 @@
 
 <resources>
 
-  <item type="id" name="AlphabetCharView" />
+  <!--<item type="id" name="DigitalAlphabetCharView" />-->
 
   
 </resources>

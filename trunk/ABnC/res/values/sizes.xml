@@ -4,10 +4,13 @@
 	<dimen name="char_width">30px</dimen>
 	<dimen name="char_height">30px</dimen>
 	<dimen name="comp_result_width">60px</dimen>
+	<dimen name="digital_alphabet_char_width">50px</dimen>
+	<dimen name="digital_alphabet_char_height">50px</dimen>
 	
 	<dimen name="char_margin_left">1px</dimen>
 	<dimen name="comp_result_margin_left">10px</dimen>
 	<dimen name="line_top_margin">1px</dimen>
+	<dimen name="alphabet_line_margin">10px</dimen>
 	<dimen name="view_top_margin">3px</dimen>
 	<dimen name="total_left_margin">20px</dimen>
 </resources>
