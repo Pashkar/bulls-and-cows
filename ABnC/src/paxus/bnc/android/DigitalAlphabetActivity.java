@@ -5,7 +5,6 @@ import paxus.bnc.model.Char;
 import paxus.bnc.model.Run;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 public class DigitalAlphabetActivity extends Activity implements OnClickListener{
 
-	private Paint paint;
 	private LinearLayout enteringWordLayout;
 	private Run run; 
 
@@ -36,7 +34,6 @@ public class DigitalAlphabetActivity extends Activity implements OnClickListener
 		Log.v("DigitalAlphabetActivity", "initActivity");
 		run = Main.run;
 		
-		paint = Main.createPaint(getResources());
 		enteringWordLayout = (LinearLayout)findViewById(R.id.EnteringLayout);
 		enteringWord = new StringBuffer();
 		
@@ -74,7 +71,7 @@ public class DigitalAlphabetActivity extends Activity implements OnClickListener
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
 		for (int i = 0; i < length; i++) {
         	CharView cv = (CharView) getLayoutInflater().inflate(R.layout.char_view, la, false);
-        	cv.paint = paint;
+        	cv.paint = Main.paint;
         	if (chars != null)
         		cv.setChar(chars[i]);
         	if (viewId != -1)

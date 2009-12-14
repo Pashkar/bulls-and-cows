@@ -32,7 +32,6 @@ import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
@@ -50,34 +49,35 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-public class Main extends Activity implements IPositionTableListener, OnClickListener {
+public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
 	
 	private static final String FNAME_PERSISTENCE = "persistence.dat";
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
 	
-	private LayoutInflater layoutInflater;
+	public static Paint paint;
+	public static LayoutInflater layoutInflater;
+	
+	private EnteringPanel enteringPanel;
+	private SecretWordPanel secretPanel;
 	private LinearLayout offeredsLayout;
 	private LinearLayout posTableLayout;
-	private SecretWordLayoutWrapper secretLayout;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
-	private Paint paint;
 	private LayoutAnimationController lineInAnimation;
 	private LayoutAnimationController lineOutAnimation;
 	private ScrollView scrollView;
 
+	private AlertDialog chooseAlphabetDialog;
+	private AlertDialog chooseWordSizeDialog;
+	private AlertDialog giveUpDialog;
 	private AlertDialog clearMarksDialog;
-	private AlertDialog wordSizeDialog;
-	private AlertDialog alphabetDialog;
 
 	protected int wordSizeChosen;
 	protected int alphabetChosen;
 
-	private AlertDialog giveUpDialog;
-	
-	public static Paint createPaint(Resources resources) {
+	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(16);
@@ -92,13 +92,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         super.onCreate(savedInstanceState);
 		Log.v("Main", "onCreate");
         
+		//init once per activity creation
+		initActivity();
 		initDialogs();
 		
 		run = null;
 		try {
 			run = restoreSavedRun();	//not null if restored
 			re.run = run;
-			initActivity();
+			reinitActivity();
 			layoutViews();
 		} 
 		catch (Exception e) {
@@ -107,17 +109,21 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
     }
 
-	private void initActivity() {
+    private void initActivity() {
+    	paint = createPaint(getResources());
+    	lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
+    	lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
+    	layoutInflater = getLayoutInflater();
+    }
+    
+	private void reinitActivity() {
 		setContentView(R.layout.main);
-		paint = createPaint(getResources());
-		layoutInflater = getLayoutInflater();
-		lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
-		lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);	//TODO replace with GridLayout?
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		scrollView = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
 		
 		freePosLayoutList.clear();
+		enteringPanel = new EnteringPanel(this, this);
 	}
 
 	/**
@@ -128,9 +134,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	 */
 	private void startNewRun(boolean cancellable) {
 		Log.v("Main", "startNewRun");
-		alphabetDialog.setCancelable(cancellable);
-		wordSizeDialog.setCancelable(cancellable);
-		alphabetDialog.show();	 
+		chooseAlphabetDialog.setCancelable(cancellable);
+		chooseWordSizeDialog.setCancelable(cancellable);
+		chooseAlphabetDialog.show();	 
     }
 
 	private void finishStartingNewRun() {
@@ -156,25 +162,25 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			run = re.startNewRun(alphabet, secret);
 		} catch (BncException e) {	}
 		
-		initActivity();
+		reinitActivity();
 		layoutViews();	//finish initialization, interrupted by dialogs chain
 	}
 	
 	private void initDialogs() {
 		//Dialogs chain - Alphabet then WordLength
-		alphabetDialog = new AlertDialog.Builder(this)
+		chooseAlphabetDialog = new AlertDialog.Builder(this)
 		.setTitle(R.string.alphabet)
 		.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				alphabetChosen = which;
 				Log.i("Main", "alphabet chosen: " + alphabetChosen);
 				
-				wordSizeDialog.show();	//ask size in chain
+				chooseWordSizeDialog.show();	//ask size in chain
 			}
 		})
 		.create();
 		
-        wordSizeDialog = new AlertDialog.Builder(this)
+        chooseWordSizeDialog = new AlertDialog.Builder(this)
         .setTitle(R.string.word_length)
         .setItems(R.array.word_length_array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
@@ -222,10 +228,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setMessage(R.string.give_up_conf)
         .create();
         
-        
         //TODO dialog with introduction
 	}
-
+	
 	private void layoutViews() {
 		Log.v("Main", "initViews");
 		Run run2 = run;
@@ -236,7 +241,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         //inflate secret word layout
         LinearLayout layout = (LinearLayout) findViewById(R.id.SecretLayout);
 		inflateCharsLine(layout, null, run2.wordLength, -1);
-		secretLayout = new SecretWordLayoutWrapper(layout);
+		secretPanel = new SecretWordPanel(layout);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
@@ -260,7 +265,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		ArrayList<PositionLine> lines = posTable.lines;
 		if (lines != null && lines.size() > 0)
         	for (PositionLine line : lines)
-        		onPosTableUpdate(true, line.chars[0].ch, line); 
+        		onPosTableUpdate(true, line.chars[0].ch, line);
 	}
 
 	@Override
@@ -338,13 +343,18 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.ShowAlphabetButton:
-			Intent intent = new Intent(this, DigitalAlphabetActivity.class);
-            startActivityForResult(intent, RESULT_FIRST_USER + 1);	//doesn't matter what code to use
+//			Intent intent = new Intent(this, DigitalAlphabetActivity.class);
+//            startActivityForResult(intent, RESULT_FIRST_USER + 1);	//doesn't matter what code to use
+//			alphabetDialog.show();
+			enteringPanel.show();
 			break;
+/*		case R.id.AlphabetCharView:
+
+			break;*/
 		}
 	}
 
-	@Override
+	/*	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.v("Main", "onActivityResult returned " + resultCode);
 		switch (resultCode) {
@@ -357,8 +367,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			default:
 				break;
 		}
+	}*/
+	
+	public void onWordOffered(String word) {
+		Log.v("Main", "word offered = " + word);
+		if (word != null && word.length() == run.wordLength)
+			offerWord(word);
 	}
-
+	
 	private void offerWord(String word) {
 		try {
 			Run.WordCompared wc = re.offerWord(word);
@@ -368,6 +384,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			if (wc.result.guessed())
 				winGame(wc);
 		} catch (BncException e) {}
+	}
+	 
+	private void addOfferedWord(WordCompared wc) throws BncException {
+		offeredsLayout.addView(inflateOfferedLine(wc));
 	}
 
 	private void winGame(WordCompared wc) {
@@ -380,10 +400,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setMessage("Congratulations! You guessed the word \"" + run.secret.asString() + "\" in ??? steps")
         .create()
         .show();
-	}
- 
-	private void addOfferedWord(WordCompared wc) throws BncException {
-		offeredsLayout.addView(inflateOfferedLine(wc));
 	}
 	
 	@Override
@@ -410,7 +426,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return super.onOptionsItemSelected(item);
 	}
 	
-	
 	///////////////////////////////////////////////////////////
 	//Inflaters
 	///////////////////////////////////////////////////////////
@@ -423,6 +438,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         		cv.setChar(chars[i]);
         	if (viewId != -1)
         		cv.setId(viewId);
+/*        	if (la.getId() == R.id.AlphabetLayout)
+        		cv.setOnClickListener(this);
+        	if (la.getId() == R.id.EnteringLayout)
+				cv.setViewPos(i);*/
         	if(la.getId() == R.id.SecretLayout) {
         		cv.setViewPos(i);				//to mark "bull" in these words
         		run.posTable.addAllPosCharStateChangedListener(cv);		
@@ -464,12 +483,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return line;
 	}
 	
-	private class SecretWordLayoutWrapper implements IPosCharStateChangedListener {
+	private class SecretWordPanel implements IPosCharStateChangedListener {
 		
 		public LinearLayout layout;
 		private Run run2;
 
-		public SecretWordLayoutWrapper(LinearLayout layout) {
+		public SecretWordPanel(LinearLayout layout) {
 			this.layout = layout;
 			run2 = run;
 			
