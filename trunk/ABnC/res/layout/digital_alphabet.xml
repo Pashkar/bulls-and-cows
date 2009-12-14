@@ -1,91 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="UTF-8"?>
 
-     Licensed under the Apache License, Version 2.0 (the "License");
-     you may not use this file except in compliance with the License.
-     You may obtain a copy of the License at
-  
-          http://www.apache.org/licenses/LICENSE-2.0
-  
-     Unless required by applicable law or agreed to in writing, software
-     distributed under the License is distributed on an "AS IS" BASIS,
-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     See the License for the specific language governing permissions and
-     limitations under the License.
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:orientation="vertical"> 
-
-	<!-- Secret -->
-	<LinearLayout
-		android:id="@+id/SecretLayout"
-		android:gravity="left"
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_marginTop="@dimen/view_top_margin"
-		android:layout_marginLeft="@dimen/total_left_margin"		
-		android:orientation="horizontal"/> 
+		android:orientation="vertical"
+		android:gravity="center_horizontal"
+		> 
 
 	<!-- Entering -->
 	<LinearLayout
 			android:id="@+id/EnteringLayout"
-			android:gravity="right"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:layout_marginTop="@dimen/view_top_margin"
-			android:layout_marginLeft="@dimen/total_left_margin"
 			>
 	</LinearLayout>
 
 	<!-- Digital alphabet -->
 	<LinearLayout  
-			android:id="@+id/DigitalAlphabetLayout"		
+			android:id="@+id/AlphabetLayout_line1"		
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:layout_marginTop="30px"
-			android:layout_weight="1"
+			android:layout_marginTop="@dimen/alphabet_line_margin"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
 			>
 	</LinearLayout>
-	
-	<!-- Buttons -->
 	<LinearLayout  
-			android:layout_width="fill_parent" 
+			android:id="@+id/AlphabetLayout_line2"		
+			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
 			android:layout_marginTop="@dimen/view_top_margin"
-			android:background="@drawable/screen_background_white"
-			android:padding="5px"
-			android:gravity="fill_horizontal"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
+			android:layout_marginBottom="@dimen/alphabet_line_margin"
 			>
-	
-			<Button 
-					android:id="@+id/DelButton"
-					android:layout_width="100px" 
-					android:layout_height="wrap_content"
-					android:text="Del"
-					android:enabled="false"
-			/>
-	
-			<Button 
-					android:id="@+id/CancelButton"
-					android:layout_height="wrap_content"
-					android:text="Cancel"
-					android:layout_width="fill_parent"
-					android:layout_weight="1.0"
-			/>
-		
-			<Button 
-					android:id="@+id/OkButton"
-					android:layout_width="100px" 
-					android:layout_height="wrap_content"
-					android:text="OK"
-					android:enabled="false"
-					/>
 	</LinearLayout>
 	
-
 </LinearLayout>

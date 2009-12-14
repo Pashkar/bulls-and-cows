@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils;
 public class CharView extends View implements OnClickListener, ICharStateChangedListener, 
 		IPosCharStateChangedListener {
 
+	private static final String TAG = "CharView";
 	public static final int WIDTH = 20;
 	public static final int HEIGHT = 20;
 	static Animation anim;
@@ -54,18 +55,14 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
         if (anim == null)
         	anim = AnimationUtils.loadAnimation(context, R.anim.char_fade_in_anim);
 	}
+
+	public void setChar(Char ch, boolean posMatched) {
+		this.posMatched = posMatched;
+		setChar(ch);
+	}
 	
 	public void setChar(Char ch) {
 		this.ch = ch;
-		ch.addStateChangedListener(this);
-//		invalidate();
-		setBackground();
-		startAnimation(anim);
-	}
-
-	public void setChar(Char ch, boolean posMatched) {
-		this.ch = ch;
-		this.posMatched = posMatched;
 		ch.addStateChangedListener(this);
 //		invalidate();
 		setBackground();
@@ -171,9 +168,17 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		} catch (BncException e) {};
 	}
 	
-	
-	
-	
+	//Once we start receiving events on one touch action, we receive all the rest until touch released. 
+	//No way for another view to start receiving events even if actions is dragged far from this one.
+	//Decided to handle touch events on higher level of view hierarchy and pass down to view under a finger.
+/*	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		Log.v(TAG, this + ": onTouchEvent, event = " + event + ", witdh = " + getWidth());
+		boolean res = event.getX() <= 30;
+		Log.v(TAG, "return " + res);
+		return res;
+	}*/
+
 	public void onCharStateChanged(Character ch, ENCharState newState) {
 //		invalidate();
 		startAnimation(anim);

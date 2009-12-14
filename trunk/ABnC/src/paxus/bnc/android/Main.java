@@ -51,6 +51,8 @@ import android.widget.ScrollView;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
 	
+	private static final String TAG = "Main";
+
 	private static final String FNAME_PERSISTENCE = "persistence.dat";
 
 	private final RunExecutor re = new RunExecutor();
@@ -90,7 +92,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-		Log.v("Main", "onCreate");
+		Log.v(TAG, "onCreate");
         
 		//init once per activity creation
 		initActivity();
@@ -104,7 +106,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			layoutViews();
 		} 
 		catch (Exception e) {
-			Log.i("Main", "restoreSavedState failed");
+			Log.i(TAG, "restoreSavedState failed");
 			startNewRun(false);	//invokes dialog chain, return null immediately
 		}
     }
@@ -133,7 +135,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	 *	@see Main#finishStartingNewRun()
 	 */
 	private void startNewRun(boolean cancellable) {
-		Log.v("Main", "startNewRun");
+		Log.v(TAG, "startNewRun");
 		chooseAlphabetDialog.setCancelable(cancellable);
 		chooseWordSizeDialog.setCancelable(cancellable);
 		chooseAlphabetDialog.show();	 
@@ -173,7 +175,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				alphabetChosen = which;
-				Log.i("Main", "alphabet chosen: " + alphabetChosen);
+				Log.i(TAG, "alphabet chosen: " + alphabetChosen);
 				
 				chooseWordSizeDialog.show();	//ask size in chain
 			}
@@ -185,7 +187,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setItems(R.array.word_length_array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             	wordSizeChosen = Run.MIN_WORD_LENGTH + which;
-            	Log.i("Main", "word size chosen: " + wordSizeChosen);
+            	Log.i(TAG, "word size chosen: " + wordSizeChosen);
             	
             	finishStartingNewRun();
             }
@@ -197,7 +199,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setTitle(R.string.clear_marks)
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-            	Log.i("Main", "Clear marks");
+            	Log.i(TAG, "Clear marks");
             	try {
 					run.clearMarks();
 				} catch (BncException e) {}
@@ -214,7 +216,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setTitle(R.string.give_up)
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-            	Log.i("Main", "Give up");
+            	Log.i(TAG, "Give up");
             	new AlertDialog.Builder(Main.this)
                 		.setMessage("The word was: \n" + run.secret.asString().toUpperCase())
                 		.show();
@@ -232,7 +234,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	
 	private void layoutViews() {
-		Log.v("Main", "initViews");
+		Log.v(TAG, "initViews");
 		Run run2 = run;
 		PositionTable posTable = run2.posTable;
 		
@@ -258,7 +260,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	        	for (WordCompared wc : wordsCompared)
 						addOfferedWord(wc);
 		} catch (BncException e) {
-			Log.e("Main", "restore offered words failed", e);
+			Log.e(TAG, "restore offered words failed", e);
 		}
 		
 		//restore PosTable
@@ -271,7 +273,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	@Override
 	protected void onPause() {
 		super.onPause();
-		Log.v("Main", "onPause");
+		Log.v(TAG, "onPause");
 		
 		ObjectOutputStream oos = null;
 		try {
@@ -279,7 +281,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			oos = new ObjectOutputStream(new BufferedOutputStream(fos));
 			oos.writeObject(run);
 		} catch (Exception e) {
-			Log.e("Main", "onPause", e);
+			Log.e(TAG, "onPause", e);
 		}
 		finally {
 			if (oos != null)
@@ -288,7 +290,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	
 	private Run restoreSavedRun() throws Exception {
-		Log.v("Main", "restoreSavedState");
+		Log.v(TAG, "restoreSavedState");
 		ObjectInputStream ois = null;
 		Run run = null;
 		try {
@@ -370,7 +372,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}*/
 	
 	public void onWordOffered(String word) {
-		Log.v("Main", "word offered = " + word);
+		Log.v(TAG, "word offered = " + word);
 		if (word != null && word.length() == run.wordLength)
 			offerWord(word);
 	}
@@ -380,7 +382,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			Run.WordCompared wc = re.offerWord(word);
 			addOfferedWord(wc);
 			scrollView.smoothScrollTo(0, 100000);
-			Log.i("Main", "offerWord = " + wc);
+			Log.i(TAG, "offerWord = " + wc);
 			if (wc.result.guessed())
 				winGame(wc);
 		} catch (BncException e) {}

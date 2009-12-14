@@ -46,7 +46,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 		hideOnDraw = false;
 	}
 	
-	public void clearPosChar() {
+	public void resetPosChar() {
 		pch.removePosStateChangedListener(this);
 		pch = PosChar.NULL;
 		hideOnDraw = false;
