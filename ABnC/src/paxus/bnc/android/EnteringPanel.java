@@ -17,6 +17,8 @@ import android.widget.LinearLayout.LayoutParams;
 
 public final class EnteringPanel implements OnClickListener {
 
+	private static final String TAG = "EnteringPanel";
+
 	private StringBuffer enteringWord;
 
 	private LinearLayout enteringWordLayout;
@@ -36,7 +38,7 @@ public final class EnteringPanel implements OnClickListener {
 	private LayoutParams digitalAlphaberCharLP;
 
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
-		Log.v("EnteringPanel", "<init>");
+		Log.v(TAG, "<init>");
 		this.callback = callback;
 		this.run = Main.run;
 		Run run2 = run;
@@ -47,10 +49,10 @@ public final class EnteringPanel implements OnClickListener {
 		
 		int alphabetLayoutId = -1;
 		if (Alphabet.DIGITAL.equals(run2.alphabet.getName()))
-			alphabetLayoutId = R.layout.digital_alphabet_for_dialog;
+			alphabetLayoutId = R.layout.digital_alphabet;
 		//TODO other alphabets
 		
-		Log.i("EnteringPanel", "alphabetLayoutId = " + alphabetLayoutId);
+		Log.i(TAG, "alphabetLayoutId = " + alphabetLayoutId);
 		panelView = Main.layoutInflater.inflate(alphabetLayoutId, null);
 
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
@@ -73,7 +75,7 @@ public final class EnteringPanel implements OnClickListener {
 	private void inflateAlphabetLines(int alphabetLayoutId) {
 		Char[] chars = run.alphabet.getAllChars().toArray(new Char[10]);
 		switch (alphabetLayoutId) {
-			case R.layout.digital_alphabet_for_dialog:	//2 lines
+			case R.layout.digital_alphabet:	//2 lines
 				LinearLayout line1 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
 				inflateCharsLine(line1, chars, 0, 5, R.layout.digital_alphabet_char_view, R.id.DigitalAlphabetCharView);
 				LinearLayout line2 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
@@ -130,7 +132,7 @@ public final class EnteringPanel implements OnClickListener {
 	}
 
 	public void show() {
-		Log.v("EnteringPanel", "show");
+		Log.v(TAG, "show");
 		for (int i = 0; i < run.wordLength; i++)
 			((CharView)enteringWordLayout.getChildAt(i)).resetChar();
 		enteringWord = new StringBuffer(run.wordLength);
