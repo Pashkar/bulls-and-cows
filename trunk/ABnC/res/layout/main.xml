@@ -17,9 +17,6 @@
 			android:gravity="center_horizontal" 
 			android:layout_marginTop="@dimen/view_top_margin"
 			>
-			<!--
-			android:layout_marginLeft="@dimen/total_left_margin"
-			-->
 			
 			<!-- Secret -->
 			<LinearLayout
@@ -42,7 +39,7 @@
 	/>
 
 	<!-- To contain various number of LinearLayouts of Offered words and results of comparisons -->
-	<ScrollView
+	<!-- <ScrollView
 		android:id="@+id/ScrollOfferedsLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
@@ -50,22 +47,39 @@
 		android:drawingCacheQuality="high" 
 		android:animationCache="true" 
 		android:alwaysDrawnWithCache="true"
-		android:layout_weight="1.0"
+		
 		android:scrollbarStyle="outsideInset"
 		android:layout_below="@id/SecretLayout"
-					android:gravity="center_horizontal" 
-		android:layout_marginTop="@dimen/view_top_margin">
+		android:layout_marginTop="@dimen/view_top_margin"> -->
 	 	
 	 	<!-- Offers -->
-		<LinearLayout
+	 	<!-- TODO - animation -->
+	 	<GridView xmlns:android="http://schemas.android.com/apk/res/android" 
+	 			android:id="@+id/OfferedsGrid"
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+			    android:horizontalSpacing="@dimen/char_margin_left"
+			    android:verticalSpacing="@dimen/line_top_margin"
+			    android:gravity="center" 
+			    android:smoothScrollbar="true"
+			    android:scrollbarStyle="outsideInset"
+			    android:scrollbars="vertical"
+			    android:scrollingCache="true"
+			    android:cacheColorHint="@drawable/screen_background_white"
+			    android:fastScrollEnabled="true"
+			    android:stretchMode="columnWidth"
+			    android:layout_weight="1.0"
+	    />
+	 	
+		<!--<LinearLayout
 			android:id="@+id/OfferedsLayout"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content" 
 			android:orientation="vertical"
 			android:gravity="center_horizontal"
-			/>
+			/>-->
 	
-	</ScrollView>
+	<!-- /ScrollView-->
 	
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
