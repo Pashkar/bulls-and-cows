@@ -36,6 +36,8 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private int viewPos = -1;	
 	
 	private boolean posMatched = false;
+	private int xOffset = -1;
+	private int yOffset = -1;
 	
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -134,8 +136,13 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     
     protected void onDraw(Canvas canvas) {
         setBackground();
-        if (ch != null && paint != null)
-        	canvas.drawText("" + ch.ch, getPaddingLeft() + getWidth() / 2, getPaddingTop() + getHeight(), paint);
+        if (ch != null && paint != null) {
+        	if (xOffset == -1)
+        		xOffset = getPaddingLeft() + getWidth() / 2;
+        	if (yOffset == -1)
+        		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
+			canvas.drawText("" + ch.ch, xOffset, yOffset, paint);
+		}
     }
 
 	//TODO not Background (probably it's stretched), just draw. Use Prescaled
@@ -163,6 +170,9 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 				ch.moveState();		//if state really changes - onStateChanged will be notified
 		} catch (BncException e) {};
 	}
+	
+	
+	
 	
 	public void onCharStateChanged(Character ch, ENCharState newState) {
 //		invalidate();

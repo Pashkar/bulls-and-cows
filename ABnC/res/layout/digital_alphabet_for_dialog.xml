@@ -3,12 +3,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:orientation="vertical"> 
+		android:orientation="vertical"
+		android:gravity="center_horizontal"
+		> 
 
 	<!-- Entering -->
 	<LinearLayout
 			android:id="@+id/EnteringLayout"
-			android:gravity="right"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
@@ -18,12 +19,24 @@
 
 	<!-- Digital alphabet -->
 	<LinearLayout  
-			android:id="@+id/AlphabetLayout"		
+			android:id="@+id/AlphabetLayout_line1"		
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:layout_marginTop="30px"
-			android:layout_weight="1"
+			android:layout_marginTop="@dimen/alphabet_line_margin"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
+			>
+	</LinearLayout>
+	<LinearLayout  
+			android:id="@+id/AlphabetLayout_line2"		
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
+			android:layout_marginBottom="@dimen/alphabet_line_margin"
 			>
 	</LinearLayout>
 	

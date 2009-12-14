@@ -21,6 +21,10 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	private PosChar pch = PosChar.NULL;
 
 	private boolean hideOnDraw = false;
+
+	private int xOffset = -1;
+
+	private int yOffset = -1;
 	
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -96,7 +100,11 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
         	return;
         }
         drawBackground();
-        canvas.drawText("[" + pch.ch + "]", getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
+    	if (xOffset == -1)
+    		xOffset = getPaddingLeft() + getWidth() / 2;
+    	if (yOffset == -1)
+    		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
+        canvas.drawText("[" + pch.ch + "]", xOffset, yOffset, paint);
     }
 
 	public void onClick(View v) {
