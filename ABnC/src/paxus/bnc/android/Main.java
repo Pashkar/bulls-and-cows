@@ -42,12 +42,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
 	
@@ -63,13 +65,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private EnteringPanel enteringPanel;
 	private SecretWordPanel secretPanel;
-	private LinearLayout offeredsLayout;
+//	private LinearLayout offeredsLayout;
+	private GridView offeredsGrid;
 	private LinearLayout posTableLayout;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private LayoutAnimationController lineInAnimation;
 	private LayoutAnimationController lineOutAnimation;
-	private ScrollView scrollView;
 
 	private AlertDialog chooseAlphabetDialog;
 	private AlertDialog chooseWordSizeDialog;
@@ -78,6 +80,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	protected int wordSizeChosen;
 	protected int alphabetChosen;
+
+	private CharLineAdapter offeredsAdapter;
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -120,12 +124,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     
 	private void reinitActivity() {
 		setContentView(R.layout.main);
-		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);	//TODO replace with GridLayout?
+//		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);	//TODO replace with GridLayout?
+		offeredsGrid = (GridView) findViewById(R.id.OfferedsGrid);
+		offeredsGrid.setNumColumns(run.wordLength + 1);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
-		scrollView = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
 		
 		freePosLayoutList.clear();
 		enteringPanel = new EnteringPanel(this, this);
+		offeredsAdapter = new CharLineAdapter();
+		offeredsGrid.setAdapter(offeredsAdapter);
 	}
 
 	/**
@@ -254,6 +261,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         posTable.addPosTableListener(this);
         
         //restore offered words
+/*        try {
+	        final List<WordCompared> wordsCompared = run2.wordsCompared;
+			if (wordsCompared != null && wordsCompared.size() > 0)
+	        	for (WordCompared wc : wordsCompared)
+						addOfferedWord(wc);
+		} catch (BncException e) {
+			Log.e(TAG, "restore offered words failed", e);
+		}*/
         try {
 	        final List<WordCompared> wordsCompared = run2.wordsCompared;
 			if (wordsCompared != null && wordsCompared.size() > 0)
@@ -345,31 +360,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.ShowAlphabetButton:
-//			Intent intent = new Intent(this, DigitalAlphabetActivity.class);
-//            startActivityForResult(intent, RESULT_FIRST_USER + 1);	//doesn't matter what code to use
-//			alphabetDialog.show();
 			enteringPanel.show();
 			break;
-/*		case R.id.AlphabetCharView:
-
-			break;*/
 		}
 	}
 
-	/*	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.v("Main", "onActivityResult returned " + resultCode);
-		switch (resultCode) {
-			case RESULT_OK:
-				String wordOffered = data.getAction();
-				Log.i("Main", "alphabetActivity returned \"" + wordOffered + "\"");
-				if (wordOffered != null && wordOffered.length() == run.wordLength)
-					offerWord(wordOffered);
-				break;
-			default:
-				break;
-		}
-	}*/
 	
 	public void onWordOffered(String word) {
 		Log.v(TAG, "word offered = " + word);
@@ -381,7 +376,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		try {
 			Run.WordCompared wc = re.offerWord(word);
 			addOfferedWord(wc);
-			scrollView.smoothScrollTo(0, 100000);
+//			scrollView.smoothScrollTo(0, 100000);
+//			offeredsGrid.scrollTo(0, 100000);
 			Log.i(TAG, "offerWord = " + wc);
 			if (wc.result.guessed())
 				winGame(wc);
@@ -389,7 +385,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	 
 	private void addOfferedWord(WordCompared wc) throws BncException {
-		offeredsLayout.addView(inflateOfferedLine(wc));
+//		offeredsLayout.addView(inflateOfferedLine(wc));
+		offeredsAdapter.addWord(wc);
+		offeredsAdapter.notifyDataSetChanged();
 	}
 
 	private void winGame(WordCompared wc) {
@@ -465,7 +463,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return line;
 	}
 	
-	private LinearLayout inflateOfferedLine(WordCompared wc) throws BncException {
+/*	private LinearLayout inflateOfferedLine(WordCompared wc) throws BncException {
 		final LayoutInflater layoutInflater2 = layoutInflater;
 		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.offered_line_view, offeredsLayout, false);
 		Run run2 = run;
@@ -483,7 +481,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		crv.setPaint(paint);
 		line.addView(crv);
 		return line;
-	}
+	}*/
 	
 	private class SecretWordPanel implements IPosCharStateChangedListener {
 		
@@ -522,5 +520,58 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				}
 			}
 		}
+	}
+	
+	public class CharLineAdapter extends BaseAdapter {
+
+		private ArrayList<CharView[]> charLines = new ArrayList<CharView[]>();
+		private ArrayList<ComparisonResultView> results = new ArrayList<ComparisonResultView>();
+		
+		public void addWord(WordCompared wc) throws BncException {
+			Log.i(TAG, "CharLineAdapter.addWord, wc = " + wc);
+			Log.d(TAG, "charLines.size = " + charLines.size() + ", results.size = " + results.size());
+			CharView[] line = new CharView[run.wordLength];
+			char[] chars = wc.word.asString().toCharArray();
+			for (int i = 0; i < run.wordLength; i++) {
+				CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, offeredsGrid, false);
+				cv.setChar(Char.valueOf(chars[i], run.alphabet), run.posTable.getPresentPos(chars[i]) == i);
+				cv.setViewPos(i);
+				cv.paint = paint;
+	        	run.posTable.addAllPosCharStateChangedListener(cv);
+				line[i] = cv;
+			}
+			charLines.add(line);
+			
+			ComparisonResultView crv = (ComparisonResultView) layoutInflater.inflate(R.layout.comp_result_view, offeredsGrid, false);
+			crv.setResult(wc.result);
+			crv.setPaint(paint);
+			results.add(crv);
+		}
+		
+		public int getCount() {
+			return charLines.size() * (run.wordLength + 1);
+		}
+
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			int wordLength = run.wordLength;
+			int lineNum = position / (wordLength + 1);
+			int colNum = position % (wordLength + 1);
+			Log.d(TAG, "getView: position = " + position + ", lineNum = " + lineNum + ", colNum = " + colNum);
+			if (colNum == wordLength)	//comparison result
+				return results.get(lineNum);
+			else 
+				return charLines.get(lineNum)[colNum];
+		}
+		
 	}
 }
