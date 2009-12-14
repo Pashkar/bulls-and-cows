@@ -95,7 +95,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
         	setVisibility(View.INVISIBLE);
         	return;
         }
-        drawBackground(canvas);
+        drawBackground();
         canvas.drawText("[" + pch.ch + "]", getPaddingLeft() + WIDTH / 2, getPaddingTop() + HEIGHT, paint);
     }
 
@@ -110,7 +110,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 		startAnimation(anim);
 	}
 
-	private void drawBackground(Canvas canvas) {
+	private void drawBackground() {
 		switch (pch.state) {
 		case NONE:
 			setBackgroundResource(R.drawable.noth);

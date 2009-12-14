@@ -57,6 +57,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		this.ch = ch;
 		ch.addStateChangedListener(this);
 //		invalidate();
+		setBackground();
 		startAnimation(anim);
 	}
 
@@ -65,6 +66,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		this.posMatched = posMatched;
 		ch.addStateChangedListener(this);
 //		invalidate();
+		setBackground();
 		startAnimation(anim);
 	}
 	
@@ -77,6 +79,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		ch = Char.NULL;
 		posMatched = false;
 //		invalidate();
+		setBackground();
 		startAnimation(anim);
 	}
 	
@@ -130,7 +133,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     }
     
     protected void onDraw(Canvas canvas) {
-        drawBackground(canvas);
+        setBackground();
         if (ch != null && paint != null)
         	canvas.drawText("" + ch.ch, getPaddingLeft() + getWidth() / 2, getPaddingTop() + getHeight(), paint);
     }
@@ -138,7 +141,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	//TODO not Background (probably it's stretched), just draw. Use Prescaled
 	//TODO use 9 points pictures
 	//TODO ImageView from xml and then "image.setImageResource(R.drawable.android);" or just from xml
-	private void drawBackground(Canvas canvas) {
+	private void setBackground() {
 		if (ch == null)
 			return;
 		switch (ch.getState()) {
