@@ -191,7 +191,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				wordSizeDialog.show();	//ask size in chain
 			}
 		})
-		.setCancelable(false)
+//		.setCancelable(false)
 		.create();
 		
         wordSizeDialog = new AlertDialog.Builder(this)
@@ -204,7 +204,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
             	finishStartingNewRun();
             }
         })
-        .setCancelable(false)
+//        .setCancelable(false)
         .create();
 
         

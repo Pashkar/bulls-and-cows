@@ -31,7 +31,7 @@
 			<Button 
 				android:id="@+id/ShowAlphabetButton"
 				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content"
+				android:layout_height="35px"
 				android:text="@string/new_word"/>
 		
 		</LinearLayout>	
