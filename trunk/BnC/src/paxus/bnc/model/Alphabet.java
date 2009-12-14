@@ -15,6 +15,8 @@ import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IStatesCounter;
 
 public abstract class Alphabet implements Externalizable, IStatesCounter {
+	public static final String LATIN = "Latin";
+	public static final String DIGITAL = "Digital";	
 	
 	private final HashSet<Character> symbols = new HashSet<Character>();
 	
@@ -149,7 +151,7 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 	public static class Latin extends Alphabet {
 		@Override
 		public String getName() {
-			return "Latin";
+			return LATIN;
 		}
 		@Override
 		protected String getSymbolsLine() {
@@ -160,7 +162,7 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 	public static class Digital extends Alphabet {
 		@Override
 		public String getName() {
-			return "Digital";
+			return DIGITAL;
 		}
 		@Override
 		protected String getSymbolsLine() {
