@@ -6,7 +6,7 @@
 	<dimen name="comp_result_width">60px</dimen>
 	
 	<dimen name="char_margin_left">1px</dimen>
-	<dimen name="comp_result_margin_left">5px</dimen>
+	<dimen name="comp_result_margin_left">10px</dimen>
 	<dimen name="line_top_margin">1px</dimen>
 	<dimen name="view_top_margin">3px</dimen>
 	<dimen name="total_left_margin">20px</dimen>

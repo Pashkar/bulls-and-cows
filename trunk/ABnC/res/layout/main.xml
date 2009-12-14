@@ -7,7 +7,7 @@
 
 		<TextView
 		    style="?android:attr/listSeparatorTextViewStyle"
-		    android:text="Guess the word"
+		    android:text="The secret word"
 		/>
 
 		<LinearLayout

@@ -2,7 +2,6 @@ package paxus.bnc.android;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -70,7 +69,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private ScrollView scrollView;
 
 	private AlertDialog clearMarksDialog;
-	private AlertDialog newGameDialog;
 	private AlertDialog wordSizeDialog;
 	private AlertDialog alphabetDialog;
 
@@ -94,7 +92,19 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         super.onCreate(savedInstanceState);
 		Log.v("Main", "onCreate");
         
-		initActivity();
+		initDialogs();
+		
+		run = null;
+		try {
+			run = restoreSavedRun();	//not null if restored
+			re.run = run;
+			initActivity();
+			layoutViews();
+		} 
+		catch (Exception e) {
+			Log.i("Main", "restoreSavedState failed");
+			startNewRun(false);	//invokes dialog chain, return null immediately
+		}
     }
 
 	private void initActivity() {
@@ -106,26 +116,77 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);	//TODO replace with GridLayout?
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		scrollView = (ScrollView) findViewById(R.id.ScrollOfferedsLayout);
+		
 		freePosLayoutList.clear();
-
-		//TODO separate layouts for portrait and landscape orientations
-/*		orientationListener = new OrientationEventListener(this) {
-			public void onOrientationChanged(int orientation) {
-				Log.v("Main", "onOrientationChanged");
-			}
-		};
-		orientationListener.enable();*/
-		
-		initDialogs();
-		
-		Run run = initRun();
-		
-		if (run != null)	//no dialogs, restored saved run
-			initViews();
 	}
 
+	/**
+	 *	Asks on Alphabet and WodLength in chain:
+	 *	@see Main#initDialogs()
+	 *	Ends up with finishStartingNewRun():
+	 *	@see Main#finishStartingNewRun()
+	 */
+	private void startNewRun(boolean cancellable) {
+		Log.v("Main", "startNewRun");
+		alphabetDialog.setCancelable(cancellable);
+		wordSizeDialog.setCancelable(cancellable);
+		alphabetDialog.show();	 
+    }
+
+	private void finishStartingNewRun() {
+		Alphabet alphabet = new Alphabet.Digital();	//TODO add other alphabets based on alphabetChosen
+		int wordLength = wordSizeChosen;
+		
+		//TODO improve secret generating
+		String secret = "12345";
+		if (alphabet instanceof Alphabet.Digital) {
+			secret = new String();
+			Random rnd = new Random();
+			Set<Character> secretSet = new HashSet<Character>(5);
+			for (int i = 0; i < wordLength; i++) {
+				Character c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
+				while (secretSet.contains(c))	//no duplicates
+					c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
+				secretSet.add(c);
+				secret += c;
+			}
+		}
+
+		try {
+			run = re.startNewRun(alphabet, secret);
+		} catch (BncException e) {	}
+		
+		initActivity();
+		layoutViews();	//finish initialization, interrupted by dialogs chain
+	}
+	
 	private void initDialogs() {
-		clearMarksDialog = new AlertDialog.Builder(this)
+		//Dialogs chain - Alphabet then WordLength
+		alphabetDialog = new AlertDialog.Builder(this)
+		.setTitle(R.string.alphabet)
+		.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				alphabetChosen = which;
+				Log.i("Main", "alphabet chosen: " + alphabetChosen);
+				
+				wordSizeDialog.show();	//ask size in chain
+			}
+		})
+		.create();
+		
+        wordSizeDialog = new AlertDialog.Builder(this)
+        .setTitle(R.string.word_length)
+        .setItems(R.array.word_length_array, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	wordSizeChosen = Run.MIN_WORD_LENGTH + which;
+            	Log.i("Main", "word size chosen: " + wordSizeChosen);
+            	
+            	finishStartingNewRun();
+            }
+        })
+        .create();
+
+        clearMarksDialog = new AlertDialog.Builder(this)
         .setIcon(android.R.drawable.ic_dialog_alert)
         .setTitle(R.string.clear_marks)
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -160,77 +221,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		})
         .setMessage(R.string.give_up_conf)
         .create();
-		
-		newGameDialog = new AlertDialog.Builder(this)
-        .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle(R.string.new_game)
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-            	Log.i("Main", "Start new game");
-				File savedStateFile = getFileStreamPath(FNAME_PERSISTENCE);
-				if (savedStateFile != null && savedStateFile.exists())
-					savedStateFile.delete();
-				initActivity();
-            }
-        })
-        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		})
-        .setMessage(R.string.new_game_conf)
-        .create();
-		
-		
-		//Dialogs chain - Alphabet then WordLength
-		alphabetDialog = new AlertDialog.Builder(this)
-		.setTitle(R.string.alphabet)
-		.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				alphabetChosen = which;
-				Log.i("Main", "alphabet chosen: " + alphabetChosen);
-				
-				wordSizeDialog.show();	//ask size in chain
-			}
-		})
-//		.setCancelable(false)
-		.create();
-		
-        wordSizeDialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.word_length)
-        .setItems(R.array.word_length_array, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            	wordSizeChosen = Run.MIN_WORD_LENGTH + which;
-            	Log.i("Main", "word size chosen: " + wordSizeChosen);
-            	
-            	finishStartingNewRun();
-            }
-        })
-//        .setCancelable(false)
-        .create();
-
+        
         
         //TODO dialog with introduction
 	}
 
-	private Run initRun() {
-		try {
-			run = null;
-			run = restoreSavedRun();	//not null if restored 
-			re.run = run;
-			return run;
-		} 
-		catch (Exception e) {
-			Log.i("Main", "restoreSavedState failed");
-		}
-		
-		//if failed to restore saved
-		try { 
-			startNewRun();	//invokes dialog chain, return null immediately
-		} 
-		catch (BncException e1) { Log.e("Main", "startNewRun failed", e1); }
-		return null;
-	}
-
-	private void initViews() {
+	private void layoutViews() {
 		Log.v("Main", "initViews");
 		Run run2 = run;
 		PositionTable posTable = run2.posTable;
@@ -301,45 +297,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
 		return run;
 	}
-	
-	private void startNewRun() throws BncException {
-		Log.v("Main", "startNewRun");
-
-		alphabetDialog.show();	//ask on Alphabet and WodLength in chain
-		
-		//will continue by dialogs chain
-    }
-
-	private Run finishStartingNewRun() {
-		Alphabet alphabet = new Alphabet.Digital();	//TODO add other alphabets based on alphabetChosen
-		int wordLength = wordSizeChosen;
-		
-		//TODO improve secret generating
-		String secret = "12345";
-		if (alphabet instanceof Alphabet.Digital) {
-			secret = new String();
-			Random rnd = new Random();
-			Set<Character> secretSet = new HashSet<Character>(5);
-			for (int i = 0; i < wordLength; i++) {
-				Character c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
-				while (secretSet.contains(c))
-					c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
-				secretSet.add(c);
-				secret += c;
-			}
-		}
-
-		try {
-		
-			run = re.startNewRun(alphabet, secret);
-
-		} catch (BncException e) {
-		}
-		
-		initViews();	//finish initialization, interrupted by dialogs chain
-		
-		return null;
-	}
 
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
 		LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
@@ -391,14 +348,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.v("Main", "onActivityResult returned " + resultCode);
 		switch (resultCode) {
-			case RESULT_CANCELED:
-				//nothing to do
-				break;
 			case RESULT_OK:
 				String wordOffered = data.getAction();
 				Log.i("Main", "alphabetActivity returned \"" + wordOffered + "\"");
 				if (wordOffered != null && wordOffered.length() == run.wordLength)
 					offerWord(wordOffered);
+				break;
+			default:
 				break;
 		}
 	}
@@ -441,7 +397,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.MenuNewGame:
-				newGameDialog.show();
+				startNewRun(true);
 				break;
 			case R.id.MenuClearMarks:
 				clearMarksDialog.show();

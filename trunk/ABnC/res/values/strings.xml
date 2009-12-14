@@ -4,7 +4,6 @@
     <string name="diplicated_msg">Duplicated symbol</string>
     <string name="word_too_long_msg">Word is too long</string>
     <string name="new_game">Start new game</string>
-    <string name="new_game_conf">Do you really want to start new game?</string>
     <string name="new_word">Guess...</string>
     <string name="win_msg">You win!</string>
     <string name="clear_marks">Clear marks</string>
