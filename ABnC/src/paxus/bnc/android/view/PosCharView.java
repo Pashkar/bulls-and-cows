@@ -11,11 +11,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class PosCharView extends View implements OnClickListener, IPosCharStateChangedListener {
 	
+	private static final String TAG = "PosCharView";
+
 	public Paint paint;
 
 	private PosChar pch = PosChar.NULL;
@@ -108,6 +111,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
     }
 
 	public void onClick(View v) {
+		Log.d(TAG, v + ".onClick()");
 		pch.movePosState();	//if state really changes - onStateChanged will be notified
 	}
 	

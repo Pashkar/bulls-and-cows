@@ -2,7 +2,7 @@
 	<string-array name="word_length_array">
 		<item>Three (ease)</item>
 		<item>Four (normal)</item>
-		<item>Five (diffcult)</item>
+		<item>Five (difficult)</item>
 		<item>Six (hard)</item>
 		<item>Seven (nightmare!)</item>
 	</string-array>

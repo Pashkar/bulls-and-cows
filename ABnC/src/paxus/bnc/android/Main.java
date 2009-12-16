@@ -18,6 +18,7 @@ import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.ComparisonResultView;
 import paxus.bnc.android.view.PosCharView;
+import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
@@ -51,7 +52,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
-public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
+public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener, ICharStateChangedListener, IPosCharStateChangedListener {
 	
 	private static final String TAG = "Main";
 
@@ -82,6 +83,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	protected int alphabetChosen;
 
 	private CharLineAdapter offeredsAdapter;
+
+	private Button guessButton;
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -128,11 +131,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		offeredsGrid = (GridView) findViewById(R.id.OfferedsGrid);
 		offeredsGrid.setNumColumns(run.wordLength + 1);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
+		guessButton = (Button) findViewById(R.id.ShowAlphabetButton);
 		
 		freePosLayoutList.clear();
 		enteringPanel = new EnteringPanel(this, this);
 		offeredsAdapter = new CharLineAdapter();
 		offeredsGrid.setAdapter(offeredsAdapter);
+		run.alphabet.addAllCharsStateChangedListener(this);
+		run.posTable.addAllPosCharStateChangedListener(this);
+		
 	}
 
 	/**
@@ -227,8 +234,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
             	new AlertDialog.Builder(Main.this)
                 		.setMessage("The word was: \n" + run.secret.asString().toUpperCase())
                 		.show();
-            	
-            	//TODO disable game
+            	guessButton.setEnabled(false);
             }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -426,6 +432,16 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return super.onOptionsItemSelected(item);
 	}
 	
+
+	public void onCharStateChanged(Character ch, ENCharState newState)
+			throws BncException {
+		offeredsAdapter.notifyDataSetInvalidated();
+	}
+
+	public void onPosCharStateChanged(PosChar ch, ENCharState newState) {
+		offeredsAdapter.notifyDataSetInvalidated();
+	}
+	
 	///////////////////////////////////////////////////////////
 	//Inflaters
 	///////////////////////////////////////////////////////////
@@ -438,10 +454,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         		cv.setChar(chars[i]);
         	if (viewId != -1)
         		cv.setId(viewId);
-/*        	if (la.getId() == R.id.AlphabetLayout)
-        		cv.setOnClickListener(this);
-        	if (la.getId() == R.id.EnteringLayout)
-				cv.setViewPos(i);*/
         	if(la.getId() == R.id.SecretLayout) {
         		cv.setViewPos(i);				//to mark "bull" in these words
         		run.posTable.addAllPosCharStateChangedListener(cv);		
@@ -566,7 +578,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			int wordLength = run.wordLength;
 			int lineNum = position / (wordLength + 1);
 			int colNum = position % (wordLength + 1);
-			Log.d(TAG, "getView: position = " + position + ", lineNum = " + lineNum + ", colNum = " + colNum);
 			if (colNum == wordLength)	//comparison result
 				return results.get(lineNum);
 			else 
