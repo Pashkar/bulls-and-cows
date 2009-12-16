@@ -52,15 +52,16 @@
 		android:layout_below="@id/SecretLayout"
 		android:layout_marginTop="@dimen/view_top_margin"> -->
 	 	
-	 	<!-- Offers -->
-	 	<!-- TODO - animation -->
-	 	<GridView xmlns:android="http://schemas.android.com/apk/res/android" 
+	 	<!-- Offered words and comparison results -->
+	 	<view class="paxus.bnc.android.view.TracingGridView"
 	 			android:id="@+id/OfferedsGrid"
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
+				android:layoutAnimation="@anim/layout_random_fade_in"
 			    android:horizontalSpacing="@dimen/char_margin_left"
 			    android:verticalSpacing="@dimen/line_top_margin"
 			    android:gravity="center" 
+			    android:focusable="false"
 			    android:smoothScrollbar="true"
 			    android:scrollbarStyle="outsideInset"
 			    android:scrollbars="vertical"

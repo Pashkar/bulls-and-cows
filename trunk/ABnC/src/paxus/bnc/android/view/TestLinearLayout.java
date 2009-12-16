@@ -5,7 +5,6 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.LinearLayout;
 
 public class TestLinearLayout extends LinearLayout {
@@ -37,8 +36,7 @@ public class TestLinearLayout extends LinearLayout {
 		
 		for (int i = 0; i < getChildCount(); i++) {
 			Rect r = new Rect();
-			View c = getChildAt(i);
-			c.getGlobalVisibleRect(r);
+			 
 //			r.offset(0, -getTop());
 //			Log.v(TAG, r.toShortString());
 			boolean hit = event.getX() >= r.left && event.getX() < r.right;

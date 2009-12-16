@@ -11,6 +11,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
@@ -39,6 +40,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private boolean posMatched = false;
 	private int xOffset = -1;
 	private int yOffset = -1;
+	private OnClickListener clickListener;
 	
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -51,7 +53,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	}
 
 	public void initView(Context context) {
-		setOnClickListener(this);
+		super.setOnClickListener(this);
         if (anim == null)
         	anim = AnimationUtils.loadAnimation(context, R.anim.char_fade_in_anim);
 	}
@@ -77,6 +79,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		ch.removeStateChangedListener(this);
 		ch = Char.NULL;
 		posMatched = false;
+		clickListener = null;
 //		invalidate();
 		setBackground();
 		startAnimation(anim);
@@ -163,7 +166,12 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	
 	public void onClick(View v) {
 		try {
-			if (changeStateOnClick)
+			Log.d(TAG, v + ".onClick()");
+			if (clickListener != null)
+				clickListener.onClick(v);
+			
+			startAnimation(anim);
+			if (changeStateOnClick) 
 				ch.moveState();		//if state really changes - onStateChanged will be notified
 		} catch (BncException e) {};
 	}
@@ -196,5 +204,16 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	@Override
 	public String toString() {
 		return ch + "";
+	}
+
+	/** 
+	 * CharView is always OnClickListener for itself. External objects may add additional listeners and 
+	 * event would be replicated (android.view.View supports only one listener and for CharView it is occupied by itself).
+	 * Currently only one external listener supported - to be widened when needed.
+	 */
+	@Override
+	public final void setOnClickListener(OnClickListener l) {
+//		super.setOnClickListener(l);
+		clickListener = l;
 	}
 }

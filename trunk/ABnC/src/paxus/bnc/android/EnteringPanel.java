@@ -118,6 +118,7 @@ public final class EnteringPanel implements OnClickListener {
         			digitalAlphaberCharLP = new LayoutParams(40, 40);
         		cv.setLayoutParams(digitalAlphaberCharLP);
         		cv.setOnClickListener(this);
+        		cv.changeStateOnClick = false;
         	}
         	if (la.getId() == R.id.EnteringLayout) {
 				cv.setViewPos(i);
