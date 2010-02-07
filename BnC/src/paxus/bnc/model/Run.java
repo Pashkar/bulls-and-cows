@@ -21,6 +21,8 @@ public final class Run implements Externalizable {
 	
 	public Char[] secretLine = new Char[MAX_WORD_LENGTH];	//store displayed secret line to serialize it in complex
 	
+	public boolean givenUp = false;
+	
 	public PositionTable posTable;
 	
 	public LinkedList<WordCompared> wordsCompared = new LinkedList<WordCompared>();
@@ -48,6 +50,7 @@ public final class Run implements Externalizable {
 		posTable = (PositionTable) in.readObject();
 		alphabet.addAllCharsStateChangedListener(posTable);
 		try { secret = Word.read(in, wordLength, alphabet); } catch (BncException e) {}
+		givenUp = in.readBoolean();
 		
 		final LinkedList<WordCompared> wordsCompared2 = wordsCompared;
 		wordsCompared2.clear();
@@ -66,6 +69,7 @@ public final class Run implements Externalizable {
 		out.writeObject(alphabet);
 		out.writeObject(posTable);
 		secret.write(out);
+		out.writeBoolean(givenUp);
 		
 		LinkedList<WordCompared> wordsCompared2 = wordsCompared;
 		out.writeInt(wordsCompared2.size());

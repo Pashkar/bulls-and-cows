@@ -51,7 +51,10 @@ public final class RunExecutor {
 	}
 
 	private void winGame() {
-		//FIXME winGame
 		System.out.println("WIN THE GAME");
+	}
+	
+	public void giveUp() {
+		run.givenUp = true;
 	}
 }

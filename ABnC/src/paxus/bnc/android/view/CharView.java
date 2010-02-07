@@ -103,7 +103,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     private int measureWidth(int measureSpec) {
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
-
+        Log.d(TAG, "specSize = " + specSize + ", specMode = " + specMode);
         if (specMode == MeasureSpec.EXACTLY) {
             // We were told how big to be
             return specSize;
@@ -175,17 +175,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 				ch.moveState();		//if state really changes - onStateChanged will be notified
 		} catch (BncException e) {};
 	}
-	
-	//Once we start receiving events on one touch action, we receive all the rest until touch released. 
-	//No way for another view to start receiving events even if actions is dragged far from this one.
-	//Decided to handle touch events on higher level of view hierarchy and pass down to view under a finger.
-/*	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		Log.v(TAG, this + ": onTouchEvent, event = " + event + ", witdh = " + getWidth());
-		boolean res = event.getX() <= 30;
-		Log.v(TAG, "return " + res);
-		return res;
-	}*/
 
 	public void onCharStateChanged(Character ch, ENCharState newState) {
 //		invalidate();
@@ -213,7 +202,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	 */
 	@Override
 	public final void setOnClickListener(OnClickListener l) {
-//		super.setOnClickListener(l);
 		clickListener = l;
 	}
 }
