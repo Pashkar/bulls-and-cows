@@ -41,7 +41,7 @@
  	<!-- Offered words and comparison results -->
  	<GridView 
  			android:id="@+id/OfferedsGrid"
-			android:layout_width="wrap_content" 
+			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:layoutAnimation="@anim/layout_random_fade_in"
 		    android:verticalSpacing="@dimen/line_top_margin"

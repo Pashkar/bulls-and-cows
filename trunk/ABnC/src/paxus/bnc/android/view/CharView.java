@@ -162,6 +162,9 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
 			break;
 		}
+		
+//		setBackgroundResource(R.drawable.red);
+		
 	}
 	
 	public void onClick(View v) {
