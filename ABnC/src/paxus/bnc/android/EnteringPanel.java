@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
-public final class EnteringPanel implements OnClickListener {
+public final class EnteringPanel implements OnClickListener, android.content.DialogInterface.OnClickListener {
 
 	private static final String TAG = "EnteringPanel";
 
@@ -58,16 +58,12 @@ public final class EnteringPanel implements OnClickListener {
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
 		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.char_view, -1);
 		inflateAlphabetLines(alphabetLayoutId);
+		enteringWord = new StringBuffer(run2.wordLength);
 		
         panelDialog = new AlertDialog.Builder(context)
-		.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				EnteringPanel.this.onOk();
-			}
-		})
-		.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {}
-		})
+		.setPositiveButton(android.R.string.ok, this)
+		.setNeutralButton(R.string.clear, this)
+		.setNegativeButton(R.string.hide, this)
 		.setView(panelView)
 		.create();
 	}
@@ -84,6 +80,7 @@ public final class EnteringPanel implements OnClickListener {
 		}
 	}
 
+	// = onCharClick
 	public void onClick(View v) {
 		if (enteringWord.length() >= run.wordLength) {
 			tooLongWordToast.show();
@@ -105,6 +102,31 @@ public final class EnteringPanel implements OnClickListener {
 		ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);		
 	}
 
+
+	// = onDialogClick
+	public void onClick(DialogInterface dialog, int which) {
+		switch (which) {
+		case DialogInterface.BUTTON_POSITIVE:	//"ok"
+			String word = enteringWord.toString();
+			if (word.length() == run.wordLength) {
+				callback.onWordOffered(word);
+				clearWord();
+			}
+			break;
+		case DialogInterface.BUTTON_NEUTRAL:	//"clear"
+			clearWord();
+			break;
+		case DialogInterface.BUTTON_NEGATIVE:	//"hide"
+			break;
+		}
+	}
+	
+	private void clearWord() {
+		for (int i = 0; i < run.wordLength; i++)
+			((CharView)enteringWordLayout.getChildAt(i)).resetChar();
+		enteringWord = new StringBuffer(run.wordLength);
+	}
+	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int from, int to, int layoutId, int viewId) {
 		for (int i = from; i < to; i++) {
         	CharView cv = (CharView) Main.layoutInflater.inflate(layoutId, la, false);
@@ -127,16 +149,9 @@ public final class EnteringPanel implements OnClickListener {
         	la.addView(cv);
         }
 	}
-	
-	private void onOk() {
-		callback.onWordOffered(enteringWord.toString());
-	}
 
 	public void show() {
 		Log.v(TAG, "show");
-		for (int i = 0; i < run.wordLength; i++)
-			((CharView)enteringWordLayout.getChildAt(i)).resetChar();
-		enteringWord = new StringBuffer(run.wordLength);
 		panelDialog.show();
 	}
 }
