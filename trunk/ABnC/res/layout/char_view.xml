@@ -6,4 +6,5 @@
 	android:layout_width="@dimen/char_width" 
 	android:layout_height="@dimen/char_height"
 	android:layout_marginLeft="@dimen/char_margin_left"
+	android:focusable="false"
 	/>

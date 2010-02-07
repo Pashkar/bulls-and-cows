@@ -53,7 +53,7 @@
 		android:layout_marginTop="@dimen/view_top_margin"> -->
 	 	
 	 	<!-- Offered words and comparison results -->
-	 	<view class="paxus.bnc.android.view.TracingGridView"
+	 	<GridView 
 	 			android:id="@+id/OfferedsGrid"
 				android:layout_width="wrap_content" 
 				android:layout_height="wrap_content"
@@ -67,7 +67,6 @@
 			    android:scrollbars="vertical"
 			    android:scrollingCache="true"
 			    android:cacheColorHint="@drawable/screen_background_white"
-			    android:fastScrollEnabled="true"
 			    android:stretchMode="columnWidth"
 			    android:layout_weight="1.0"
 	    />

@@ -370,7 +370,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			break;
 		}
 	}
-
 	
 	public void onWordOffered(String word) {
 		Log.v(TAG, "word offered = " + word);
@@ -435,11 +434,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	public void onCharStateChanged(Character ch, ENCharState newState)
 			throws BncException {
-		offeredsAdapter.notifyDataSetInvalidated();
+//		offeredsAdapter.notifyDataSetInvalidated();
+		offeredsAdapter.notifyDataSetChanged();
 	}
 
 	public void onPosCharStateChanged(PosChar ch, ENCharState newState) {
-		offeredsAdapter.notifyDataSetInvalidated();
+//		offeredsAdapter.notifyDataSetInvalidated();
+		offeredsAdapter.notifyDataSetChanged();
 	}
 	
 	///////////////////////////////////////////////////////////
