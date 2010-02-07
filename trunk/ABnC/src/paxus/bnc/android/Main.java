@@ -1,18 +1,7 @@
 package paxus.bnc.android;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
@@ -22,12 +11,7 @@ import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
-import paxus.bnc.model.Alphabet;
-import paxus.bnc.model.Char;
-import paxus.bnc.model.ENCharState;
-import paxus.bnc.model.PosChar;
-import paxus.bnc.model.PositionTable;
-import paxus.bnc.model.Run;
+import paxus.bnc.model.*;
 import paxus.bnc.model.PositionTable.PositionLine;
 import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
@@ -38,13 +22,9 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.BaseAdapter;
@@ -52,7 +32,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
-public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener, ICharStateChangedListener, IPosCharStateChangedListener {
+public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener, ICharStateChangedListener, IPosCharStateChangedListener, OnKeyListener {
 	
 	private static final String TAG = "Main";
 
@@ -66,8 +46,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private EnteringPanel enteringPanel;
 	private SecretWordPanel secretPanel;
-//	private LinearLayout offeredsLayout;
 	private GridView offeredsGrid;
+	private CharLineAdapter offeredsAdapter;
 	private LinearLayout posTableLayout;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
@@ -82,9 +62,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	protected int wordSizeChosen;
 	protected int alphabetChosen;
 
-	private CharLineAdapter offeredsAdapter;
 
 	private Button guessButton;
+
+	private int charWidth;
+	private int charHeight;
+
+	private LinearLayout.LayoutParams posCharLP;
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -123,23 +107,29 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     	lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
     	lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
     	layoutInflater = getLayoutInflater();
+    	charHeight = getResources().getDimensionPixelSize(R.dimen.char_height);
     }
     
 	private void reinitActivity() {
+		charWidth = -1;
 		setContentView(R.layout.main);
-//		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);	//TODO replace with GridLayout?
-		offeredsGrid = (GridView) findViewById(R.id.OfferedsGrid);
-		offeredsGrid.setNumColumns(run.wordLength + 1);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		guessButton = (Button) findViewById(R.id.ShowAlphabetButton);
+		guessButton.setEnabled(!run.givenUp);
 		
 		freePosLayoutList.clear();
+		posCharLP = new LinearLayout.LayoutParams(getCharWidthInPx(), charHeight);
+		posCharLP.leftMargin = getResources().getDimensionPixelSize(R.dimen.char_margin_left);
+
 		enteringPanel = new EnteringPanel(this, this);
 		offeredsAdapter = new CharLineAdapter();
+		offeredsGrid = (GridView) findViewById(R.id.OfferedsGrid);
+		offeredsGrid.setNumColumns(run.wordLength + 1);
+		offeredsGrid.setOnKeyListener(this);
 		offeredsGrid.setAdapter(offeredsAdapter);
+		
 		run.alphabet.addAllCharsStateChangedListener(this);
 		run.posTable.addAllPosCharStateChangedListener(this);
-		
 	}
 
 	/**
@@ -232,9 +222,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
             public void onClick(DialogInterface dialog, int whichButton) {
             	Log.i(TAG, "Give up");
             	new AlertDialog.Builder(Main.this)
-                		.setMessage("The word was: \n" + run.secret.asString().toUpperCase())
+                		.setMessage("The word was: \n\n" + run.secret.asString().toUpperCase())
+                		.setPositiveButton(android.R.string.ok, null)
                 		.show();
             	guessButton.setEnabled(false);
+            	re.giveUp();
             }
         })
         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -470,32 +462,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
 		for (int i = 0; i < wordLength; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
+			pcw.setLayoutParams(posCharLP);
 			pcw.paint = paint;
         	line.addView(pcw);
         }
 		return line;
 	}
-	
-/*	private LinearLayout inflateOfferedLine(WordCompared wc) throws BncException {
-		final LayoutInflater layoutInflater2 = layoutInflater;
-		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.offered_line_view, offeredsLayout, false);
-		Run run2 = run;
-		char[] chars = wc.word.asString().toCharArray();
-		for (int i = 0; i < run2.wordLength; i++) {
-			CharView cv = (CharView) layoutInflater2.inflate(R.layout.char_view, line, false);
-			cv.setChar(Char.valueOf(chars[i], run2.alphabet), run2.posTable.getPresentPos(chars[i]) == i);
-			cv.setViewPos(i);
-			cv.paint = paint;
-        	run2.posTable.addAllPosCharStateChangedListener(cv);
-			line.addView(cv);
-		}
-		ComparisonResultView crv = (ComparisonResultView) layoutInflater2.inflate(R.layout.comp_result_view, line, false);
-		crv.setResult(wc.result);
-		crv.setPaint(paint);
-		line.addView(crv);
-		return line;
-	}*/
-	
+
 	private class SecretWordPanel implements IPosCharStateChangedListener {
 		
 		public LinearLayout layout;
@@ -539,6 +512,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 		private ArrayList<CharView[]> charLines = new ArrayList<CharView[]>();
 		private ArrayList<ComparisonResultView> results = new ArrayList<ComparisonResultView>();
+		private GridView.LayoutParams gridCharLP = new GridView.LayoutParams(getCharWidthInPx(), charHeight);
 		
 		public void addWord(WordCompared wc) throws BncException {
 			Log.i(TAG, "CharLineAdapter.addWord, wc = " + wc);
@@ -566,12 +540,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
 
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return position;
 		}
 
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return position;
 		}
 
@@ -581,9 +553,30 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			int colNum = position % (wordLength + 1);
 			if (colNum == wordLength)	//comparison result
 				return results.get(lineNum);
-			else 
-				return charLines.get(lineNum)[colNum];
+			else {
+				CharView cv = charLines.get(lineNum)[colNum];
+				cv.setLayoutParams(gridCharLP);
+				return cv;
+			}
 		}
-		
+	}
+	
+	public int getCharWidthInPx() {
+		if (charWidth == -1)
+			charWidth = getResources().getIntArray(R.array.char_width_array)[run.wordLength];
+		return charWidth;
+	}
+	
+	//GridView
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		Log.v(TAG, this + ": onKey, event = " + event + ", keyCode = " + keyCode);
+		/*if (event.getAction() == KeyEvent.ACTION_UP &&
+				(keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER)) {
+			Log.d(TAG, "Enter pressed for view " + v);
+			if (v instanceof CharView) {
+				((CharView) v).onClick(v);
+			}
+		}*/
+		return false;
 	}
 }

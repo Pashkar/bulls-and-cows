@@ -7,6 +7,7 @@ import paxus.bnc.model.Run;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -37,7 +38,10 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 
 	private LayoutParams digitalAlphaberCharLP;
 
+	private final Context context;
+
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
+		this.context = context;
 		Log.v(TAG, "<init>");
 		this.callback = callback;
 		this.run = Main.run;
@@ -52,7 +56,6 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 			alphabetLayoutId = R.layout.digital_alphabet;
 		//TODO other alphabets
 		
-		Log.i(TAG, "alphabetLayoutId = " + alphabetLayoutId);
 		panelView = Main.layoutInflater.inflate(alphabetLayoutId, null);
 
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
@@ -62,10 +65,10 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		
         panelDialog = new AlertDialog.Builder(context)
 		.setPositiveButton(android.R.string.ok, this)
-		.setNeutralButton(R.string.clear, this)
-		.setNegativeButton(R.string.hide, this)
+		.setNegativeButton(R.string.clear, this)
 		.setView(panelView)
 		.create();
+        panelDialog.setCanceledOnTouchOutside(true);
 	}
 
 	private void inflateAlphabetLines(int alphabetLayoutId) {
@@ -80,7 +83,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		}
 	}
 
-	// = onCharClick
+	//Char click
 	public void onClick(View v) {
 		if (enteringWord.length() >= run.wordLength) {
 			tooLongWordToast.show();
@@ -103,7 +106,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	}
 
 
-	// = onDialogClick
+	//Dialog buttons
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
 		case DialogInterface.BUTTON_POSITIVE:	//"ok"
@@ -113,10 +116,8 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 				clearWord();
 			}
 			break;
-		case DialogInterface.BUTTON_NEUTRAL:	//"clear"
+		case DialogInterface.BUTTON_NEGATIVE:	//"clear"
 			clearWord();
-			break;
-		case DialogInterface.BUTTON_NEGATIVE:	//"hide"
 			break;
 		}
 	}
@@ -136,8 +137,12 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
         	if (viewId != -1)
         		cv.setId(viewId);
         	if (viewId == R.id.DigitalAlphabetCharView) {
-        		if (digitalAlphaberCharLP == null)	//lazy init
-        			digitalAlphaberCharLP = new LayoutParams(40, 40);
+        		if (digitalAlphaberCharLP == null) {
+					Resources resources = context.getResources();
+					//lazy init
+					digitalAlphaberCharLP = new LayoutParams(resources.getDimensionPixelSize(R.dimen.entering_char_width), 
+							resources.getDimensionPixelSize(R.dimen.entering_char_width));
+				}
         		cv.setLayoutParams(digitalAlphaberCharLP);
         		cv.setOnClickListener(this);
         		cv.changeStateOnClick = false;

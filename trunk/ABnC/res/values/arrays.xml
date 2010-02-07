@@ -12,4 +12,15 @@
 		<item>Latin (abc)</item>
 		<item>Cyrillic (абв) </item>
 	</string-array>
+	
+	<integer-array name="char_width_array">
+		<item>0</item>
+		<item>0</item>
+		<item>0</item>
+		<item>55</item>	<!-- 3 chars -->
+		<item>50</item>	<!-- 4 chars -->
+		<item>45</item>	<!-- 5 chars -->
+		<item>40</item>	<!-- 6 chars -->
+		<item>35</item>	<!-- 7 chars -->
+	</integer-array>
 </resources>
