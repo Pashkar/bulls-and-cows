@@ -68,15 +68,16 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private int charWidth;
 	private int charHeight;
 
-	private LinearLayout.LayoutParams posCharLP;
+	private LinearLayout.LayoutParams linearCharLP;
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(16);
-        paint.setFakeBoldText(true);
+//        paint.setFakeBoldText(true);
         paint.setTextAlign(Align.CENTER);
         paint.setColor(resources.getColor(R.drawable.paint_color));
+        paint.setDither(true);
         return paint;
 	}
 	
@@ -118,8 +119,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		guessButton.setEnabled(!run.givenUp);
 		
 		freePosLayoutList.clear();
-		posCharLP = new LinearLayout.LayoutParams(getCharWidthInPx(), charHeight);
-		posCharLP.leftMargin = getResources().getDimensionPixelSize(R.dimen.char_margin_left);
+		linearCharLP = new LinearLayout.LayoutParams(getCharWidthInPx(), charHeight);
+		linearCharLP.leftMargin = getResources().getDimensionPixelSize(R.dimen.char_margin_left);
 
 		enteringPanel = new EnteringPanel(this, this);
 		offeredsAdapter = new CharLineAdapter();
@@ -221,10 +222,16 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             	Log.i(TAG, "Give up");
-            	new AlertDialog.Builder(Main.this)
-                		.setMessage("The word was: \n\n" + run.secret.asString().toUpperCase())
-                		.setPositiveButton(android.R.string.ok, null)
-                		.show();
+            	String str = run.secret.asString().toUpperCase();
+            	StringBuffer sb = new StringBuffer(str.length() * 2);
+            	for (char ch : str.toCharArray())
+            		sb.append(ch).append(' ');
+				new AlertDialog.Builder(Main.this)
+		            	.setIcon(android.R.drawable.ic_dialog_alert)
+		            	.setTitle(R.string.give_up)
+		        		.setMessage("The secret was: \n\n\t" + sb.toString() + "\n")
+		        		.setPositiveButton(android.R.string.ok, null)
+		        		.show();
             	guessButton.setEnabled(false);
             	re.giveUp();
             }
@@ -462,7 +469,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
 		for (int i = 0; i < wordLength; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
-			pcw.setLayoutParams(posCharLP);
+			pcw.setLayoutParams(linearCharLP);
 			pcw.paint = paint;
         	line.addView(pcw);
         }
@@ -482,6 +489,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			for (int i = 0; i < run2.wordLength; i++) {
 				Char ch = run2.secretLine[i];
 				CharView cv = (CharView)layout.getChildAt(i);
+				cv.setLayoutParams(linearCharLP);
 				cv.setChar(ch, i == run2.posTable.getPresentPos(ch.ch));
 				cv.changeStateOnClick = false;	//secret word should not react on clicks, just listen to changes produced by others
 			}
