@@ -138,16 +138,13 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
         setBackground();
         if (ch != null && paint != null) {
         	if (xOffset == -1)
-        		xOffset = getPaddingLeft() + getWidth() / 2;
+        		xOffset = /*getPaddingLeft() + */getWidth() / 2;
         	if (yOffset == -1)
         		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
 			canvas.drawText("" + ch.ch, xOffset, yOffset, paint);
 		}
     }
 
-	//TODO not Background (probably it's stretched), just draw. Use Prescaled
-	//TODO use 9 points pictures
-	//TODO ImageView from xml and then "image.setImageResource(R.drawable.android);" or just from xml
 	private void setBackground() {
 		if (ch == null)
 			return;
@@ -162,9 +159,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			setBackgroundResource(posMatched ? R.drawable.bull : R.drawable.cow);
 			break;
 		}
-		
-//		setBackgroundResource(R.drawable.red);
-		
 	}
 	
 	public void onClick(View v) {
