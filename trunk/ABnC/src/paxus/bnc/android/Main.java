@@ -266,14 +266,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         posTable.addPosTableListener(this);
         
         //restore offered words
-/*        try {
-	        final List<WordCompared> wordsCompared = run2.wordsCompared;
-			if (wordsCompared != null && wordsCompared.size() > 0)
-	        	for (WordCompared wc : wordsCompared)
-						addOfferedWord(wc);
-		} catch (BncException e) {
-			Log.e(TAG, "restore offered words failed", e);
-		}*/
         try {
 	        final List<WordCompared> wordsCompared = run2.wordsCompared;
 			if (wordsCompared != null && wordsCompared.size() > 0)
