@@ -21,8 +21,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		IPosCharStateChangedListener {
 
 	private static final String TAG = "CharView";
-	public static final int WIDTH = 20;
-	public static final int HEIGHT = 20;
 	static Animation anim;
 	
 	public Paint paint;
@@ -103,12 +101,12 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     private int measureWidth(int measureSpec) {
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
-        Log.d(TAG, "specSize = " + specSize + ", specMode = " + specMode);
+        Log.d(TAG, "measureWidth: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
         if (specMode == MeasureSpec.EXACTLY) {
             // We were told how big to be
             return specSize;
         } else {
-        	int desiredWidth = WIDTH + getPaddingLeft() + getPaddingRight();
+        	int desiredWidth = getLayoutParams().width + getPaddingLeft() + getPaddingRight();
         	if (specMode == MeasureSpec.AT_MOST) {
         		return desiredWidth < specSize ? desiredWidth : specSize;
         	} else {
@@ -120,12 +118,12 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     private int measureHeight(int measureSpec) {
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
-
+        Log.d(TAG, "measureHeight: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
         if (specMode == MeasureSpec.EXACTLY) {
             // We were told how big to be
             return specSize;
         } else {
-        	int desiredHeight = HEIGHT + getPaddingTop() + getPaddingBottom();
+        	int desiredHeight = getLayoutParams().height + getPaddingTop() + getPaddingBottom();
         	if (specMode == MeasureSpec.AT_MOST) {
         		return desiredHeight < specSize ? desiredHeight : specSize;
         	} else {

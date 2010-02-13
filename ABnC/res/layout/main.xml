@@ -39,7 +39,7 @@
 	/>
 
  	<!-- Offered words and comparison results -->
- 	<GridView 
+ 	<!--<GridView 
  			android:id="@+id/OfferedsGrid"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
@@ -55,7 +55,18 @@
 		    android:scrollingCache="true"
 		    android:cacheColorHint="@drawable/screen_background_white"
 		    android:layout_weight="1.0"
-    />
+    />-->
+    
+    <!--<Scroll></Scroll>-->
+    
+   	<LinearLayout
+		android:id="@+id/OfferedsLayout"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:layoutAnimation="@anim/layout_random_fade_in"
+		android:orientation="vertical"
+		android:gravity="center_horizontal" 
+		android:layout_marginTop="@dimen/view_top_margin"/>
 
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
@@ -67,8 +78,9 @@
 		android:id="@+id/PositioningLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
+		android:layoutAnimation="@anim/layout_random_fade_in"
 		android:orientation="vertical"
-					android:gravity="center_horizontal" 
+		android:gravity="center_horizontal" 
 		android:layout_marginTop="@dimen/view_top_margin"/>
 		
 </LinearLayout>
