@@ -1,7 +1,5 @@
 package paxus.bnc.android.view;
 
-import static paxus.bnc.android.view.CharView.HEIGHT;
-import static paxus.bnc.android.view.CharView.WIDTH;
 import static paxus.bnc.android.view.CharView.anim;
 import paxus.bnc.android.R;
 import paxus.bnc.controller.IPosCharStateChangedListener;
@@ -70,7 +68,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
             // We were told how big to be
             return specSize;
         } else {
-        	int desiredWidth = WIDTH + getPaddingLeft() + getPaddingRight();
+        	int desiredWidth = getLayoutParams().width + getPaddingLeft() + getPaddingRight();
         	if (specMode == MeasureSpec.AT_MOST) {
         		return desiredWidth < specSize ? desiredWidth : specSize;
         	} else {
@@ -87,7 +85,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
             // We were told how big to be
             return specSize;
         } else {
-        	int desiredHeight = HEIGHT + getPaddingTop() + getPaddingBottom();
+        	int desiredHeight = getLayoutParams().height + getPaddingTop() + getPaddingBottom();
         	if (specMode == MeasureSpec.AT_MOST) {
         		return desiredHeight < specSize ? desiredHeight : specSize;
         	} else {
