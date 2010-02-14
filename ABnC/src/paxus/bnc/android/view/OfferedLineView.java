@@ -3,7 +3,6 @@ package paxus.bnc.android.view;
 import paxus.bnc.model.Run.WordCompared;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.LinearLayout;
 
 public class OfferedLineView extends LinearLayout {
@@ -19,7 +18,7 @@ public class OfferedLineView extends LinearLayout {
 		super(context);
 	}
 
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	/*protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		measureChildren(MeasureSpec.makeMeasureSpec(MeasureSpec.EXACTLY, 12), 
 						getChildMeasureSpec(heightMeasureSpec, 0, 0));
         setMeasuredDimension(measureWidth(widthMeasureSpec),
@@ -47,7 +46,7 @@ public class OfferedLineView extends LinearLayout {
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		// TODO Auto-generated method stub
 		super.onLayout(changed, l, t, r, b);
-	}
+	}*/
     
     
     
