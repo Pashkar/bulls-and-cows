@@ -5,5 +5,5 @@
 	android:id="@+id/DigitalAlphabetCharView"
 	android:layout_width="@dimen/digital_alphabet_char_width" 
 	android:layout_height="@dimen/digital_alphabet_char_height"
-	android:layout_marginLeft="@dimen/char_margin_left"
+	android:layout_marginLeft="@dimen/char_left_margin"
 	/>

@@ -5,6 +5,6 @@
 		android:id="@+id/ComparisonResultView"
 		android:layout_width="@dimen/comp_result_width" 
 		android:layout_height="@dimen/char_height"
-		android:layout_marginLeft="@dimen/comp_result_margin_left"
+		android:layout_marginLeft="@dimen/comp_result_left_margin"
 		android:background="@drawable/markbg"
 		/>

@@ -150,6 +150,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
         	if (la.getId() == R.id.EnteringLayout) {
 				cv.setViewPos(i);
 				cv.changeStateOnClick = false;
+				run.posTable.addAllPosCharStateChangedListener(cv);
         	}
         	la.addView(cv);
         }
