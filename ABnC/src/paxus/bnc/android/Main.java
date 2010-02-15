@@ -27,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener/*, ICharStateChangedListener, IPosCharStateChangedListener*/ {
 	
@@ -42,14 +43,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private EnteringPanel enteringPanel;
 	private SecretWordPanel secretPanel;
-//	private GridView offeredsGrid;
-//	private CharLineAdapter offeredsAdapter;
 	private LinearLayout offeredsLayout;
 	private LinearLayout posTableLayout;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private LayoutAnimationController lineInAnimation;
-//	private LayoutAnimationController lineOutAnimation;
 
 	private AlertDialog chooseAlphabetDialog;
 	private AlertDialog chooseWordSizeDialog;
@@ -121,15 +119,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 //		linearCharLP.leftMargin = getResources().getDimensionPixelSize(R.dimen.char_margin_left);
 
 		enteringPanel = new EnteringPanel(this, this);
-//		offeredsAdapter = new CharLineAdapter();
-//		offeredsGrid = (GridView) findViewById(R.id.OfferedsGrid);
-//		offeredsGrid.setNumColumns(run.wordLength + 1);
-//		offeredsGrid.setOnKeyListener(this);
-//		offeredsGrid.setAdapter(offeredsAdapter);
-		
-		
-//		run.alphabet.addAllCharsStateChangedListener(this);
-//		run.posTable.addAllPosCharStateChangedListener(this);
 	}
 
 	/**
@@ -146,7 +135,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     }
 
 	private void finishStartingNewRun() {
-		Alphabet alphabet = new Alphabet.Digital();	//TODO add other alphabets based on alphabetChosen
+		Alphabet alphabet = new Alphabet.Digital();	
 		int wordLength = wordSizeChosen;
 		
 		//TODO improve secret generating
@@ -168,6 +157,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			run = re.startNewRun(alphabet, secret);
 		} catch (BncException e) {	}
 		
+		Log.d(TAG, run.secret.toString());
 		reinitActivity();
 		layoutViews();	//finish initialization, interrupted by dialogs chain
 	}
@@ -221,16 +211,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             	Log.i(TAG, "Give up");
-            	String str = run.secret.asString().toUpperCase();
-            	StringBuffer sb = new StringBuffer(str.length() * 2);
-            	for (char ch : str.toCharArray())
-            		sb.append(ch).append(' ');
-				new AlertDialog.Builder(Main.this)
-		            	.setIcon(android.R.drawable.ic_dialog_alert)
-		            	.setTitle(R.string.give_up)
-		        		.setMessage("The secret was: \n\n\t" + sb.toString() + "\n")
-		        		.setPositiveButton(android.R.string.ok, null)
-		        		.show();
+            	inflateAndShowAnswerDialog(R.string.secret_title, "You failed to guess the secret... Try again!");
             	guessButton.setEnabled(false);
             	re.giveUp();
             }
@@ -252,9 +233,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		((Button)findViewById(R.id.ShowAlphabetButton)).setOnClickListener(this);
 		
         //inflate secret word layout
-        LinearLayout layout = (LinearLayout) findViewById(R.id.SecretLayout);
-		inflateCharsLine(layout, null, run2.wordLength, -1);
-		secretPanel = new SecretWordPanel(layout);
+        LinearLayout secretLayout = (LinearLayout) findViewById(R.id.SecretLayout);
+		inflateCharsLine(secretLayout, null, run2.wordLength, true);
+		secretPanel = new SecretWordPanel(secretLayout);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
@@ -382,35 +363,18 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	 
 	private void addOfferedWord(WordCompared wc) throws BncException {
-//		offeredsLayout.addView(inflateOfferedLine(wc));
-//		offeredsAdapter.addWord(wc);
-//		offeredsAdapter.notifyDataSetChanged();
 		Log.d(TAG, "adding an offered word: " + wc);
-		OfferedLineView offeredLine = (OfferedLineView) layoutInflater.inflate(R.layout.offeredline_view, offeredsLayout, false);
-//		offeredLine.setWordCompared(wc);
-		inflateCharsLine(offeredLine, wc.word.chars, run.wordLength, -1);
+		OfferedLineView offeredLine = (OfferedLineView) layoutInflater.inflate(R.layout.offeredline_layout, offeredsLayout, false);
+		inflateCharsLine(offeredLine, wc.word.chars, run.wordLength, true);
 		offeredsLayout.addView(offeredLine);
 		offeredLine.setVisibility(View.VISIBLE);
 	}
-
-	private void winGame(WordCompared wc) {
-		new AlertDialog.Builder(this)
-        .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle(R.string.win_msg)
-        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {}
-        })
-        .setMessage("Congratulations! You guessed the word \"" + run.secret.asString() + "\" in ??? steps")
-        .create()
-        .show();
-	}
 	
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return true;
-    }
+	private void winGame(WordCompared wc) {
+    	Log.i(TAG, "Win game");
+    	inflateAndShowAnswerDialog(R.string.win_msg, "Congratulations! You solved the puzzle in " + run.wordsCompared.size() + 
+    			(run.wordsCompared.size() == 1 ? " step!" : " steps!"));
+	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -429,33 +393,53 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return super.onOptionsItemSelected(item);
 	}
 	
-
-/*	public void onCharStateChanged(Character ch, ENCharState newState)
-			throws BncException {
-//		offeredsAdapter.notifyDataSetInvalidated();
-		offeredsAdapter.notifyDataSetChanged();
-	}
-
-	public void onPosCharStateChanged(PosChar ch, ENCharState newState) {
-//		offeredsAdapter.notifyDataSetInvalidated();
-		offeredsAdapter.notifyDataSetChanged();
-	}*/
-	
 	///////////////////////////////////////////////////////////
 	//Inflaters
 	///////////////////////////////////////////////////////////
 	
-	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, int viewId) {
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_main, menu);
+		return true;
+	}
+
+	private void inflateAndShowAnswerDialog(int titleId, String message) {
+		LinearLayout answerLine = (LinearLayout) layoutInflater.inflate(R.layout.answerline_layout, null, false);
+		inflateCharsLine(answerLine, run.secret.chars, run.wordLength, true);
+
+		new AlertDialog.Builder(Main.this)
+            	.setIcon(android.R.drawable.ic_dialog_alert)
+            	.setTitle(titleId)
+            	.setView(answerLine)
+            	.setMessage(message)
+        		.setPositiveButton(android.R.string.ok, null)
+        		.show();
+	}
+	
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, boolean posSensitive) {
+		LayoutParams answerLP = null;
+		if (la.getId() == R.id.AnswerLine) {
+			answerLP = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.entering_char_width), 
+						getResources().getDimensionPixelSize(R.dimen.entering_char_width));
+    	}
+	
 		for (int i = 0; i < length; i++) {
         	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, la, false);
         	cv.paint = paint;
         	if (chars != null && i < chars.length)
         		cv.setChar(chars[i]);
-        	if (viewId != -1)
-        		cv.setId(viewId);
-        	if(la.getId() == R.id.SecretLayout) {
-        		cv.setViewPos(i);				//to mark "bull" in these words
+        	if (posSensitive) {		//to mark "bull" in these words
+        		cv.setViewPos(i);
         		run.posTable.addAllPosCharStateChangedListener(cv);		
+        		if (chars != null) {
+		    		int presentPos = run.posTable.getPresentPos(chars[i].ch);
+		   			cv.setChar(chars[i], i == presentPos);	//mark as "bull" at start 
+        		}
+        	}
+        	if (la.getId() == R.id.AnswerLine) {
+        		cv.changeStateOnClick = false;
+        		cv.setLayoutParams(answerLP);
         	}
         	la.addView(cv);
         	cv.setVisibility(View.VISIBLE);
@@ -466,7 +450,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private LinearLayout inflatePosLine() {
 		LayoutInflater layoutInflater2 = layoutInflater;
 		int wordLength = run.wordLength;
-		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_view, posTableLayout, false);
+		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_layout, posTableLayout, false);
 		for (int i = 0; i < wordLength; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
 //			pcw.setLayoutParams(linearCharLP);
@@ -515,64 +499,4 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			}
 		}
 	}
-	
-	/*public class CharLineAdapter extends BaseAdapter {
-
-		private ArrayList<CharView[]> charLines = new ArrayList<CharView[]>();
-		private ArrayList<ComparisonResultView> results = new ArrayList<ComparisonResultView>();
-		private GridView.LayoutParams gridCharLP = new GridView.LayoutParams(getCharWidthInPx(), charHeight);
-		
-		public void addWord(WordCompared wc) throws BncException {
-			Log.i(TAG, "CharLineAdapter.addWord, wc = " + wc);
-			Log.d(TAG, "charLines.size = " + charLines.size() + ", results.size = " + results.size());
-			CharView[] line = new CharView[run.wordLength];
-			char[] chars = wc.word.asString().toCharArray();
-			for (int i = 0; i < run.wordLength; i++) {
-				CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, offeredsGrid, false);
-				cv.setChar(Char.valueOf(chars[i], run.alphabet), run.posTable.getPresentPos(chars[i]) == i);
-				cv.setViewPos(i);
-				cv.paint = paint;
-	        	run.posTable.addAllPosCharStateChangedListener(cv);
-				line[i] = cv;
-			}
-			charLines.add(line);
-			
-			ComparisonResultView crv = (ComparisonResultView) layoutInflater.inflate(R.layout.comp_result_view, offeredsGrid, false);
-			crv.setResult(wc.result);
-			crv.setPaint(paint);
-			results.add(crv);
-		}
-		
-		public int getCount() {
-			return charLines.size() * (run.wordLength + 1);
-		}
-
-		public Object getItem(int position) {
-			return position;
-		}
-
-		public long getItemId(int position) {
-			return position;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			int wordLength = run.wordLength;
-			int lineNum = position / (wordLength + 1);
-			int colNum = position % (wordLength + 1);
-			if (colNum == wordLength)	//comparison result
-				return results.get(lineNum);
-			else {
-				CharView cv = charLines.get(lineNum)[colNum];
-				cv.setLayoutParams(gridCharLP);
-				return cv;
-			}
-		}
-	}*/
-	
-	public int getCharWidthInPx() {
-		if (charWidth == -1)
-			charWidth = getResources().getIntArray(R.array.char_width_array)[run.wordLength];
-		return charWidth;
-	}
-
 }

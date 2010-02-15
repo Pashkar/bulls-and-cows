@@ -5,6 +5,6 @@
 	android:id="@+id/CharView"
 	android:layout_width="@dimen/char_width"
 	android:layout_height="@dimen/char_height"
-	android:layout_marginLeft="@dimen/char_margin_left"
+	android:layout_marginLeft="@dimen/char_left_margin"
 	android:focusable="true"
 	/>
