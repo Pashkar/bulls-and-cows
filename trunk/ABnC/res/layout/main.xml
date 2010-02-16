@@ -14,8 +14,9 @@
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:gravity="center_horizontal" 
+			android:layout_gravity="left" 
 			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginLeft="@dimen/line_left_margin"
 			>
 			
 			<!-- Secret -->

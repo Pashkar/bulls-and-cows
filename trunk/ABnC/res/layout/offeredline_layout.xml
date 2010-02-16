@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<view xmlns:android="http://schemas.android.com/apk/res/android"
-	class="paxus.bnc.android.view.OfferedLineLayout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/OfferedLine"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:orientation="horizontal"
 	android:paddingTop="@dimen/line_top_margin"
 	android:paddingBottom="0px"
+	android:layout_marginLeft="@dimen/line_left_margin"
 	android:animationCache="false"
 	android:persistentDrawingCache="animation"
 	/><!--android:layoutAnimation="@anim/layout_random_fade_in"-->
