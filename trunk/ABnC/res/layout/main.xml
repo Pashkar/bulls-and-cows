@@ -7,7 +7,7 @@
 
 		<TextView
 		    style="?android:attr/listSeparatorTextViewStyle"
-		    android:text="The secret word"
+		    android:text="@string/secret_line"
 		/>
 
 		<LinearLayout
@@ -30,13 +30,13 @@
 				android:id="@+id/ShowAlphabetButton"
 				android:layout_width="wrap_content" 
 				android:layout_height="35px"
-				android:text="@string/new_word"/>
+				android:text="@string/new_word_title"/>
 		
 		</LinearLayout>	
 
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
-	    android:text="Your guesses"
+	    android:text="@string/guesses_line"
 	/>
 
 	<ScrollView 
@@ -64,7 +64,7 @@
 
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
-	    android:text="Position is the question..."
+	    android:text="@string/position_line"
 	/>
 	
 	<!-- PosTable: To contain various number of LinearLayouts of PosTable-->

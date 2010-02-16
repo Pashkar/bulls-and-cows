@@ -162,7 +162,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private void initDialogs() {
 		//Dialogs chain - Alphabet then WordLength
 		chooseAlphabetDialog = new AlertDialog.Builder(this)
-		.setTitle(R.string.alphabet)
+		.setTitle(R.string.alphabet_title)
 		.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				alphabetChosen = which;
@@ -180,7 +180,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		.create();
 		
         chooseWordSizeDialog = new AlertDialog.Builder(this)
-        .setTitle(R.string.word_length)
+        .setTitle(R.string.word_length_title)
         .setItems(R.array.word_length_array, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             	wordSizeChosen = Run.MIN_WORD_LENGTH + which;
@@ -193,7 +193,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
         clearMarksDialog = new AlertDialog.Builder(this)
         .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle(R.string.clear_marks)
+        .setTitle(R.string.clear_marks_title)
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             	Log.i(TAG, "Clear marks");
@@ -210,11 +210,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
         giveUpDialog = new AlertDialog.Builder(this)
         .setIcon(android.R.drawable.ic_dialog_alert)
-        .setTitle(R.string.give_up)
+        .setTitle(R.string.give_up_title)
         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             	Log.i(TAG, "Give up");
-            	inflateAndShowAnswerDialog(R.string.secret_title, "You failed to guess the secret... Try again!");
+            	inflateAndShowAnswerDialog(R.string.secret_title, getResources().getString(R.string.give_up_msg));
             	guessButton.setEnabled(false);
             	re.giveUp();
             }
@@ -394,8 +394,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private void winGame(WordCompared wc) {
     	Log.i(TAG, "Win game");
-    	inflateAndShowAnswerDialog(R.string.win_msg, "Congratulations! You solved the puzzle in " + run.wordsCompared.size() + 
-    			(run.wordsCompared.size() == 1 ? " step!" : " steps!"));
+    	inflateAndShowAnswerDialog(R.string.win_title, getResources().getString(R.string.win_msg, run.wordsCompared.size())); 
 	}
 
 	@Override
