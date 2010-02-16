@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-	<!-- Char sizes -->
-	<dimen name="char_width">30px</dimen>	<!-- default value -->
-	<dimen name="char_width_3">30px</dimen>
-	<dimen name="char_width_4">30px</dimen>
-	
-	<dimen name="char_height">30px</dimen>
+	<dimen name="char_width">30px</dimen>
+	<dimen name="char_height">30px</dimen>	<!-- set in "pt"? -->
+	<dimen name="char_width_max">45px</dimen>
+	<dimen name="char_left_margin">1px</dimen>
+
 	<dimen name="entering_char_width">40px</dimen>
 	<dimen name="entering_char_height">40px</dimen>
+	<dimen name="entering_line_bottom_margin">30px</dimen>
 	
 	<dimen name="comp_result_width">45px</dimen>
+	<dimen name="comp_result_left_margin">10px</dimen>
+	<dimen name="comp_result_right_margin">10px</dimen>
+	
 	<dimen name="digital_alphabet_char_width">40px</dimen>
 	<dimen name="digital_alphabet_char_height">40px</dimen>
 	
-	<dimen name="char_left_margin">1px</dimen>
-	<dimen name="comp_result_left_margin">10px</dimen>
 	<dimen name="line_top_margin">1px</dimen>
-	<dimen name="entering_line_bottom_margin">30px</dimen>
+	<dimen name="line_left_margin">3px</dimen>
+	
 	<dimen name="answer_line_top_margin">10px</dimen>
 	<dimen name="alphabet_line_margin">10px</dimen>
 	<dimen name="view_top_margin">3px</dimen>
-	<dimen name="total_left_margin">20px</dimen>
+	
+	<dimen name="toast_top_margin">50px</dimen>
 </resources>

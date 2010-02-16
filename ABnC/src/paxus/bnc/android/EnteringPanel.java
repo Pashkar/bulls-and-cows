@@ -46,10 +46,11 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		this.callback = callback;
 		this.run = Main.run;
 		Run run2 = run;
+		int offset = context.getResources().getDimensionPixelOffset(R.dimen.toast_top_margin);
 		tooLongWordToast = Toast.makeText(context, R.string.word_too_long_msg, Toast.LENGTH_SHORT);
-		tooLongWordToast.setGravity(Gravity.TOP, 0, 50);
+		tooLongWordToast.setGravity(Gravity.TOP, 0, offset);
 		duplicatedCharToast = Toast.makeText(context, R.string.diplicated_msg, Toast.LENGTH_SHORT);
-		duplicatedCharToast.setGravity(Gravity.TOP, 0, 50);
+		duplicatedCharToast.setGravity(Gravity.TOP, 0, offset);
 		
 		int alphabetLayoutId = -1;
 		if (Alphabet.DIGITAL.equals(run2.alphabet.getName()))

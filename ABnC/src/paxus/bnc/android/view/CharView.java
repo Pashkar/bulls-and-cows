@@ -92,7 +92,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 //		invalidate();
 	}
 
-	@Override
+	/*@Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(measureWidth(widthMeasureSpec),
                 measureHeight(heightMeasureSpec));
@@ -101,7 +101,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     private int measureWidth(int measureSpec) {
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
-        Log.d(TAG, "measureWidth: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
+        Log.d(TAG, this + ": measureWidth: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
         if (specMode == MeasureSpec.EXACTLY) {
             // We were told how big to be
             return specSize;
@@ -118,7 +118,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
     private int measureHeight(int measureSpec) {
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
-        Log.d(TAG, "measureHeight: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
+        Log.d(TAG, this + ": measureHeight: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
         if (specMode == MeasureSpec.EXACTLY) {
             // We were told how big to be
             return specSize;
@@ -130,7 +130,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
         		return desiredHeight;
         	}
         }
-    }
+    }*/
     
     protected void onDraw(Canvas canvas) {
         setBackground();
@@ -187,7 +187,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	
 	@Override
 	public String toString() {
-		return ch + "";
+		return ch + "(" + viewPos + ")";
 	}
 
 	/** 
