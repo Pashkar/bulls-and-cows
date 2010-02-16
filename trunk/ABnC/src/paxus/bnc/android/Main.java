@@ -57,7 +57,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	protected int wordSizeChosen;
 	protected int alphabetChosen;
 
-
 	private Button guessButton;
 
 	private int charWidth;
