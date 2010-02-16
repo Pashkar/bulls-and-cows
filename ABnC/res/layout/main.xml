@@ -45,7 +45,7 @@
 		android:scrollbars="vertical"
 		android:scrollbarStyle="outsideInset"
 		android:layout_weight="1.0"
-		android:persistentDrawingCache="all"
+		android:persistentDrawingCache="scrolling"
 		android:drawingCacheQuality="high"
 	    >
 	    
@@ -53,12 +53,11 @@
 			android:id="@+id/OfferedsLayout"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
-			android:layoutAnimation="@anim/layout_random_fade_in"
 			android:orientation="vertical"
 			android:gravity="center_horizontal" 
 			android:layout_marginTop="@dimen/view_top_margin"
-			android:persistentDrawingCache="scrolling"
 			/>
+			<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
 			
 	</ScrollView>
 
@@ -72,9 +71,9 @@
 		android:id="@+id/PositioningLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
-		android:layoutAnimation="@anim/layout_random_fade_in"
 		android:orientation="vertical"
 		android:gravity="center_horizontal" 
 		android:layout_marginTop="@dimen/view_top_margin"/>
+		<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
 		
 </LinearLayout>

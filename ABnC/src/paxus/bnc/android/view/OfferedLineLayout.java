@@ -18,6 +18,12 @@ public class OfferedLineLayout extends LinearLayout {
 		super(context);
 	}
 
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		measureChildren(MeasureSpec.makeMeasureSpec(MeasureSpec.EXACTLY, 12), 
+						getChildMeasureSpec(heightMeasureSpec, 0, 0));
+        setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), getChildAt(0).getMeasuredHeight());
+    }
+	
 	/*protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		measureChildren(MeasureSpec.makeMeasureSpec(MeasureSpec.EXACTLY, 12), 
 						getChildMeasureSpec(heightMeasureSpec, 0, 0));

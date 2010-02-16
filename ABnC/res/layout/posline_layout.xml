@@ -9,5 +9,4 @@
 	android:paddingBottom="0px"
 	android:animationCache="false"
 	android:persistentDrawingCache="animation"
-	android:layoutAnimation="@anim/layout_random_fade_in"
-	/>
+	/> <!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
