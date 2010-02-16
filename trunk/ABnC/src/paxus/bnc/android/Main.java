@@ -5,7 +5,8 @@ import java.util.*;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
-import paxus.bnc.android.view.OfferedLineView;
+import paxus.bnc.android.view.ComparisonResultView;
+import paxus.bnc.android.view.OfferedLineLayout;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
@@ -27,6 +28,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.LinearLayout.LayoutParams;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener/*, ICharStateChangedListener, IPosCharStateChangedListener*/ {
@@ -45,6 +47,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private SecretWordPanel secretPanel;
 	private LinearLayout offeredsLayout;
 	private LinearLayout posTableLayout;
+	private ScrollView scrollView;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private LayoutAnimationController lineInAnimation;
@@ -110,6 +113,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
+		scrollView = (ScrollView) findViewById(R.id.ScrollOffered);
 		guessButton = (Button) findViewById(R.id.ShowAlphabetButton);
 		guessButton.setEnabled(!run.givenUp);
 		
@@ -353,8 +357,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		try {
 			Run.WordCompared wc = re.offerWord(word);
 			addOfferedWord(wc);
-//			scrollView.smoothScrollTo(0, 100000);
-//			offeredsGrid.scrollTo(0, 100000);
+			scrollView.smoothScrollTo(0, 100000);
 			Log.i(TAG, "offerWord = " + wc);
 			if (wc.result.guessed())
 				winGame(wc);
@@ -363,12 +366,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	 
 	private void addOfferedWord(WordCompared wc) throws BncException {
 		Log.d(TAG, "adding an offered word: " + wc);
-		OfferedLineView offeredLine = (OfferedLineView) layoutInflater.inflate(R.layout.offeredline_layout, offeredsLayout, false);
+		OfferedLineLayout offeredLine = (OfferedLineLayout) layoutInflater.inflate(R.layout.offeredline_layout, offeredsLayout, false);
 		inflateCharsLine(offeredLine, wc.word.chars, run.wordLength, true);
+		ComparisonResultView compResView = inflateComparisonResult(offeredLine, wc);
+		offeredLine.addView(compResView);
 		offeredsLayout.addView(offeredLine);
 		offeredLine.setVisibility(View.VISIBLE);
 	}
-	
+
 	private void winGame(WordCompared wc) {
     	Log.i(TAG, "Win game");
     	inflateAndShowAnswerDialog(R.string.win_msg, "Congratulations! You solved the puzzle in " + run.wordsCompared.size() + 
@@ -392,15 +397,23 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return super.onOptionsItemSelected(item);
 	}
 	
-	///////////////////////////////////////////////////////////
-	//Inflaters
-	///////////////////////////////////////////////////////////
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu_main, menu);
 		return true;
+	}
+
+	
+	///////////////////////////////////////////////////////////
+	//Inflaters
+	///////////////////////////////////////////////////////////
+	
+	private ComparisonResultView inflateComparisonResult(OfferedLineLayout offeredLine, WordCompared wc) {
+		ComparisonResultView compResView = (ComparisonResultView) layoutInflater.inflate(R.layout.comp_result_view, offeredLine, false);
+		compResView.setPaint(paint);
+		compResView.setResult(wc.result);
+		return compResView;
 	}
 
 	private void inflateAndShowAnswerDialog(int titleId, String message) {

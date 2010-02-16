@@ -5,16 +5,16 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
-public class OfferedLineView extends LinearLayout {
+public class OfferedLineLayout extends LinearLayout {
 	
 	private static final String TAG = "CharLine";
 	private WordCompared wc;
 	
-	public OfferedLineView(Context context, AttributeSet attrs) {
+	public OfferedLineLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 	
-	public OfferedLineView(Context context) {
+	public OfferedLineLayout(Context context) {
 		super(context);
 	}
 

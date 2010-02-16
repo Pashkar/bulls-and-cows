@@ -6,14 +6,11 @@
 	<dimen name="char_width_3">30px</dimen>
 	<dimen name="char_width_4">30px</dimen>
 	
-	
 	<dimen name="char_height">30px</dimen>
 	<dimen name="entering_char_width">40px</dimen>
 	<dimen name="entering_char_height">40px</dimen>
 	
-	
-	
-	<dimen name="comp_result_width">60px</dimen>
+	<dimen name="comp_result_width">45px</dimen>
 	<dimen name="digital_alphabet_char_width">40px</dimen>
 	<dimen name="digital_alphabet_char_height">40px</dimen>
 	
