@@ -66,7 +66,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		
         panelDialog = new AlertDialog.Builder(context)
 		.setPositiveButton(android.R.string.ok, this)
-		.setNegativeButton(R.string.clear, this)
+		.setNegativeButton(R.string.clear_title, this)
 		.setView(panelView)
 		.create();
         panelDialog.setCanceledOnTouchOutside(true);
