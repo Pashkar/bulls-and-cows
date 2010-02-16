@@ -38,35 +38,29 @@
 	    android:text="Your guesses"
 	/>
 
- 	<!-- Offered words and comparison results -->
- 	<!--<GridView 
- 			android:id="@+id/OfferedsGrid"
+	<ScrollView 
+		android:id="@+id/ScrollOffered"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"			
+		android:scrollbars="vertical"
+		android:scrollbarStyle="outsideInset"
+		android:layout_weight="1.0"
+		android:persistentDrawingCache="all"
+		android:drawingCacheQuality="high"
+	    >
+	    
+	   	<LinearLayout
+			android:id="@+id/OfferedsLayout"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:layoutAnimation="@anim/layout_random_fade_in"
-		    android:verticalSpacing="@dimen/line_top_margin"
-		    android:stretchMode="columnWidth"
-		    
-		    android:gravity="center" 
-		    android:focusable="false"
-		    android:smoothScrollbar="true"
-		    android:scrollbarStyle="outsideInset"
-		    android:scrollbars="vertical"
-		    android:scrollingCache="true"
-		    android:cacheColorHint="@drawable/screen_background_white"
-		    android:layout_weight="1.0"
-    />-->
-    
-    <!--<Scroll></Scroll>-->
-    
-   	<LinearLayout
-		android:id="@+id/OfferedsLayout"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:layoutAnimation="@anim/layout_random_fade_in"
-		android:orientation="vertical"
-		android:gravity="center_horizontal" 
-		android:layout_marginTop="@dimen/view_top_margin"/>
+			android:orientation="vertical"
+			android:gravity="center_horizontal" 
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:persistentDrawingCache="scrolling"
+			/>
+			
+	</ScrollView>
 
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
