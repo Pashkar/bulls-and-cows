@@ -46,8 +46,10 @@
 		android:scrollbars="vertical"
 		android:scrollbarStyle="outsideInset"
 		android:layout_weight="1.0"
-		android:persistentDrawingCache="scrolling"
-		android:drawingCacheQuality="high"
+		android:persistentDrawingCache="all"
+		android:drawingCacheQuality="high" 
+		android:animationCache="true" 
+		android:alwaysDrawnWithCache="true"
 	    >
 	    
 	   	<LinearLayout

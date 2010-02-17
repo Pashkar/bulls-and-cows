@@ -92,46 +92,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 //		invalidate();
 	}
 
-	/*@Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(measureWidth(widthMeasureSpec),
-                measureHeight(heightMeasureSpec));
-    }
-     
-    private int measureWidth(int measureSpec) {
-        int specMode = MeasureSpec.getMode(measureSpec);
-        int specSize = MeasureSpec.getSize(measureSpec);
-        Log.d(TAG, this + ": measureWidth: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
-        if (specMode == MeasureSpec.EXACTLY) {
-            // We were told how big to be
-            return specSize;
-        } else {
-        	int desiredWidth = getLayoutParams().width + getPaddingLeft() + getPaddingRight();
-        	if (specMode == MeasureSpec.AT_MOST) {
-        		return desiredWidth < specSize ? desiredWidth : specSize;
-        	} else {
-        		return desiredWidth;
-        	}
-        }
-    }
-    
-    private int measureHeight(int measureSpec) {
-        int specMode = MeasureSpec.getMode(measureSpec);
-        int specSize = MeasureSpec.getSize(measureSpec);
-        Log.d(TAG, this + ": measureHeight: specSize = " + specSize + ", specMode = " + specMode + (specMode == MeasureSpec.EXACTLY ? " (MeasureSpec.EXACTLY)" : ""));
-        if (specMode == MeasureSpec.EXACTLY) {
-            // We were told how big to be
-            return specSize;
-        } else {
-        	int desiredHeight = getLayoutParams().height + getPaddingTop() + getPaddingBottom();
-        	if (specMode == MeasureSpec.AT_MOST) {
-        		return desiredHeight < specSize ? desiredHeight : specSize;
-        	} else {
-        		return desiredHeight;
-        	}
-        }
-    }*/
-    
     protected void onDraw(Canvas canvas) {
         setBackground();
         if (ch != null && paint != null) {
