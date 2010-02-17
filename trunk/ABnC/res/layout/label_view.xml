@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+	class="paxus.bnc.android.view.LabelView"
+	android:id="@+id/LabelView"
+	android:background="@drawable/empty"
+	android:layout_width="@dimen/comp_result_width"
+	android:layout_height="@dimen/char_height"
+	android:layout_marginRight="@dimen/comp_result_right_margin"
+	android:focusable="false"
+	/>

@@ -6,6 +6,6 @@
 		android:layout_width="@dimen/comp_result_width" 
 		android:layout_height="@dimen/char_height"
 		android:layout_marginLeft="@dimen/comp_result_left_margin"
-		android:gravity="right"
+		android:layout_marginRight="@dimen/comp_result_right_margin"
 		android:background="@drawable/markbg"
 		/>

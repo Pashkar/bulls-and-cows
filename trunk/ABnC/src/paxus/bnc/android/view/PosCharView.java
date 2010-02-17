@@ -102,10 +102,10 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
         }
         drawBackground();
     	if (xOffset == -1)
-    		xOffset = /*getPaddingLeft() + */getWidth() / 2;
+    		xOffset = getWidth() / 2;
     	if (yOffset == -1)
     		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
-        canvas.drawText("[" + pch.ch + "]", xOffset, yOffset, paint);
+        canvas.drawText(pch.ch + "", xOffset, yOffset, paint);
     }
 
 	public void onClick(View v) {

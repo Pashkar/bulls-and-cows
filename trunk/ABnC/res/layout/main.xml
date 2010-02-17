@@ -3,41 +3,45 @@
 	android:id="@+id/MainLayout"
 	android:layout_width="fill_parent" 
 	android:layout_height="fill_parent"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	>
 
-		<TextView
-		    style="?android:attr/listSeparatorTextViewStyle"
-		    android:text="@string/secret_line"
+	<TextView
+	    style="?android:attr/listSeparatorTextViewStyle"
+	    android:text="@string/secret_line"
 		/>
 
+	<!-- Secret word -->
+	<LinearLayout
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:paddingTop="@dimen/view_top_margin"
+		android:paddingRight="@dimen/view_right_padding"		
+		android:gravity="right" 
+		>
+		
+		<Button 
+			android:id="@+id/ShowAlphabetButton"
+			android:layout_width="wrap_content" 
+			android:layout_height="35px"
+			android:text="@string/new_word_title"
+			/>
+
+		<!-- Secret -->
 		<LinearLayout
-			android:layout_width="fill_parent" 
+			android:id="@+id/SecretLayout"
+			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:layout_gravity="left" 
-			android:layout_marginTop="@dimen/view_top_margin"
-			android:layout_marginLeft="@dimen/line_left_margin"
-			>
-			
-			<!-- Secret -->
-			<LinearLayout
-				android:id="@+id/SecretLayout"
-				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"/> 
-				
-			<Button 
-				android:id="@+id/ShowAlphabetButton"
-				android:layout_width="wrap_content" 
-				android:layout_height="35px"
-				android:text="@string/new_word_title"/>
-		
-		</LinearLayout>	
+			/> 
+	
+	</LinearLayout>	
 
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
 	    android:text="@string/guesses_line"
-	/>
+		/>
 
 	<ScrollView 
 		android:id="@+id/ScrollOffered"
@@ -45,20 +49,22 @@
 		android:layout_height="wrap_content"			
 		android:scrollbars="vertical"
 		android:scrollbarStyle="outsideInset"
-		android:layout_weight="1.0"
 		android:persistentDrawingCache="all"
 		android:drawingCacheQuality="high" 
 		android:animationCache="true" 
 		android:alwaysDrawnWithCache="true"
-		android:layout_marginTop="@dimen/view_top_margin"
+		android:layout_weight="1.0"
+		android:paddingTop="@dimen/view_top_margin"
+		android:paddingRight="@dimen/scroll_right_padding"
+		android:paddingLeft="@dimen/line_left_margin"
 	    >
 	    
+		<!-- Offered words + comparison results -->
 	   	<LinearLayout
 			android:id="@+id/OfferedsLayout"
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
-			android:gravity="center_horizontal" 
 			/>
 			<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
 			
@@ -67,7 +73,7 @@
 	<TextView
 	    style="?android:attr/listSeparatorTextViewStyle"
 	    android:text="@string/position_line"
-	/>
+		/>
 	
 	<!-- PosTable: To contain various number of LinearLayouts of PosTable-->
 	<LinearLayout
@@ -75,9 +81,11 @@
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:gravity="center_horizontal"
-		android:layout_marginBottom="@dimen/view_top_margin"
-		android:layout_marginTop="@dimen/view_top_margin"/>
+		android:paddingTop="@dimen/view_top_margin"
+		android:paddingBottom="@dimen/view_top_margin"
+		android:paddingLeft="@dimen/line_left_margin"
+		android:paddingRight="@dimen/view_right_padding"
+		/>
 		
 		<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
 		
