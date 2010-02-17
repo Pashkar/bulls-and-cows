@@ -50,6 +50,7 @@
 		android:drawingCacheQuality="high" 
 		android:animationCache="true" 
 		android:alwaysDrawnWithCache="true"
+		android:layout_marginTop="@dimen/view_top_margin"
 	    >
 	    
 	   	<LinearLayout
@@ -58,7 +59,6 @@
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
 			android:gravity="center_horizontal" 
-			android:layout_marginTop="@dimen/view_top_margin"
 			/>
 			<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
 			
@@ -75,8 +75,10 @@
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:gravity="center_horizontal" 
+		android:gravity="center_horizontal"
+		android:layout_marginBottom="@dimen/view_top_margin"
 		android:layout_marginTop="@dimen/view_top_margin"/>
+		
 		<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
 		
 </LinearLayout>
