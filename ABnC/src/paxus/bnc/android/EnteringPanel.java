@@ -21,24 +21,19 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	private static final String TAG = "EnteringPanel";
 
 	private StringBuffer enteringWord;
-
 	private LinearLayout enteringWordLayout;
 
 	private Toast tooLongWordToast;
-
 	private Toast duplicatedCharToast;
 
+	private final Context context;
 	private Run run;
+	private LayoutParams digitalAlphaberCharLP;
 
 	private View panelView;
-
 	private AlertDialog panelDialog;	//implementation based on Dialog
 
 	private final OnWordOfferedListener callback;
-
-	private LayoutParams digitalAlphaberCharLP;
-
-	private final Context context;
 
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
 		this.context = context;

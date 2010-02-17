@@ -6,6 +6,7 @@ import java.util.*;
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.ComparisonResultView;
+import paxus.bnc.android.view.LabelView;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
@@ -23,8 +24,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -51,7 +50,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
 	private Toast alphabetNotSupportedToast;
-	private LayoutAnimationController lineInAnimation;
+//	private LayoutAnimationController lineInAnimation;
 	private LinearLayout.LayoutParams charLP;
 	private int displayWidth;
 
@@ -64,6 +63,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	protected int alphabetChosen;
 
 	private Button guessButton;
+
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -99,7 +99,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
     private void initActivity() {
     	paint = createPaint(getResources());
-    	lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
+//    	lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
 //    	lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
     	layoutInflater = getLayoutInflater();
     	displayWidth = getWindowManager().getDefaultDisplay().getWidth();
@@ -154,7 +154,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			run = re.startNewRun(alphabet, secret);
 		} catch (BncException e) {	}
 		
-		Log.d(TAG, run.secret.toString());
+//		Log.d(TAG, run.secret.toString());
 		reinitActivity();
 		layoutViews();	//finish initialization, interrupted by dialogs chain
 	}
@@ -243,6 +243,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		secretPanel = new SecretWordPanel(secretLayout);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
+		//also inflate labels
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
         for (int i = 0; i < run2.wordLength; i++) {
         	LinearLayout line = inflatePosLine();
@@ -268,7 +269,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         	for (PositionLine line : lines)
         		onPosTableUpdate(true, line.chars[0].ch, line);
 	}
-	
+
 	//failed to work with "onMeasure" and "measureChildren" form API. Workaround proposed 
 	private void calcOfferedCharLayout() {
 		Resources resources = getResources();
@@ -276,7 +277,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				resources.getDimensionPixelSize(R.dimen.comp_result_right_margin) + 
 				resources.getDimensionPixelSize(R.dimen.comp_result_width) +
 				resources.getDimensionPixelSize(R.dimen.comp_result_left_margin) + 
-				resources.getDimensionPixelSize(R.dimen.line_left_margin) 
+				resources.getDimensionPixelSize(R.dimen.line_left_margin) +
+				resources.getDimensionPixelSize(R.dimen.view_right_padding)
 		);
 		int charLeftMargin = resources.getDimensionPixelSize(R.dimen.char_left_margin);
 		int charWidth = Math.min((width / run.wordLength) - charLeftMargin, resources.getDimensionPixelSize(R.dimen.char_width_max));
@@ -321,24 +323,24 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
-		LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
 		if (insert) {
-			LinearLayout pl = freePosLayoutList2.removeFirst();
-			showPosLine(pl, line.chars, run.wordLength);
+			LinearLayout pl = freePosLayoutList.removeFirst();
 			pl.setTag(ch);
+			showPosLine(pl, line.chars, run.wordLength);
 		} else {				//line == null
 			LinearLayout pl = hidePosLine(ch);
 			if (pl == null)
 				return;
-			freePosLayoutList2.add(pl);
+			freePosLayoutList.add(pl);
 			pl.setTag(null);
 		}
 	}
 	
 	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
 	private void showPosLine(LinearLayout line, PosChar[] chars, int length) {
+		((LabelView)line.getChildAt(0)).caption = chars[0].ch;
 		for (int i = 0; i < length; i++) {
-			PosCharView pcw = (PosCharView) line.getChildAt(i);
+			PosCharView pcw = (PosCharView) line.getChildAt(i + 1);		//first is LabelView
 			pcw.setPosChar(chars[i]);
         }
 		posTableLayout.addView(line);
@@ -385,9 +387,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private void addOfferedWord(WordCompared wc) throws BncException {
 		Log.d(TAG, "adding an offered word: " + wc);
 		LinearLayout offeredLine = (LinearLayout) layoutInflater.inflate(R.layout.offeredline_layout, offeredsLayout, false);
-		inflateCharsLine(offeredLine, wc.word.chars, run.wordLength, charLP);
 		ComparisonResultView compResView = inflateComparisonResult(offeredLine, wc);
 		offeredLine.addView(compResView);
+		inflateCharsLine(offeredLine, wc.word.chars, run.wordLength, charLP);
 		offeredsLayout.addView(offeredLine);
 		offeredLine.setVisibility(View.VISIBLE);
 	}
@@ -425,6 +427,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	///////////////////////////////////////////////////////////
 	//Inflaters
 	///////////////////////////////////////////////////////////
+	
+	private LabelView inflateLabel() {
+		LabelView lv = (LabelView) layoutInflater.inflate(R.layout.label_view, posTableLayout, false);
+		lv.paint = paint;
+		return lv;
+	}
 	
 	private ComparisonResultView inflateComparisonResult(LinearLayout la, WordCompared wc) {
 		ComparisonResultView compResView = (ComparisonResultView) layoutInflater.inflate(R.layout.comp_result_view, la, false);
@@ -483,6 +491,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		LayoutInflater layoutInflater2 = layoutInflater;
 		int wordLength = run.wordLength;
 		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_layout, posTableLayout, false);
+		
+		//first is label
+		line.addView(inflateLabel());
+		
+		//then - posChars
 		for (int i = 0; i < wordLength; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
 			pcw.setLayoutParams(charLP);

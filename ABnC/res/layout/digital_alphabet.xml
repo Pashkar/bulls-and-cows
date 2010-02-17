@@ -15,6 +15,8 @@
 			android:orientation="horizontal"
 			android:layout_marginTop="@dimen/view_top_margin"
 			android:layout_marginBottom="@dimen/entering_line_bottom_margin"
+			android:layout_marginLeft="@dimen/line_left_margin"
+			android:layout_marginRight="@dimen/line_left_margin"
 			>
 	</LinearLayout>
 
