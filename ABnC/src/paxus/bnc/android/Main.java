@@ -338,9 +338,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
 	private void showPosLine(LinearLayout line, PosChar[] chars, int length) {
-		((LabelView)line.getChildAt(0)).caption = chars[0].ch;
+//		((LabelView)line.getChildAt(0)).caption = chars[0].ch;
+		
 		for (int i = 0; i < length; i++) {
-			PosCharView pcw = (PosCharView) line.getChildAt(i + 1);		//first is LabelView
+			PosCharView pcw = (PosCharView) line.getChildAt(i/* + 1*/);		//first is LabelView
 			pcw.setPosChar(chars[i]);
         }
 		posTableLayout.addView(line);
@@ -493,7 +494,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_layout, posTableLayout, false);
 		
 		//first is label
-		line.addView(inflateLabel());
+//		line.addView(inflateLabel());
 		
 		//then - posChars
 		for (int i = 0; i < wordLength; i++) {
