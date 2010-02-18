@@ -1,17 +1,32 @@
 package paxus.bnc.android;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.ComparisonResultView;
-import paxus.bnc.android.view.LabelView;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
-import paxus.bnc.model.*;
+import paxus.bnc.model.Alphabet;
+import paxus.bnc.model.Char;
+import paxus.bnc.model.ENCharState;
+import paxus.bnc.model.PosChar;
+import paxus.bnc.model.PositionTable;
+import paxus.bnc.model.Run;
 import paxus.bnc.model.PositionTable.PositionLine;
 import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
@@ -22,7 +37,11 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -338,10 +357,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	//Already inflated LanearLayout, line of PosCharViews. Just associate PosChar objects
 	private void showPosLine(LinearLayout line, PosChar[] chars, int length) {
-//		((LabelView)line.getChildAt(0)).caption = chars[0].ch;
-		
 		for (int i = 0; i < length; i++) {
-			PosCharView pcw = (PosCharView) line.getChildAt(i/* + 1*/);		//first is LabelView
+			PosCharView pcw = (PosCharView) line.getChildAt(i);		
 			pcw.setPosChar(chars[i]);
         }
 		posTableLayout.addView(line);
@@ -388,9 +405,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private void addOfferedWord(WordCompared wc) throws BncException {
 		Log.d(TAG, "adding an offered word: " + wc);
 		LinearLayout offeredLine = (LinearLayout) layoutInflater.inflate(R.layout.offeredline_layout, offeredsLayout, false);
+		inflateCharsLine(offeredLine, wc.word.chars, run.wordLength, charLP);
 		ComparisonResultView compResView = inflateComparisonResult(offeredLine, wc);
 		offeredLine.addView(compResView);
-		inflateCharsLine(offeredLine, wc.word.chars, run.wordLength, charLP);
+
 		offeredsLayout.addView(offeredLine);
 		offeredLine.setVisibility(View.VISIBLE);
 	}
@@ -428,12 +446,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	///////////////////////////////////////////////////////////
 	//Inflaters
 	///////////////////////////////////////////////////////////
-	
-	private LabelView inflateLabel() {
-		LabelView lv = (LabelView) layoutInflater.inflate(R.layout.label_view, posTableLayout, false);
-		lv.paint = paint;
-		return lv;
-	}
 	
 	private ComparisonResultView inflateComparisonResult(LinearLayout la, WordCompared wc) {
 		ComparisonResultView compResView = (ComparisonResultView) layoutInflater.inflate(R.layout.comp_result_view, la, false);
@@ -493,10 +505,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		int wordLength = run.wordLength;
 		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_layout, posTableLayout, false);
 		
-		//first is label
-//		line.addView(inflateLabel());
-		
-		//then - posChars
 		for (int i = 0; i < wordLength; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
 			pcw.setLayoutParams(charLP);

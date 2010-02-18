@@ -8,5 +8,5 @@
 	android:orientation="horizontal"
 	android:animationCache="true"
 	android:persistentDrawingCache="all"
-	android:gravity="right"
+	android:gravity="left"
 	/> <!-- android:layoutAnimation="@anim/layout_random_fade_in" -->

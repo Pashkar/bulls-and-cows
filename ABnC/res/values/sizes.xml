@@ -6,12 +6,13 @@
 	<dimen name="char_width_max">65px</dimen>
 	<dimen name="char_left_margin">1px</dimen>
 
-
 	<dimen name="entering_char_width">40px</dimen>
 	<dimen name="entering_char_height">40px</dimen>
 	<dimen name="entering_line_bottom_margin">30px</dimen>
 	
-	<!--<dimen name="label_width">30px</dimen>-->
+	<dimen name="button_height">35px</dimen>
+	<dimen name="button_left_margin">3px</dimen>
+	
 	<dimen name="comp_result_width">45px</dimen>
 	<dimen name="comp_result_left_margin">10px</dimen>
 	<dimen name="comp_result_right_margin">10px</dimen>
@@ -20,7 +21,7 @@
 	<dimen name="digital_alphabet_char_height">40px</dimen>
 	
 	<dimen name="line_top_margin">1px</dimen>
-	<dimen name="line_left_margin">10px</dimen>
+	<dimen name="line_left_margin">5px</dimen>
 	
 	<dimen name="answer_line_top_margin">10px</dimen>
 	<dimen name="alphabet_line_margin">10px</dimen>
