@@ -11,7 +11,7 @@
     <string name="word_too_long_msg">Word is too long</string>
     
     <string name="new_game_title">New game</string>
-    <string name="new_word_title">Guess...</string>
+    <string name="new_word_title">Guess</string>
     <string name="win_title">You win!</string>
     <string name="win_msg">"Congratulations! You solved the puzzle in %d steps!</string>
     
