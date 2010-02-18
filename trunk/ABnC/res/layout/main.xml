@@ -18,16 +18,10 @@
 		android:orientation="horizontal"
 		android:paddingTop="@dimen/view_top_margin"
 		android:paddingRight="@dimen/view_right_padding"		
-		android:gravity="right" 
+		android:paddingLeft="@dimen/line_left_margin"
+		android:gravity="left" 
 		>
 		
-		<Button 
-			android:id="@+id/ShowAlphabetButton"
-			android:layout_width="wrap_content" 
-			android:layout_height="35px"
-			android:text="@string/new_word_title"
-			/>
-
 		<!-- Secret -->
 		<LinearLayout
 			android:id="@+id/SecretLayout"
@@ -36,6 +30,14 @@
 			android:orientation="horizontal"
 			/> 
 	
+		<Button 
+			android:id="@+id/ShowAlphabetButton"
+			android:layout_width="wrap_content" 
+			android:layout_height="@dimen/button_height"
+			android:layout_marginLeft="@dimen/button_left_margin"
+			android:text="@string/new_word_title"
+			/>
+
 	</LinearLayout>	
 
 	<TextView
