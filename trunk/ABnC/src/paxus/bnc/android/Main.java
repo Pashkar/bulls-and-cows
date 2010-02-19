@@ -114,7 +114,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
 		freePosLayoutList.clear();
 		enteringPanel = new EnteringPanel(this, this);
-//		ComparisonResultView.width = -1;
+		ComparisonResultView.reset();
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			run = re.startNewRun(alphabet, secret);
 		} catch (BncException e) {	}
 		
-//		Log.d(TAG, run.secret.toString());
+		Log.d(TAG, run.secret.toString());
 		reinitActivity();
 		layoutViews();	//finish initialization, interrupted by dialogs chain
 	}

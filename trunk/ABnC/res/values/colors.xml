@@ -19,4 +19,5 @@
 	<drawable name="font_color">#000</drawable>
 	<drawable name="bull_color">#7A6</drawable>
 	<drawable name="cow_color">#EA0</drawable>
+	<drawable name="noth_color">#D55</drawable>
 </resources>
