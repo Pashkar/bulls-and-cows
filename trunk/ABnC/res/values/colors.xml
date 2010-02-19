@@ -16,6 +16,7 @@
 
 <resources>
 	<drawable name="screen_background_white">#ffE7E7E7</drawable>
-	<drawable name="paint_color">#000</drawable>
-    <drawable name="translucent_background">#99999999</drawable>
+	<drawable name="font_color">#000</drawable>
+	<drawable name="bull_color">#7A6</drawable>
+	<drawable name="cow_color">#EA0</drawable>
 </resources>
