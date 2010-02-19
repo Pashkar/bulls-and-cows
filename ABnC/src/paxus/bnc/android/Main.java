@@ -1,18 +1,7 @@
 package paxus.bnc.android;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
@@ -21,12 +10,7 @@ import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
-import paxus.bnc.model.Alphabet;
-import paxus.bnc.model.Char;
-import paxus.bnc.model.ENCharState;
-import paxus.bnc.model.PosChar;
-import paxus.bnc.model.PositionTable;
-import paxus.bnc.model.Run;
+import paxus.bnc.model.*;
 import paxus.bnc.model.PositionTable.PositionLine;
 import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
@@ -37,11 +21,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -83,13 +63,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private Button guessButton;
 
-
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setTextSize(16);
         paint.setTextAlign(Align.CENTER);
-        paint.setColor(resources.getColor(R.drawable.paint_color));
+        paint.setColor(resources.getColor(R.drawable.font_color));
         paint.setDither(true);
         return paint;
 	}
@@ -135,6 +114,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
 		freePosLayoutList.clear();
 		enteringPanel = new EnteringPanel(this, this);
+//		ComparisonResultView.width = -1;
 	}
 
 	/**
@@ -449,7 +429,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private ComparisonResultView inflateComparisonResult(LinearLayout la, WordCompared wc) {
 		ComparisonResultView compResView = (ComparisonResultView) layoutInflater.inflate(R.layout.comp_result_view, la, false);
-		compResView.setPaint(paint);
 		compResView.setResult(wc.result);
 		return compResView;
 	}
