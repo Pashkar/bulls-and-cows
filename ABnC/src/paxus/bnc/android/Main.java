@@ -134,9 +134,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     }
 
 	private void finishStartingNewRun() {
+		//TODO add new alphabets
 		Alphabet alphabet = new Alphabet.Digital();	
-		int wordLength = wordSizeChosen;
-		
 		String secret = "";
 		if (alphabet instanceof Alphabet.Digital) {
 			List<Character> secretList = new ArrayList<Character>(10);
