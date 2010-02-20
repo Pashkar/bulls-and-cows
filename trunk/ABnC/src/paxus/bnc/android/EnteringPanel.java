@@ -68,7 +68,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	}
 
 	private void inflateAlphabetLines(int alphabetLayoutId) {
-		Char[] chars = run.alphabet.getAllChars().toArray(new Char[10]);
+		Char[] chars = run.alphabet.getAllCharsSorted().toArray(new Char[10]);
 		switch (alphabetLayoutId) {
 			case R.layout.digital_alphabet:	//2 lines
 				LinearLayout line1 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);

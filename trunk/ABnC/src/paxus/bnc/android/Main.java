@@ -1,7 +1,10 @@
 package paxus.bnc.android;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
@@ -134,19 +137,18 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		Alphabet alphabet = new Alphabet.Digital();	
 		int wordLength = wordSizeChosen;
 		
-		//TODO improve secret generating
-		String secret = "12345";
+		String secret = "";
 		if (alphabet instanceof Alphabet.Digital) {
-			secret = new String();
-			Random rnd = new Random();
-			Set<Character> secretSet = new HashSet<Character>(5);
-			for (int i = 0; i < wordLength; i++) {
-				Character c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
-				while (secretSet.contains(c))	//no duplicates
-					c = new Character(String.valueOf(1 + rnd.nextInt(10)).charAt(0));
-				secretSet.add(c);
-				secret += c;
-			}
+			List<Character> secretList = new ArrayList<Character>(10);
+			for (char c = '0'; c <='9'; c++)
+				secretList.add(new Character(c));
+
+			Collections.shuffle(secretList);
+			StringBuffer sb = new StringBuffer(10);
+			for (Character ch : secretList)
+				sb.append(ch);
+			
+			secret = sb.substring(0, wordSizeChosen);
 		}
 
 		try {

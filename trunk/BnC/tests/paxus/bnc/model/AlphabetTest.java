@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 import paxus.bnc.BncException;
@@ -26,11 +27,20 @@ public class AlphabetTest extends TestCase {
 		assertEquals(ENCharState.PRESENT, run.alphabet.moveCharState('b', ENCharState.ABSENT));	//success
 	}
 	
-	public void testGetAllChars() {
+	public void testGetAllCharsSorted() {
 		final Alphabet da = new Alphabet.Digital();
-		assertEquals(10, da.getAllChars().size());
+		Collection<Char> chars = da.getAllCharsSorted();
+		assertEquals(10, chars.size());
+		char chi = '0';
+		for (Char ch : chars) 
+			assertSame(da.getCharInstance(chi++), ch);
+		
 		final Alphabet la = new Alphabet.Latin();
-		assertEquals(26, la.getAllChars().size());
+		chars = la.getAllCharsSorted();
+		assertEquals(26, chars.size());
+		chi = 'a';
+		for (Char ch : chars) 
+			assertSame(la.getCharInstance(chi++), ch);
 	}
 	
 	public void testAllCharStateChangeListener() throws BncException {
