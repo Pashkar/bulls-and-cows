@@ -9,7 +9,7 @@ import paxus.bnc.controller.ICharStateChangedListener;
  * Would be better to have Char as a nested class for Alphabet. 
  * Anyway, may not be serialized itself, only by Alphabet which cares of Char instances.  
 */
-public class Char {
+public class Char implements Comparable {
 	 
 	static final char NULL_CHAR = ' ';
 
@@ -102,6 +102,17 @@ public class Char {
 		if (ch != other.ch)
 			return false;
 		return true;
+	}
+	
+	public int compareTo(Object obj) {
+		if (this == obj)
+			return 0;
+		if (obj == null)
+			throw new NullPointerException();
+		if (getClass() != obj.getClass())
+			throw new IllegalArgumentException();
+		Char other = (Char) obj;
+		return this.ch.charValue() - other.ch.charValue();
 	}
 
 	public static final Char NULL;

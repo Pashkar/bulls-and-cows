@@ -4,10 +4,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import paxus.bnc.BncException;
 import paxus.bnc.controller.ICharStateChangedListener;
@@ -81,6 +78,12 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 	
 	public Collection<Char> getAllChars() {
 		return char2char.values();
+	}
+	
+	public Collection<Char> getAllCharsSorted() {
+		List<Char> values = new ArrayList<Char>(char2char.values());
+		Collections.sort(values);
+		return values;
 	}
 
 	//package-private
