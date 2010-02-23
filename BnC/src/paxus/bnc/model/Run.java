@@ -1,10 +1,9 @@
 package paxus.bnc.model;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.*;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import paxus.bnc.BncException;
 
@@ -14,18 +13,14 @@ public final class Run implements Externalizable {
 	public static final int MAX_WORD_LENGTH = 7;
 	
 	public int wordLength;
-	
 	public Alphabet alphabet;
-	
 	public Word secret;
 	
-	public Char[] secretLine = new Char[MAX_WORD_LENGTH];	//store displayed secret line to serialize it in complex
-	
-	public boolean givenUp = false;
-	
 	public PositionTable posTable;
-	
 	public LinkedList<WordCompared> wordsCompared = new LinkedList<WordCompared>();
+	
+/*	public Char[] secretLine = new Char[MAX_WORD_LENGTH];	//store displayed secret line to serialize it in complex
+	public boolean givenUp = false;*/
 	
 	public Run() {
 	}
@@ -35,8 +30,8 @@ public final class Run implements Externalizable {
 		this.secret = new Word(alphabet, secret);
 		this.wordLength = secret.length();
 		this.posTable = new PositionTable(wordLength, wordLength);
-		for (int i = 0; i < wordLength; i++)
-			this.secretLine[i] = Char.NULL;
+/*		for (int i = 0; i < wordLength; i++)
+			this.secretLine[i] = Char.NULL;*/
 	}
 	
 	public void addWordCompared(WordCompared wordCompared) {
@@ -50,7 +45,6 @@ public final class Run implements Externalizable {
 		posTable = (PositionTable) in.readObject();
 		alphabet.addAllCharsStateChangedListener(posTable);
 		try { secret = Word.read(in, wordLength, alphabet); } catch (BncException e) {}
-		givenUp = in.readBoolean();
 		
 		final LinkedList<WordCompared> wordsCompared2 = wordsCompared;
 		wordsCompared2.clear();
@@ -58,10 +52,13 @@ public final class Run implements Externalizable {
 		for (int i = 0; i < wcCount; i++)
 			wordsCompared.add(readWordCompared(in, wordLength, alphabet));
 		
-		try {
+		extraDataLength = in.readInt();
+		extraData = new Object[extraDataLength > 0 ? extraDataLength : 0];
+		for (int i = 0; i < extraDataLength; i++)
+			extraData[i] = in.readObject();
+/*			givenUp = in.readBoolean();
 			for (int i = 0; i < wordLength; i++)
-				secretLine[i] = Char.valueOf(in.readChar(), alphabet);
-		} catch (BncException e) {} 
+				secretLine[i] = Char.valueOf(in.readChar(), alphabet);*/
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -69,15 +66,18 @@ public final class Run implements Externalizable {
 		out.writeObject(alphabet);
 		out.writeObject(posTable);
 		secret.write(out);
-		out.writeBoolean(givenUp);
 		
 		LinkedList<WordCompared> wordsCompared2 = wordsCompared;
 		out.writeInt(wordsCompared2.size());
 		for (WordCompared wc : wordsCompared2) 
 			writeWordCompared(out, wc);
-		
+
+		out.writeInt(extraDataLength);
+		for (int i = 0; i < extraDataLength; i++)
+			out.writeObject(extraData[i]);
+		/*out.writeBoolean(givenUp);
 		for (int i = 0; i < wordLength; i++)
-			out.writeChar(secretLine[i].ch);
+			out.writeChar(secretLine[i].ch);*/
 	}
 	
 	public WordCompared readWordCompared(ObjectInput in, int wordLength,
@@ -96,6 +96,11 @@ public final class Run implements Externalizable {
 		out.writeObject(wc.result);
 	}
 	
+	public void clearMarks() throws BncException {
+		for (Char ch : alphabet.getAllChars())
+			ch.moveState(ENCharState.ABSENT, ENCharState.PRESENT);
+	}
+	
 	public final class WordCompared {
 		public Word word;
 		public WordComparisonResult result;
@@ -111,8 +116,10 @@ public final class Run implements Externalizable {
 		}
 	}
 
-	public void clearMarks() throws BncException {
-		for (Char ch : alphabet.getAllChars())
-			ch.moveState(ENCharState.ABSENT, ENCharState.PRESENT);
+	public static final class ExtraData implements Serializable {
+		public Map<String, Object> extraData = new HashMap<String, Object>();	//additional data to be serialized
+		
+		
 	}
+	
 }

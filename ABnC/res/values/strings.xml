@@ -26,4 +26,6 @@
     <string name="give_up_title">Give up</string>
     <string name="give_up_conf">Are you sure you want to give up?</string>
     <string name="give_up_msg">"You failed to guess the secret... Try again!"</string>
+    
+    <string name="introduction">Hello, <u><b>world!</b></u></string>
 </resources>

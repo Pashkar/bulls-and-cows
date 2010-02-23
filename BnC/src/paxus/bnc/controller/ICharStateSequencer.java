@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import paxus.bnc.model.ENCharState;
 
+@SuppressWarnings("serial")
 public interface ICharStateSequencer extends Serializable {
 	
 	public ENCharState nextState(ENCharState curState, Character ch, int pos, ENCharState... forbidden);

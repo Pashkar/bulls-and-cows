@@ -1,5 +1,6 @@
 package paxus.bnc;
 
+@SuppressWarnings("serial")
 public class BncException extends Exception {
 	public BncException() {
 		super();
