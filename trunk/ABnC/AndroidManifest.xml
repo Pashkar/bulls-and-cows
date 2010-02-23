@@ -10,11 +10,14 @@
 		android:anyDensity="false"
 	/>
 	
-	<application 
+	<application
 		android:icon="@drawable/icon" 
-		android:theme="@style/WhiteTheme">
+		android:theme="@style/WhiteTheme"
+		android:label="@string/app_name">
 
-		<activity android:name="Main" android:screenOrientation="portrait">
+		<activity 
+				android:name="Main" 
+				android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />

@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * immutable
  */
+@SuppressWarnings("serial")
 public final class WordComparisonResult implements Serializable { //no special handling for serialization
 	
 	private final int wordLength;

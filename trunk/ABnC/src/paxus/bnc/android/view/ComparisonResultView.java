@@ -11,7 +11,6 @@ import android.view.View;
 
 public class ComparisonResultView extends View {
 
-	private static final String TAG = "ComparisonResultView";
 	private WordComparisonResult result;
 	
 	private static final Paint bullPaint = new Paint();

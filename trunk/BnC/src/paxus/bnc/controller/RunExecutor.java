@@ -1,11 +1,7 @@
 package paxus.bnc.controller;
 
 import paxus.bnc.BncException;
-import paxus.bnc.model.Alphabet;
-import paxus.bnc.model.ENCharState;
-import paxus.bnc.model.Run;
-import paxus.bnc.model.Word;
-import paxus.bnc.model.WordComparisonResult;
+import paxus.bnc.model.*;
 
 public final class RunExecutor {
 	
@@ -48,10 +44,6 @@ public final class RunExecutor {
 		
 		//TODO fail game when limit exceeds? or endless?
 		return wordCompared;
-	}
-
-	private void winGame() {
-		System.out.println("WIN THE GAME");
 	}
 	
 	public void giveUp() {

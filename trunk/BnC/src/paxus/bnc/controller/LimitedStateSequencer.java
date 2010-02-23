@@ -5,6 +5,7 @@ import paxus.bnc.model.ENCharState;
 /**
  *	Limits amount of stated chars
  */
+@SuppressWarnings("serial")
 public final class LimitedStateSequencer implements ICharStateSequencer {
 
 	private final ICharStateSequencer baseCss;

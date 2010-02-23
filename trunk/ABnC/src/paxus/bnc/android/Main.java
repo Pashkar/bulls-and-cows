@@ -45,7 +45,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	public static LayoutInflater layoutInflater;
 	
 	private EnteringPanel enteringPanel;
-	private SecretWordPanel secretPanel;
 	private LinearLayout offeredsLayout;
 	private LinearLayout posTableLayout;
 	private ScrollView scrollView;
@@ -240,7 +239,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         //inflate secret word layout
         LinearLayout secretLayout = (LinearLayout) findViewById(R.id.SecretLayout);
 		inflateCharsLine(secretLayout, null, run2.wordLength, charLP);
-		secretPanel = new SecretWordPanel(secretLayout);
+		new SecretWordPanel(secretLayout);
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
 		//also inflate labels
@@ -439,7 +438,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		inflateCharsLine(answerLine, run.secret.chars, run.wordLength, null);
 
 		new AlertDialog.Builder(Main.this)
-            	.setIcon(android.R.drawable.ic_dialog_alert)
+            	.setIcon(android.R.drawable.ic_dialog_info)
             	.setTitle(titleId)
             	.setView(answerLine)
             	.setMessage(message)

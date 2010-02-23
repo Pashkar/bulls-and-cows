@@ -1,19 +1,11 @@
 package paxus.bnc.model;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import paxus.bnc.BncException;
-import paxus.bnc.controller.ICharStateChangedListener;
-import paxus.bnc.controller.ICharStateSequencer;
-import paxus.bnc.controller.IPosCharStateChangedListener;
-import paxus.bnc.controller.IPositionTableListener;
-import paxus.bnc.controller.IStatesCounter;
+import paxus.bnc.controller.*;
 
 public class PositionTable implements Externalizable, IStatesCounter, ICharStateChangedListener {
 
@@ -201,6 +193,7 @@ public class PositionTable implements Externalizable, IStatesCounter, ICharState
 		return line.getPosPresent();
 	}
 	
+	@SuppressWarnings("serial")
 	public final class PositionLine implements Serializable {
 
 		public final PosChar[] chars = new PosChar[Run.MAX_WORD_LENGTH];
