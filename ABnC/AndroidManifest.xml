@@ -2,8 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="paxus.bnc.android"
 	android:versionCode="1"
-	android:versionName="1.0">
-
+	android:versionName="1.0"
+	>
+	
+	<supports-screens
+		android:smallScreens="false"
+		android:anyDensity="false"
+	/>
+	
 	<application 
 		android:icon="@drawable/icon" 
 		android:theme="@style/WhiteTheme">
@@ -15,19 +21,8 @@
 			</intent-filter>
 		</activity>
 
-        <!--<activity android:name="DigitalAlphabetActivity" 
-        		android:theme="@style/Theme.Translucent" 
-        		android:screenOrientation="portrait"
-        		android:excludeFromRecents="true"
-        		android:noHistory="true"
-        		>
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>-->
-
 	</application>
-	<uses-sdk android:minSdkVersion="3" />
+	<uses-sdk android:minSdkVersion="3"
+		android:targetSdkVersion="3"/>
 
 </manifest> 
