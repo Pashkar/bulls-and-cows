@@ -14,15 +14,15 @@ public final class RunExecutor {
 		this.run = new Run(alphabet,  secret);
 		
 		//allow PosTable listen to changes to automatically add/remove row on char marked/unmarked as PRESENT
-		this.run.alphabet.addAllCharsStateChangedListener(this.run.posTable);
+		Run.alphabet.addAllCharsStateChangedListener(this.run.posTable);
 		
 		//Not more then wordLength PRESENT allowed
-		run.alphabet.setCss(
+		Run.alphabet.setCss(
 				new LimitedStateSequencer(
 						ICharStateSequencer.FORWARD, 
 						ENCharState.PRESENT, 
 						run.wordLength, 
-						run.alphabet));
+						Run.alphabet));
 		 
 		//Only one PRESENT in line/column allowed. <br/>
 		//All chars with ABSENT in line/column not allowed.
@@ -37,7 +37,7 @@ public final class RunExecutor {
 	}
 	
 	public Run.WordCompared offerWord(String str) throws BncException {
-		Word word = new Word(run.alphabet, str);
+		Word word = new Word(Run.alphabet, str);
 		WordComparisonResult res = wc.compare(run.secret, word);
 		final Run.WordCompared wordCompared = run.new WordCompared(word, res);
 		run.addWordCompared(wordCompared);
@@ -47,6 +47,6 @@ public final class RunExecutor {
 	}
 	
 	public void giveUp() {
-		run.givenUp = true;
+		run.data.map.put(Run.ExtraData.DATA_GIVEN_UP, true);
 	}
 }

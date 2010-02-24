@@ -9,8 +9,8 @@ public class CharStateSequencerTest extends TestCase {
 	public void testForwardSequencer() throws BncException {
 		final Alphabet la = new Alphabet.Latin();
 		RunExecutor re = new RunExecutor();
-		Run run = re.startNewRun(la, "abcd");
-		Char ch = Char.valueOf('a', run.alphabet);
+		re.startNewRun(la, "abcd");
+		Char ch = Char.valueOf('a', Run.alphabet);
 		
 		//simple cycle
 		assertEquals(ENCharState.ABSENT, ch.moveState());

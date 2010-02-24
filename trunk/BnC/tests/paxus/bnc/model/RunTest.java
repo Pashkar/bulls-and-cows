@@ -30,10 +30,12 @@ public class RunTest extends TestCase {
 		re.startNewRun(da, "1234");
 		re.run.posTable.addLine('5');
 		
-		Word w = new Word(re.run.alphabet, "1243");
+		Word w = new Word(Run.alphabet, "1243");
 		WordComparisonResult comparisonResult = re.offerWord("1243").result;
 
-		re.run.secretLine[1] = new Char(da, '5');
+		re.run.data.map.put(Run.ExtraData.DATA_SECRET_LINE, new Char[] {null, new Char(da, '5')});
+		re.run.data.map.put(Run.ExtraData.DATA_GIVEN_UP, true);
+		re.run.data.map.put(Run.ExtraData.DATA_INTRODUCTION_SHOWN, false);
 		
 		os.writeObject(re.run);
 		os.close();
@@ -44,13 +46,15 @@ public class RunTest extends TestCase {
 		
 		assertEquals(4, run.wordLength);
 		assertEquals("1234", run.secret.asString());
-		assertEquals("Digital", run.alphabet.getName());
+		assertEquals("Digital", Run.alphabet.getName());
 		assertEquals(1, run.posTable.getLinesCount());
 		assertEquals(1, run.wordsCompared.size());
 		assertEquals(comparisonResult.toString(), run.wordsCompared.get(0).result.toString());
 		assertEquals(w.toString(), run.wordsCompared.get(0).word.toString());
-		assertEquals(new Character('5'), run.secretLine[1].ch);
-		assertEquals((Character)Char.NULL_CHAR, run.secretLine[0].ch);
+		assertEquals(new Character('5'), ((Char[])run.data.map.get(Run.ExtraData.DATA_SECRET_LINE))[1].ch);
+		assertEquals(null, ((Char[])run.data.map.get(Run.ExtraData.DATA_SECRET_LINE))[0]);
+		assertEquals(true, run.data.map.get(Run.ExtraData.DATA_GIVEN_UP));
+		assertEquals(false, run.data.map.get(Run.ExtraData.DATA_INTRODUCTION_SHOWN));
 	}
 	
 	public void testClearMarks() throws Exception {

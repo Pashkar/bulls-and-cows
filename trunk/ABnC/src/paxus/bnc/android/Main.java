@@ -58,6 +58,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private AlertDialog chooseAlphabetDialog;
 	private AlertDialog chooseWordSizeDialog;
 	private AlertDialog giveUpDialog;
+	private AlertDialog introDialog;
 	private AlertDialog clearMarksDialog;
 
 	protected int wordSizeChosen;
@@ -95,6 +96,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			Log.i(TAG, "restoreSavedState failed");
 			startNewRun(false);	//invokes dialog chain, return null immediately
 		}
+		
+		if (!(Boolean)run.data.map.get(Run.ExtraData.DATA_INTRODUCTION_SHOWN)) {
+			introDialog.show();
+			run.data.map.put(Run.ExtraData.DATA_INTRODUCTION_SHOWN, Boolean.TRUE);
+		}
     }
 
     private void initActivity() {
@@ -112,10 +118,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		scrollView = (ScrollView) findViewById(R.id.ScrollOffered);
 		guessButton = (Button) findViewById(R.id.ShowAlphabetButton);
-		guessButton.setEnabled(!run.givenUp);
+		guessButton.setEnabled(!(Boolean)run.data.map.get(Run.ExtraData.DATA_GIVEN_UP));
 		
 		freePosLayoutList.clear();
-		enteringPanel = new EnteringPanel(this, this);
+		if (!(Boolean)run.data.map.get(Run.ExtraData.DATA_GIVEN_UP))
+			enteringPanel = new EnteringPanel(this, this);
 		ComparisonResultView.reset();
 	}
 
@@ -151,9 +158,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 		try {
 			run = re.startNewRun(alphabet, secret);
+			Char[] secretLine = new Char[wordSizeChosen];
+			for (int i = 0; i < wordSizeChosen; i++)
+				secretLine[i] = Char.NULL;
+			run.data.map.put(Run.ExtraData.DATA_SECRET_LINE, secretLine);
+			run.data.map.put(Run.ExtraData.DATA_GIVEN_UP, false);
+			run.data.map.put(Run.ExtraData.DATA_INTRODUCTION_SHOWN, false);
 		} catch (BncException e) {	}
 		
-		Log.d(TAG, run.secret.toString());
+//		Log.d(TAG, run.secret.toString());
 		reinitActivity();
 		layoutViews();	//finish initialization, interrupted by dialogs chain
 	}
@@ -224,7 +237,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         .setMessage(R.string.give_up_conf)
         .create();
         
-        //TODO dialog with introduction
+        introDialog = new AlertDialog.Builder(this)
+        .setIcon(android.R.drawable.ic_dialog_info)
+        .setTitle(R.string.intro_title)
+        .setPositiveButton(android.R.string.ok, null)
+        .setMessage(R.string.intro_msg)
+        .create();
 	}
 	
 	private void layoutViews() {
@@ -409,6 +427,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				break;
 			case R.id.MenuGiveUp:
 				giveUpDialog.show();
+				break;
+			case R.id.MenuIntro:
+				introDialog.show();
 				break;				
 		}
 		
@@ -503,8 +524,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			run2 = run;
 			
 			//restore secret line serialized by Run object
+			Char[] secretLine = (Char[]) run2.data.map.get(Run.ExtraData.DATA_SECRET_LINE);
 			for (int i = 0; i < run2.wordLength; i++) {
-				Char ch = run2.secretLine[i];
+				Char ch = secretLine[i];
 				CharView cv = (CharView)layout.getChildAt(i);
 //				cv.setLayoutParams(linearCharLP);
 				cv.setChar(ch, i == run2.posTable.getPresentPos(ch.ch));
@@ -514,11 +536,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
 
 		public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
-			CharView cv = (CharView) layout.getChildAt(pch.pos);	//TODO replace with array
-			final Char[] secretLine = run2.secretLine;
+			CharView cv = (CharView) layout.getChildAt(pch.pos);
+			final Char[] secretLine = (Char[]) run2.data.map.get(Run.ExtraData.DATA_SECRET_LINE);
 			if (newState == ENCharState.PRESENT) {
 				try { 
-					final Char ch = Char.valueOf(pch.ch, run2.alphabet);
+					final Char ch = Char.valueOf(pch.ch, Run.alphabet);
 					cv.setChar(ch, true);
 					secretLine[pch.pos] = ch;
 				} catch (BncException e) {}

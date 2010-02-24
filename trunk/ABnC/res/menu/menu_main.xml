@@ -19,12 +19,16 @@
         android:title="@string/new_game_title"
         android:icon="@android:drawable/ic_menu_add"
         />
-    <item android:id="@+id/MenuClearMarks"
-        android:title="@string/clear_marks_title"
-        android:icon="@android:drawable/ic_menu_delete"
-        />
     <item android:id="@+id/MenuGiveUp"
         android:title="@string/give_up_title"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
         />
+    <item android:id="@+id/MenuClearMarks"
+        android:title="@string/clear_marks_title"
+        android:icon="@android:drawable/ic_menu_delete"
+        />
+	<item android:id="@+id/MenuIntro"
+		android:title="@string/intro_menu_caption"
+		android:icon="@android:drawable/ic_menu_info_details"
+		/>
 </menu>

@@ -48,7 +48,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		duplicatedCharToast.setGravity(Gravity.TOP, 0, offset);
 		
 		int alphabetLayoutId = -1;
-		if (Alphabet.DIGITAL.equals(run2.alphabet.getName()))
+		if (Alphabet.DIGITAL.equals(Run.alphabet.getName()))
 			alphabetLayoutId = R.layout.digital_alphabet;
 		//TODO other alphabets
 		
@@ -68,7 +68,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	}
 
 	private void inflateAlphabetLines(int alphabetLayoutId) {
-		Char[] chars = run.alphabet.getAllCharsSorted().toArray(new Char[10]);
+		Char[] chars = Run.alphabet.getAllCharsSorted().toArray(new Char[10]);
 		switch (alphabetLayoutId) {
 			case R.layout.digital_alphabet:	//2 lines
 				LinearLayout line1 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
