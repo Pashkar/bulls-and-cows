@@ -1,5 +1,8 @@
 package paxus.bnc.model;
 
+import java.io.IOException;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import paxus.bnc.BncException;
@@ -7,17 +10,17 @@ import paxus.bnc.controller.ICharStateChangedListener;
 
 /*
  * Would be better to have Char as a nested class for Alphabet. 
- * Anyway, may not be serialized itself, only by Alphabet which cares of Char instances.  
+ * While serializing, there must be an Alphabet instance which cares of Char instances.  
 */
-public class Char implements Comparable<Char> {
+public class Char implements Serializable, Comparable<Char> {
 	 
 	static final char NULL_CHAR = ' ';
 
-	public final Character ch;
+	public Character ch;	//not-final due to readObject()
 	
 	public final String asString;
 	
-	public transient final Alphabet alphabet;
+	public final Alphabet alphabet;
 	
 	private transient final ArrayList<ICharStateChangedListener> stateChangedListenerList = new ArrayList<ICharStateChangedListener>();
 	
@@ -27,6 +30,20 @@ public class Char implements Comparable<Char> {
 		this.alphabet = alphabet;
 		this.ch = ch;
 		this.asString = ch + "";
+	}
+	
+	private Object readResolve() throws ObjectStreamException {
+		if (Run.alphabet == null)
+			throw new NullPointerException("Run.alphabet must not be null");
+		return Run.alphabet.getCharInstance(ch);
+	}
+	
+	private void readObject(java.io.ObjectInputStream stream) throws IOException {
+		this.ch = stream.readChar();
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException {
+		stream.writeChar(ch);
 	}
 	
 	public static Char valueOf(Character ch, Alphabet alphabet) throws BncException {
@@ -42,6 +59,21 @@ public class Char implements Comparable<Char> {
 			throw new BncException("Symbol " + ch + " is not allowed in alphabet " + alphabet);
 		return alphabet.char2char.get(ch);	//all char must have been initialized on alphabet load
 	}
+
+/*	public void readExternal(ObjectInput in) throws IOException,
+			ClassNotFoundException {
+		if (Run.alphabet == null)
+			throw new NullPointerException("Run.alphabet must not be null");
+		
+		this.alphabet = alphabet;
+		this.ch = ch;
+		this.asString = ch + "";
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeChar(ch);
+	}*/
+	
 
 	public ENCharState getState() {
 		return alphabet.char2state.get(ch);

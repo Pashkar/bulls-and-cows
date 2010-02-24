@@ -13,25 +13,25 @@ public final class Run implements Externalizable {
 	public static final int MAX_WORD_LENGTH = 7;
 	
 	public int wordLength;
-	public Alphabet alphabet;
+	public static Alphabet alphabet;
 	public Word secret;
 	
 	public PositionTable posTable;
 	public LinkedList<WordCompared> wordsCompared = new LinkedList<WordCompared>();
 	
-/*	public Char[] secretLine = new Char[MAX_WORD_LENGTH];	//store displayed secret line to serialize it in complex
-	public boolean givenUp = false;*/
+	public ExtraData data = new ExtraData();
 	
+	/**
+	 *	For serialization purposes only 
+	 */
 	public Run() {
 	}
 	
 	public Run(Alphabet alphabet, String secret) throws BncException {
-		this.alphabet = alphabet;
+		Run.alphabet = alphabet;
 		this.secret = new Word(alphabet, secret);
 		this.wordLength = secret.length();
 		this.posTable = new PositionTable(wordLength, wordLength);
-/*		for (int i = 0; i < wordLength; i++)
-			this.secretLine[i] = Char.NULL;*/
 	}
 	
 	public void addWordCompared(WordCompared wordCompared) {
@@ -52,13 +52,7 @@ public final class Run implements Externalizable {
 		for (int i = 0; i < wcCount; i++)
 			wordsCompared.add(readWordCompared(in, wordLength, alphabet));
 		
-		extraDataLength = in.readInt();
-		extraData = new Object[extraDataLength > 0 ? extraDataLength : 0];
-		for (int i = 0; i < extraDataLength; i++)
-			extraData[i] = in.readObject();
-/*			givenUp = in.readBoolean();
-			for (int i = 0; i < wordLength; i++)
-				secretLine[i] = Char.valueOf(in.readChar(), alphabet);*/
+		data = (ExtraData) in.readObject();
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
@@ -72,12 +66,7 @@ public final class Run implements Externalizable {
 		for (WordCompared wc : wordsCompared2) 
 			writeWordCompared(out, wc);
 
-		out.writeInt(extraDataLength);
-		for (int i = 0; i < extraDataLength; i++)
-			out.writeObject(extraData[i]);
-		/*out.writeBoolean(givenUp);
-		for (int i = 0; i < wordLength; i++)
-			out.writeChar(secretLine[i].ch);*/
+		out.writeObject(data);
 	}
 	
 	public WordCompared readWordCompared(ObjectInput in, int wordLength,
@@ -116,10 +105,16 @@ public final class Run implements Externalizable {
 		}
 	}
 
+	/**
+	 * Additional data to be serialized within the Run instance.
+	 */
+	@SuppressWarnings("serial")
 	public static final class ExtraData implements Serializable {
-		public Map<String, Object> extraData = new HashMap<String, Object>();	//additional data to be serialized
-		
-		
+		public static final String DATA_GIVEN_UP = "givenUp";
+		public static final String DATA_SECRET_LINE = "secretLine";
+		public static final String DATA_INTRODUCTION_SHOWN = "showIntroduction";
+
+		public final Map<String, Object> map = new HashMap<String, Object>();	//additional data to be serialized
 	}
 	
 }
