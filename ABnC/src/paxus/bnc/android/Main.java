@@ -94,12 +94,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		} 
 		catch (Exception e) {
 			Log.i(TAG, "restoreSavedState failed");
-			startNewRun(false);	//invokes dialog chain, return null immediately
-		}
-		
-		if (!(Boolean)run.data.map.get(Run.ExtraData.DATA_INTRODUCTION_SHOWN)) {
-			introDialog.show();
-			run.data.map.put(Run.ExtraData.DATA_INTRODUCTION_SHOWN, Boolean.TRUE);
+			introDialog.setCancelable(false);
+			introDialog.show();	//invokes dialog chain of starting new game
 		}
     }
 
@@ -163,7 +159,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				secretLine[i] = Char.NULL;
 			run.data.map.put(Run.ExtraData.DATA_SECRET_LINE, secretLine);
 			run.data.map.put(Run.ExtraData.DATA_GIVEN_UP, false);
-			run.data.map.put(Run.ExtraData.DATA_INTRODUCTION_SHOWN, false);
 		} catch (BncException e) {	}
 		
 //		Log.d(TAG, run.secret.toString());
@@ -172,6 +167,19 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	
 	private void initDialogs() {
+		//Dialogs chain - Intro then Alphabet then WordLength
+        introDialog = new AlertDialog.Builder(this)
+        .setIcon(android.R.drawable.ic_dialog_info)
+        .setTitle(R.string.intro_title)
+        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface arg0, int arg1) {
+				if (run == null)	//very first run - start new game
+					startNewRun(false);
+			}
+		})
+        .setMessage(R.string.intro_msg)
+        .create();
+		
 		//Dialogs chain - Alphabet then WordLength
 		chooseAlphabetDialog = new AlertDialog.Builder(this)
 		.setTitle(R.string.alphabet_title)
@@ -235,13 +243,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			public void onClick(DialogInterface dialog, int which) {}
 		})
         .setMessage(R.string.give_up_conf)
-        .create();
-        
-        introDialog = new AlertDialog.Builder(this)
-        .setIcon(android.R.drawable.ic_dialog_info)
-        .setTitle(R.string.intro_title)
-        .setPositiveButton(android.R.string.ok, null)
-        .setMessage(R.string.intro_msg)
         .create();
 	}
 	
@@ -429,6 +430,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				giveUpDialog.show();
 				break;
 			case R.id.MenuIntro:
+				introDialog.setCancelable(true);
 				introDialog.show();
 				break;				
 		}

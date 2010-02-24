@@ -112,7 +112,6 @@ public final class Run implements Externalizable {
 	public static final class ExtraData implements Serializable {
 		public static final String DATA_GIVEN_UP = "givenUp";
 		public static final String DATA_SECRET_LINE = "secretLine";
-		public static final String DATA_INTRODUCTION_SHOWN = "showIntroduction";
 
 		public final Map<String, Object> map = new HashMap<String, Object>();	//additional data to be serialized
 	}
