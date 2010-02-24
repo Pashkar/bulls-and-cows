@@ -35,7 +35,6 @@ public class RunTest extends TestCase {
 
 		re.run.data.map.put(Run.ExtraData.DATA_SECRET_LINE, new Char[] {null, new Char(da, '5')});
 		re.run.data.map.put(Run.ExtraData.DATA_GIVEN_UP, true);
-		re.run.data.map.put(Run.ExtraData.DATA_INTRODUCTION_SHOWN, false);
 		
 		os.writeObject(re.run);
 		os.close();
@@ -54,7 +53,6 @@ public class RunTest extends TestCase {
 		assertEquals(new Character('5'), ((Char[])run.data.map.get(Run.ExtraData.DATA_SECRET_LINE))[1].ch);
 		assertEquals(null, ((Char[])run.data.map.get(Run.ExtraData.DATA_SECRET_LINE))[0]);
 		assertEquals(true, run.data.map.get(Run.ExtraData.DATA_GIVEN_UP));
-		assertEquals(false, run.data.map.get(Run.ExtraData.DATA_INTRODUCTION_SHOWN));
 	}
 	
 	public void testClearMarks() throws Exception {
