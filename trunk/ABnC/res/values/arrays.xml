@@ -1,6 +1,6 @@
 <resources>
 	<string-array name="word_length_array">
-		<item>Three (ease)</item>
+		<item>Three (easy)</item>
 		<item>Four (normal)</item>
 		<item>Five (difficult)</item>
 		<item>Six (hard)</item>

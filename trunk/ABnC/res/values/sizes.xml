@@ -15,7 +15,7 @@
 	
 	<dimen name="comp_result_width">45px</dimen>
 	<dimen name="comp_result_left_margin">10px</dimen>
-	<dimen name="comp_result_right_margin">10px</dimen>
+	<dimen name="comp_result_right_margin">2px</dimen>
 	<dimen name="comp_result_left_padding">5px</dimen>
 	<dimen name="comp_result_right_padding">5px</dimen>
 	
@@ -29,8 +29,9 @@
 	<dimen name="alphabet_line_margin">10px</dimen>
 	<dimen name="view_top_margin">3px</dimen>
 	
-	<dimen name="scroll_right_padding">5px</dimen>	<!-- + implicit 6px for scroll bar -->
-	<dimen name="view_right_padding">11px</dimen>
+	<dimen name="scroll_right_padding">3px</dimen>	<!-- + implicit 6px for scroll bar -->
+	<dimen name="view_right_padding">8px</dimen>
+	<dimen name="secret_line_right_padding">3px</dimen>
 	
 	<dimen name="toast_top_margin">50px</dimen>
 </resources>
