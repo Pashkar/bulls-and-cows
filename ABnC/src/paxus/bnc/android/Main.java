@@ -32,7 +32,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
-public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener/*, ICharStateChangedListener, IPosCharStateChangedListener*/ {
+public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
 	
 	private static final String TAG = "Main";
 
@@ -292,6 +292,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private void calcOfferedCharLayout() {
 		Resources resources = getResources();
 		int width = displayWidth - (
+				resources.getDimensionPixelSize(R.dimen.scroll_right_padding) +
 				resources.getDimensionPixelSize(R.dimen.comp_result_right_margin) + 
 				resources.getDimensionPixelSize(R.dimen.comp_result_width) +
 				resources.getDimensionPixelSize(R.dimen.comp_result_left_margin) + 

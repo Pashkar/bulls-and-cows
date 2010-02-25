@@ -17,7 +17,7 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
 		android:paddingTop="@dimen/view_top_margin"
-		android:paddingRight="@dimen/view_right_padding"		
+		android:paddingRight="@dimen/secret_line_right_padding"		
 		android:paddingLeft="@dimen/line_left_margin"
 		android:gravity="left" 
 		>
