@@ -20,7 +20,7 @@
 			>
 	</LinearLayout>
 
-	<!-- Digital alphabet -->
+	<!-- Alphabet -->
 	<LinearLayout  
 			android:id="@+id/AlphabetLayout_line1"		
 			android:layout_width="wrap_content" 

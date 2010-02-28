@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical"
+		android:gravity="center_horizontal"
+		> 
+
+	<!-- Entering -->
+	<LinearLayout
+			android:id="@+id/EnteringLayout"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginBottom="@dimen/entering_line_bottom_margin"
+			android:layout_marginLeft="@dimen/line_left_margin"
+			android:layout_marginRight="@dimen/line_left_margin"
+			/>
+
+	<!-- Alphabet -->
+	<LinearLayout  
+			android:id="@+id/AlphabetLayout_line1"		
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="@dimen/alphabet_line_margin"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
+			/>
+			
+	<LinearLayout  
+			android:id="@+id/AlphabetLayout_line2"		
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
+			/>	
+	<LinearLayout  
+			android:id="@+id/AlphabetLayout_line3"		
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
+			/>	
+	<LinearLayout  
+			android:id="@+id/AlphabetLayout_line4"		
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginLeft="@dimen/alphabet_line_margin"
+			android:layout_marginRight="@dimen/alphabet_line_margin"
+			android:layout_marginBottom="@dimen/alphabet_line_margin"
+			/>
+</LinearLayout>

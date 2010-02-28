@@ -2,8 +2,7 @@
 
 <view xmlns:android="http://schemas.android.com/apk/res/android"
 	class="paxus.bnc.android.view.CharView"
-	android:id="@+id/DigitalAlphabetCharView"
-	android:layout_width="@dimen/digital_alphabet_char_width" 
-	android:layout_height="@dimen/digital_alphabet_char_height"
+	android:layout_width="@dimen/alphabet_5_char_width" 
+	android:layout_height="@dimen/alphabet_char_height"
 	android:layout_marginLeft="@dimen/char_left_margin"
 	/>

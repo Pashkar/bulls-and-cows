@@ -1,5 +1,11 @@
 <resources>
-	<string-array name="word_length_array">
+	<string-array name="alphabet_array">
+		<item>Numerical (123)</item>
+		<item>Latin (abc)</item>
+		<item>Cyrillic (coming soon)</item>
+	</string-array>
+
+	<string-array name="num_word_length_array">
 		<item>Three (easy)</item>
 		<item>Four (normal)</item>
 		<item>Five (difficult)</item>
@@ -7,10 +13,10 @@
 		<item>Seven (nightmare!)</item>
 	</string-array>
 	
-	<string-array name="alphabet_array">
-		<item>Numerical (123)</item>
-		<item>Latin (coming soon)</item>
-		<item>Cyrillic (coming soon)</item>
+	<string-array name="word_length_array">
+		<item>Four (normal)</item>
+		<item>Five (difficult)</item>
+		<item>Six (hard)</item>
 	</string-array>
-
+	
 </resources>
