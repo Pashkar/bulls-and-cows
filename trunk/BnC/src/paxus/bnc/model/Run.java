@@ -9,7 +9,7 @@ import paxus.bnc.BncException;
 
 public final class Run implements Externalizable {
 
-	public static final int MIN_WORD_LENGTH = 3;
+	public static final int MIN_WORD_LENGTH = 4;
 	public static final int MAX_WORD_LENGTH = 7;
 	
 	public int wordLength;

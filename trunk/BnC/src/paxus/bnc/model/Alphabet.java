@@ -12,31 +12,46 @@ import paxus.bnc.controller.ICharStateSequencer;
 import paxus.bnc.controller.IStatesCounter;
 
 public abstract class Alphabet implements Externalizable, IStatesCounter {
-	public static final String LATIN = "Latin";
-	public static final String DIGITAL = "Digital";	
+	public static final int 		DIGITAL_ID = 0;
+	public static final String 		DIGITAL_NAME = "Digital";	
+	public static final int 		DIGITAL_MIN_WORD_LENGTH = 3;
+
+	public static final int 		LATIN_ID = 1;
+	public static final String 		LATIN_NAME = "Latin";
+	public static final int 		LATIN_MIN_WORD_LENGTH = 4;
+	
+	public static final int 		CYRILLIC_ID = 2;
+	public static final String 		CYRILLIC_NAME = "Latin";
+	public static final int 		CYRILLIC_MIN_WORD_LENGTH = 4;
 	
 	private final HashSet<Character> symbols = new HashSet<Character>();
+	private ICharStateSequencer css = ICharStateSequencer.FORWARD;
+	private int presentStateCount;
 	
 	//TODO Optimization : replace map with ordinal array by char->int
 	final HashMap<Character, ENCharState> char2state = new HashMap<Character, ENCharState>();
-	
-	//TODO Optimization : replace map with ordinal array by char->int
 	transient final HashMap<Character, Char> char2char = new HashMap<Character, Char>();
 	
 	private final ArrayList<ICharStateChangedListener> stateChangedListenerList = new ArrayList<ICharStateChangedListener>();
+
+	public static int getMinSize(int id) {
+		switch (id) {
+			case DIGITAL_ID:
+				return DIGITAL_MIN_WORD_LENGTH;
+			case LATIN_ID:
+				return LATIN_MIN_WORD_LENGTH;
+			case CYRILLIC_ID:
+				return CYRILLIC_MIN_WORD_LENGTH;
+			default:
+				return -1;
+		}
+	}
 	
-	private ICharStateSequencer css = ICharStateSequencer.FORWARD;
-	public void setCss(ICharStateSequencer defaultCss) {
-		this.css = defaultCss;
-	}
-
-	private int presentStateCount; 
-	public int getStatesCount(ENCharState state, Character ch, int pos) {
-		if (state != ENCharState.PRESENT)
-			return -1;
-		return presentStateCount;
-	}
-
+	public abstract int getId();
+	public abstract String getName();
+	protected abstract String getSymbolsLine();
+	
+	
 	public Alphabet() {
 		//replace members by local references (for-loop increases impact) 
 		final HashMap<Character, ENCharState> char2state2 = char2state;
@@ -61,6 +76,16 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 	
 	public void removeAllCharsStateCRhangedListener(ICharStateChangedListener listener) {
 		stateChangedListenerList.remove(listener);
+	}
+	
+	public void setCss(ICharStateSequencer defaultCss) {
+		this.css = defaultCss;
+	}
+	 
+	public int getStatesCount(ENCharState state, Character ch, int pos) {
+		if (state != ENCharState.PRESENT)
+			return -1;
+		return presentStateCount;
 	}
 
 	/**
@@ -121,9 +146,9 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 		return symbols.contains(ch);
 	}
 	
-	protected abstract String getSymbolsLine();
-
-	public abstract String getName();
+	public final List<Character> getSymbols() {
+		return new ArrayList<Character>(symbols);	//return copy, not the instance
+	}
 	
 	@Override
 	public String toString() {
@@ -151,10 +176,14 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 		out.writeObject(css);
 	}
 
-	public static class Latin extends Alphabet {
+	public final static class Latin extends Alphabet {
+		@Override
+		public int getId() {
+			return Alphabet.LATIN_ID;
+		}
 		@Override
 		public String getName() {
-			return LATIN;
+			return LATIN_NAME;
 		}
 		@Override
 		protected String getSymbolsLine() {
@@ -162,10 +191,14 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 		}
 	};
 	
-	public static class Digital extends Alphabet {
+	public final static class Digital extends Alphabet {
+		@Override
+		public int getId() {
+			return Alphabet.DIGITAL_ID;
+		}
 		@Override
 		public String getName() {
-			return DIGITAL;
+			return DIGITAL_NAME;
 		}
 		@Override
 		protected String getSymbolsLine() {

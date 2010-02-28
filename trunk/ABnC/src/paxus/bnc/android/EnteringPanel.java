@@ -7,14 +7,12 @@ import paxus.bnc.model.Run;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.LinearLayout.LayoutParams;
 
 public final class EnteringPanel implements OnClickListener, android.content.DialogInterface.OnClickListener {
 
@@ -26,17 +24,13 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	private Toast tooLongWordToast;
 	private Toast duplicatedCharToast;
 
-	private final Context context;
 	private Run run;
-	private LayoutParams digitalAlphaberCharLP;
-
 	private View panelView;
 	private AlertDialog panelDialog;	//implementation based on Dialog
 
 	private final OnWordOfferedListener callback;
 
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
-		this.context = context;
 		Log.v(TAG, "<init>");
 		this.callback = callback;
 		this.run = Main.run;
@@ -48,15 +42,21 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		duplicatedCharToast.setGravity(Gravity.TOP, 0, offset);
 		
 		int alphabetLayoutId = -1;
-		if (Alphabet.DIGITAL.equals(Run.alphabet.getName()))
-			alphabetLayoutId = R.layout.digital_alphabet;
-		//TODO other alphabets
+		int alphabetId = Run.alphabet.getId();
+		switch (alphabetId) {
+			case Alphabet.DIGITAL_ID:
+				alphabetLayoutId = R.layout.entering_digital_layout;
+				break;
+			case Alphabet.LATIN_ID:
+				alphabetLayoutId = R.layout.entering_latin_layout;
+				break;
+		}
 		
 		panelView = Main.layoutInflater.inflate(alphabetLayoutId, null);
 
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
-		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.char_view, -1);
-		inflateAlphabetLines(alphabetLayoutId);
+		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.char_view);
+		inflateAlphabetLines(alphabetId);
 		enteringWord = new StringBuffer(run2.wordLength);
 		
         panelDialog = new AlertDialog.Builder(context)
@@ -67,15 +67,29 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
         panelDialog.setCanceledOnTouchOutside(true);
 	}
 
-	private void inflateAlphabetLines(int alphabetLayoutId) {
+	private void inflateAlphabetLines(int alphabetId) {
 		Char[] chars = Run.alphabet.getAllCharsSorted().toArray(new Char[10]);
-		switch (alphabetLayoutId) {
-			case R.layout.digital_alphabet:	//2 lines
-				LinearLayout line1 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
-				inflateCharsLine(line1, chars, 0, 5, R.layout.digital_alphabet_char_view, R.id.DigitalAlphabetCharView);
-				LinearLayout line2 = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
-				inflateCharsLine(line2, chars, 5, 10, R.layout.digital_alphabet_char_view, R.id.DigitalAlphabetCharView);
-			break;
+		switch (alphabetId) {
+			case Alphabet.DIGITAL_ID:	{	//2 x 5 
+				LinearLayout line;
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
+				inflateCharsLine(line, chars, 0, 5, R.layout.alphabet_digital_char_view);
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
+				inflateCharsLine(line, chars, 5, 5, R.layout.alphabet_digital_char_view);
+				break;
+			}
+			case Alphabet.LATIN_ID:	{	//3 x 6 & 1 x 7
+				LinearLayout line;
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
+				inflateCharsLine(line, chars, 0, 6, R.layout.alphabet_latin_6_char_view);
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
+				inflateCharsLine(line, chars, 6, 6, R.layout.alphabet_latin_6_char_view);
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line3);
+				inflateCharsLine(line, chars, 12, 6, R.layout.alphabet_latin_6_char_view);
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line4);
+				inflateCharsLine(line, chars, 18, 7, R.layout.alphabet_latin_7_char_view);
+				break;
+			}
 		}
 	}
 
@@ -105,16 +119,16 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	//Dialog buttons
 	public void onClick(DialogInterface dialog, int which) {
 		switch (which) {
-		case DialogInterface.BUTTON_POSITIVE:	//"ok"
-			String word = enteringWord.toString();
-			if (word.length() == run.wordLength) {
-				callback.onWordOffered(word);
+			case DialogInterface.BUTTON_POSITIVE:	//"ok"
+				String word = enteringWord.toString();
+				if (word.length() == run.wordLength) {
+					callback.onWordOffered(word);
+					clearWord();
+				}
+				break;
+			case DialogInterface.BUTTON_NEGATIVE:	//"clear"
 				clearWord();
-			}
-			break;
-		case DialogInterface.BUTTON_NEGATIVE:	//"clear"
-			clearWord();
-			break;
+				break;
 		}
 	}
 	
@@ -124,29 +138,19 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		enteringWord = new StringBuffer(run.wordLength);
 	}
 	
-	private void inflateCharsLine(LinearLayout la, Char[] chars, int from, int to, int layoutId, int viewId) {
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int from, int length, int layoutId) {
+		int to = from + length;
 		for (int i = from; i < to; i++) {
         	CharView cv = (CharView) Main.layoutInflater.inflate(layoutId, la, false);
         	cv.paint = Main.paint;
+        	cv.changeStateOnClick = false;
         	if (chars != null)
         		cv.setChar(chars[i]);
-        	if (viewId != -1)
-        		cv.setId(viewId);
-        	if (viewId == R.id.DigitalAlphabetCharView) {
-        		if (digitalAlphaberCharLP == null) {
-					Resources resources = context.getResources();
-					//lazy init
-					digitalAlphaberCharLP = new LayoutParams(resources.getDimensionPixelSize(R.dimen.entering_char_width), 
-							resources.getDimensionPixelSize(R.dimen.entering_char_width));
-				}
-        		cv.setLayoutParams(digitalAlphaberCharLP);
-        		cv.setOnClickListener(this);
-        		cv.changeStateOnClick = false;
-        	}
-        	if (la.getId() == R.id.EnteringLayout) {
+    		if (la.getId() == R.id.EnteringLayout) {
 				cv.setViewPos(i);
-				cv.changeStateOnClick = false;
 				run.posTable.addAllPosCharStateChangedListener(cv);
+        	} else {	//alphabet line layout
+        		cv.setOnClickListener(this);
         	}
         	la.addView(cv);
         }
