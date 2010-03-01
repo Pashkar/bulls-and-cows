@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class DictProcessor {
 
 	private static final String DICT_SRC = "/res/dict/src";
-	private static final String DICT_DEST = "/res/dict/dest";
+	private static final String DICT_DIST = "/res/dict/dist";
 
 	public static void main(String[] args) throws Exception {
 		if (args.length != 2) {
@@ -33,7 +33,7 @@ public class DictProcessor {
 			System.exit(1);
 		}
 		System.out.println("Source file \"" + fs.getName() + "\" found");
-		File fd = new File(path + DICT_DEST, distr);
+		File fd = new File(path + DICT_DIST, distr);
 		System.out.println("Dest file \"" + fd.getAbsolutePath() + "\" creating");
 		
 		BufferedReader fr = new BufferedReader(new FileReader(fs));
