@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
@@ -145,7 +146,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			}
 			case Alphabet.LATIN_ID: {
 				alphabet = new Alphabet.Latin();
-				secret = getRandomSybmols(alphabet, wordSizeChosen);
+//				secret = getRandomSybmols(alphabet, wordSizeChosen);
+				secret = loadWord(wordSizeChosen);
 				break;
 			}
 		}
@@ -174,6 +176,25 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		for (Character ch : secretList)
 			sb.append(ch);
 		return sb.substring(0, size);
+	}
+	
+	private String loadWord(int size) {
+		Log.d(TAG, "loadWord: size = " + size);
+		AssetFileDescriptor fd = null;
+		try {
+			fd = getAssets().openFd("latin_dict_4.txt");
+			Log.d(TAG, "fileLength = " + fd.getLength());
+			int wordsCount = (int) (fd.getLength() / (size + 1));
+			Log.d(TAG, "wordsCount = " + wordsCount);
+			
+		} catch (IOException e) {
+			Log.e(TAG, e.toString());
+		} finally {
+			if (fd != null)
+				try { fd.close(); } catch (IOException e) {}
+		}
+		
+		return "abcd";
 	}
 	
 	@Override
