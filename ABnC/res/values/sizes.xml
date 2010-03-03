@@ -11,6 +11,7 @@
 	<dimen name="entering_line_bottom_margin">30px</dimen>
 	
 	<dimen name="alphabet_line_margin">5px</dimen>
+	<dimen name="alphabet_line_bottom_margin">30px</dimen>
 	<dimen name="alphabet_char_height">40px</dimen>
 	<dimen name="alphabet_5_char_width">40px</dimen>
 	<dimen name="alphabet_6_char_width">46px</dimen>

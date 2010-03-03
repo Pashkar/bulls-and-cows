@@ -56,6 +56,6 @@
 			android:layout_marginTop="@dimen/view_top_margin"
 			android:layout_marginLeft="@dimen/alphabet_line_margin"
 			android:layout_marginRight="@dimen/alphabet_line_margin"
-			android:layout_marginBottom="@dimen/alphabet_line_margin"
+			android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
 			/>
 </LinearLayout>
