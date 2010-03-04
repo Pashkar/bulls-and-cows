@@ -81,13 +81,13 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 			case Alphabet.LATIN_ID:	{	//3 x 6 & 1 x 7
 				LinearLayout line;
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
-				inflateCharsLine(line, chars, 0, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
+				inflateCharsLine(line, chars, 0, 7, R.layout.alphabet_7_char_view);
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
-				inflateCharsLine(line, chars, 6, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
+				inflateCharsLine(line, chars, 7, 7, R.layout.alphabet_7_char_view);
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line3);
-				inflateCharsLine(line, chars, 12, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
+				inflateCharsLine(line, chars, 14, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line4);
-				inflateCharsLine(line, chars, 18, 7, R.layout.alphabet_7_char_view);
+				inflateCharsLine(line, chars, 20, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
 				break;
 			}
 		}
