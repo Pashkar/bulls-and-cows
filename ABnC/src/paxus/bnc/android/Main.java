@@ -1,10 +1,7 @@
 package paxus.bnc.android;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
@@ -20,7 +17,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
@@ -38,7 +34,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private static final String TAG = "Main";
 
-	private static final String FNAME_PERSISTENCE = "persistence.dat";
+	private static final String PERSISTENCE = "persistence.dat";
+	
+	private static final String DICT_LATIN_4 = "latin_dict_4.txt";
+	private static final String DICT_LATIN_5 = "latin_dict_5.txt";
+	private static final String DICT_LATIN_6 = "latin_dict_6.txt";
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
@@ -56,6 +56,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 //	private LayoutAnimationController lineInAnimation;
 	private LinearLayout.LayoutParams charLP;
 	private int displayWidth;
+	private Button guessButton;
 
 	private static final int DIALOG_ALPHABETS_ID = 0;
 	private static final int DIALOG_SIZE_ID = 2;
@@ -66,8 +67,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private int wordSizeChosen;
 	private int alphabetChosen;
 	private boolean firstRun = false;
-	
-	private Button guessButton;
+	private final Random rnd = new Random();
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -137,7 +137,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private void finishStartingNewRun() {
 		Alphabet alphabet = null;	
-		String secret = "";
+		String secret = null;
 		switch (alphabetChosen) {
 			case Alphabet.DIGITAL_ID: {
 				alphabet = new Alphabet.Digital();
@@ -146,8 +146,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			}
 			case Alphabet.LATIN_ID: {
 				alphabet = new Alphabet.Latin();
-//				secret = getRandomSybmols(alphabet, wordSizeChosen);
-				secret = loadWord(wordSizeChosen);
+				while (secret == null)	//make sure we don't crash in case loadWord caught exception somehow
+					secret = loadWord(wordSizeChosen);
 				break;
 			}
 		}
@@ -159,7 +159,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				secretLine[i] = Char.NULL;
 			run.data.map.put(Run.ExtraData.DATA_SECRET_LINE, secretLine);
 			run.data.map.put(Run.ExtraData.DATA_GIVEN_UP, false);
-		} catch (BncException e) {	}
+		} catch (BncException e) {	
+			Log.e(TAG, e.toString());
+		}
 		
 //		Log.d(TAG, run.secret.toString());
 		
@@ -178,23 +180,42 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return sb.substring(0, size);
 	}
 	
-	private String loadWord(int size) {
-		Log.d(TAG, "loadWord: size = " + size);
-		AssetFileDescriptor fd = null;
+	private String loadWord(int wordLength) {
+		Log.d(TAG, "loadWord: wordLength = " + wordLength);
+		String word = null;
+		String file = null;
+		switch (wordLength) {
+			case 4: 
+				file = DICT_LATIN_4;		
+				break;
+			case 5: 
+				file = DICT_LATIN_5;		
+				break;
+			case 6: 
+				file = DICT_LATIN_6;		
+				break;
+		}
+		
+		InputStream stream = null;
 		try {
-			fd = getAssets().openFd("latin_dict_4.txt");
-			Log.d(TAG, "fileLength = " + fd.getLength());
-			int wordsCount = (int) (fd.getLength() / (size + 1));
+			stream = getAssets().open(file);
+			int fileSize = stream.available();
+			int wordsCount = (int) (fileSize / (wordLength + 1));
 			Log.d(TAG, "wordsCount = " + wordsCount);
-			
+
+			int wordNum = rnd.nextInt(wordsCount - 1);
+			byte[] data = new byte[wordLength];
+			stream.skip(wordNum * (wordLength + 1));
+			stream.read(data);
+			word = new String(data);
+//			Log.d(TAG, "wordNum = " + wordNum + ", word = " + word);
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
 		} finally {
-			if (fd != null)
-				try { fd.close(); } catch (IOException e) {}
+			if (stream != null)
+				try { stream.close(); } catch (IOException e) {}
 		}
-		
-		return "abcd";
+		return word;
 	}
 	
 	@Override
@@ -370,7 +391,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		Log.v(TAG, "onPause");
 		ObjectOutputStream oos = null;
 		try {
-			FileOutputStream fos = openFileOutput(FNAME_PERSISTENCE, MODE_PRIVATE);
+			FileOutputStream fos = openFileOutput(PERSISTENCE, MODE_PRIVATE);
 			oos = new ObjectOutputStream(new BufferedOutputStream(fos));
 			oos.writeObject(run);
 		} catch (Exception e) {
@@ -387,7 +408,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		ObjectInputStream ois = null;
 		Run run = null;
 		try {
-			FileInputStream fis = openFileInput(FNAME_PERSISTENCE);
+			FileInputStream fis = openFileInput(PERSISTENCE);
 			ois = new ObjectInputStream(new BufferedInputStream(fis));
 			run = (Run) ois.readObject();
 		}
