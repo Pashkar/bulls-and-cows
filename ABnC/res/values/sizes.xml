@@ -6,15 +6,16 @@
 	<dimen name="char_width_max">65px</dimen>
 	<dimen name="char_left_margin">1px</dimen>
 
-	<dimen name="entering_char_width">30px</dimen>
-	<dimen name="entering_char_height">30px</dimen>
+	<dimen name="entering_char_width">37px</dimen>
+	<dimen name="entering_char_height">37px</dimen>
 	<dimen name="entering_line_bottom_margin">30px</dimen>
 	
 	<dimen name="alphabet_line_margin">5px</dimen>
-	<dimen name="alphabet_line_bottom_margin">30px</dimen>
+	<dimen name="alphabet_line_bottom_margin">10px</dimen>
 	<dimen name="alphabet_char_height">40px</dimen>
 	<dimen name="alphabet_5_char_width">40px</dimen>
-	<dimen name="alphabet_6_char_width">46px</dimen>
+	<dimen name="alphabet_6_char_width">47px</dimen>
+	<dimen name="alphabet_6_last_char_width">45px</dimen>
 	<dimen name="alphabet_7_char_width">40px</dimen>
 	
 	<dimen name="answer_char_width">40px</dimen>

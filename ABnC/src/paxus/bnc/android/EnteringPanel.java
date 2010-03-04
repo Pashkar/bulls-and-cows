@@ -55,7 +55,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		panelView = Main.layoutInflater.inflate(alphabetLayoutId, null);
 
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
-		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.char_view);
+		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.entering_char_view);
 		inflateAlphabetLines(alphabetId);
 		enteringWord = new StringBuffer(run2.wordLength);
 		
@@ -81,13 +81,13 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 			case Alphabet.LATIN_ID:	{	//3 x 6 & 1 x 7
 				LinearLayout line;
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
-				inflateCharsLine(line, chars, 0, 6, R.layout.alphabet_latin_6_char_view);
+				inflateCharsLine(line, chars, 0, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
-				inflateCharsLine(line, chars, 6, 6, R.layout.alphabet_latin_6_char_view);
+				inflateCharsLine(line, chars, 6, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line3);
-				inflateCharsLine(line, chars, 12, 6, R.layout.alphabet_latin_6_char_view);
+				inflateCharsLine(line, chars, 12, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line4);
-				inflateCharsLine(line, chars, 18, 7, R.layout.alphabet_latin_7_char_view);
+				inflateCharsLine(line, chars, 18, 7, R.layout.alphabet_7_char_view);
 				break;
 			}
 		}
@@ -139,9 +139,16 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	}
 	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int from, int length, int layoutId) {
+		inflateCharsLine(la, chars, from, length, layoutId, -1);
+	}
+	
+	private void inflateCharsLine(LinearLayout la, Char[] chars, int from, int length, int layoutId, int lastLayoutId) {
 		int to = from + length;
 		for (int i = from; i < to; i++) {
-        	CharView cv = (CharView) Main.layoutInflater.inflate(layoutId, la, false);
+			int lId = layoutId;
+			if (i == to - 1 && lastLayoutId != -1)
+				lId = lastLayoutId;
+        	CharView cv = (CharView) Main.layoutInflater.inflate(lId, la, false);
         	cv.paint = Main.paint;
         	cv.changeStateOnClick = false;
         	if (chars != null)

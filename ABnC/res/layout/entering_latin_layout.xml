@@ -6,7 +6,7 @@
 		android:orientation="vertical"
 		android:gravity="center_horizontal"
 		> 
-
+		
 	<!-- Entering -->
 	<LinearLayout
 			android:id="@+id/EnteringLayout"
@@ -58,4 +58,5 @@
 			android:layout_marginRight="@dimen/alphabet_line_margin"
 			android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
 			/>
+			
 </LinearLayout>
