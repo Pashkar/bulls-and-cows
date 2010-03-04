@@ -2,6 +2,6 @@
 
 <view xmlns:android="http://schemas.android.com/apk/res/android"
 	class="paxus.bnc.android.view.CharView"
-	android:layout_width="@dimen/alphabet_7_char_width" 
-	android:layout_height="@dimen/char_height"
+	android:layout_width="@dimen/alphabet_6_last_char_width" 
+	android:layout_height="@dimen/alphabet_char_height"
 	/>
