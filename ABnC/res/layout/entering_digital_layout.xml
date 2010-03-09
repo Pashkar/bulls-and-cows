@@ -8,21 +8,31 @@
 		android:gravity="center_horizontal"
 		> 
 		
+	<TextView 
+		android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+		android:layout_marginTop="@dimen/view_top_margin"
+		android:layout_marginLeft="@dimen/answer_link_left_margin"
+		android:layout_marginBottom="@dimen/alphabet_line_margin"
+		android:text="@string/ads"
+		/>
+		
 	<com.qwapi.adclient.android.view.QWAdView
           android:id="@+id/Ad"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
           
-          qwad:siteId="Quattro_Wireless_Demo"
-          qwad:publisherId="c3d598cf86144bd4b6e957011336a46e"
+          qwad:publisherId="2f69e71864bd46fb88baf4407cbef625"
+          qwad:siteId="BnC-g6fi4v3b"
           qwad:mediaType="banner"
           qwad:displayMode="normal"
           qwad:animation="fade"
     	  qwad:renderAdOnCreate="true"
     	  qwad:bgColor="#00000000"
     	  qwad:defaultAdImage="@drawable/banner"
-    	  qwad:testMode="true"  
+    	  qwad:testMode="false"  
         />
 		
 	<!-- Entering -->
