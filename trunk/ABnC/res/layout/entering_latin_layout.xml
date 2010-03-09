@@ -29,7 +29,7 @@
           qwad:mediaType="banner"
           qwad:displayMode="normal"
           qwad:animation="fade"
-    	  qwad:renderAdOnCreate="true"
+    	  qwad:renderAdOnCreate="false"
     	  qwad:bgColor="#00000000"
     	  qwad:defaultAdImage="@drawable/banner"
     	  qwad:testMode="false"  
