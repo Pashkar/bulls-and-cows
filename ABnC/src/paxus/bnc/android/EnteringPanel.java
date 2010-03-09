@@ -14,6 +14,8 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.qwapi.adclient.android.view.QWAdView;
+
 public final class EnteringPanel implements OnClickListener, android.content.DialogInterface.OnClickListener {
 
 	private static final String TAG = "EnteringPanel";
@@ -27,8 +29,10 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	private Run run;
 	private View panelView;
 	private AlertDialog panelDialog;	//implementation based on Dialog
+	private QWAdView ads;
 
 	private final OnWordOfferedListener callback;
+
 
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
 		Log.v(TAG, "<init>");
@@ -59,6 +63,8 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		inflateAlphabetLines(alphabetId);
 		enteringWord = new StringBuffer(run2.wordLength);
 		
+		ads = (QWAdView) panelView.findViewById(R.id.Ad);
+		
         panelDialog = new AlertDialog.Builder(context)
 		.setPositiveButton(android.R.string.ok, this)
 		.setNegativeButton(R.string.clear_title, this)
@@ -66,7 +72,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		.create();
         panelDialog.setCanceledOnTouchOutside(true);
 	}
-
+	
 	private void inflateAlphabetLines(int alphabetId) {
 		Char[] chars = Run.alphabet.getAllCharsSorted().toArray(new Char[10]);
 		switch (alphabetId) {
@@ -166,5 +172,6 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	public void show() {
 		Log.v(TAG, "show");
 		panelDialog.show();
+		ads.displayNextAd();
 	}
 }

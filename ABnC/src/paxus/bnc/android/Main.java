@@ -17,9 +17,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
@@ -83,6 +85,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		Log.v(TAG, "onCreate");
+		
+//		Intent intent = new Intent(Intent.ACTION_VIEW);
+//		intent.setData(Uri.parse("http://ya.ru"));
+//		startActivity(intent);
         
 		//init once per activity creation
 		initActivity();
@@ -457,9 +463,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.ShowAlphabetButton:
-			enteringPanel.show();
-			break;
+			case R.id.ShowAlphabetButton:
+				enteringPanel.show();
+				break;
+			case R.id.AnswerLink:
+				Intent intent = new Intent(Intent.ACTION_VIEW);
+				intent.setData(Uri.parse("http://translate.google.com?text=" + run.secret.asString()));
+				startActivity(intent);
+				break;
 		}
 	}
 	
@@ -537,13 +548,27 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 
 	private void inflateAndShowAnswerDialog(int titleId, String message) {
-		LinearLayout answerLine = (LinearLayout) layoutInflater.inflate(R.layout.answerline_layout, null, false);
-		inflateCharsLine(answerLine, run.secret.chars, run.wordLength, null);
+		LinearLayout answerLayout = null;
+		switch (Run.alphabet.getId()) {
+			case Alphabet.DIGITAL_ID: {
+				answerLayout = (LinearLayout) layoutInflater.inflate(R.layout.answerline_layout, null, false);
+				inflateCharsLine(answerLayout, run.secret.chars, run.wordLength, null);
+				break;
+			}
+			case Alphabet.CYRILLIC_ID:
+			case Alphabet.LATIN_ID: {
+				answerLayout = (LinearLayout) layoutInflater.inflate(R.layout.answer_layout, null, false);
+				LinearLayout answerLine = (LinearLayout) answerLayout.findViewById(R.id.AnswerLine);
+				inflateCharsLine(answerLine, run.secret.chars, run.wordLength, null);
+				answerLayout.findViewById(R.id.AnswerLink).setOnClickListener(Main.this);
+				break;
+			}
+		}
 
 		Dialog dialog = new AlertDialog.Builder(Main.this)
             	.setIcon(android.R.drawable.ic_dialog_info)
             	.setTitle(titleId)
-            	.setView(answerLine)
+            	.setView(answerLayout)
             	.setMessage(message)
         		.setPositiveButton(android.R.string.ok, null)
         		.create();
@@ -552,14 +577,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int length, LayoutParams lp) {
-		LayoutParams answerLP = null;
-		if (la.getId() == R.id.AnswerLine) {
-			answerLP = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.answer_char_width), 
-						getResources().getDimensionPixelSize(R.dimen.answer_char_width));
-    	}
+		int viewId = R.layout.char_view;
+		if (la.getId() == R.id.AnswerLine)
+			viewId = R.layout.answer_char_view;
 	
 		for (int i = 0; i < length; i++) {
-        	CharView cv = (CharView) layoutInflater.inflate(R.layout.char_view, la, false);
+			CharView cv = (CharView) layoutInflater.inflate(viewId, la, false);
         	cv.paint = paint;
         	if (chars != null && i < chars.length)
         		cv.setChar(chars[i]);
@@ -574,10 +597,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	   			cv.setChar(chars[i], i == presentPos);	//mark as "bull" at start 
     		}
 
-    		if (la.getId() == R.id.AnswerLine) {
+    		if (la.getId() == R.id.AnswerLine)
         		cv.changeStateOnClick = false;
-        		cv.setLayoutParams(answerLP);
-        	}
         	la.addView(cv);
         	cv.setVisibility(View.VISIBLE);
         }
@@ -612,7 +633,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			for (int i = 0; i < run2.wordLength; i++) {
 				Char ch = secretLine[i];
 				CharView cv = (CharView)layout.getChildAt(i);
-//				cv.setLayoutParams(linearCharLP);
 				cv.setChar(ch, i == run2.posTable.getPresentPos(ch.ch));
 				cv.changeStateOnClick = false;	//secret word should not react on clicks, just listen to changes produced by others
 			}

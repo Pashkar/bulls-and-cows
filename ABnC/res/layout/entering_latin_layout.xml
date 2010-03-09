@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:qwad="http://schemas.android.com/apk/res/paxus.bnc.android"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
 		android:gravity="center_horizontal"
 		> 
+				
+	<com.qwapi.adclient.android.view.QWAdView
+          android:id="@+id/Ad"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
+          
+          qwad:siteId="Quattro_Wireless_Demo"
+          qwad:publisherId="c3d598cf86144bd4b6e957011336a46e"
+          qwad:mediaType="banner"
+          qwad:displayMode="normal"
+          qwad:animation="fade"
+    	  qwad:renderAdOnCreate="true"
+    	  qwad:bgColor="#00000000"
+    	  qwad:defaultAdImage="@drawable/banner"
+    	  qwad:testMode="true"  
+        />
 		
 	<!-- Entering -->
 	<LinearLayout
@@ -35,7 +53,7 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginTop="@dimen/alphabet_top_margin"
 			android:layout_marginLeft="@dimen/alphabet_line_margin"
 			android:layout_marginRight="@dimen/alphabet_line_margin"
 			/>	
@@ -44,7 +62,7 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginTop="@dimen/alphabet_top_margin"
 			android:layout_marginLeft="@dimen/alphabet_line_margin"
 			android:layout_marginRight="@dimen/alphabet_line_margin"
 			/>	
@@ -53,7 +71,7 @@
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
 			android:orientation="horizontal"
-			android:layout_marginTop="@dimen/view_top_margin"
+			android:layout_marginTop="@dimen/alphabet_top_margin"
 			android:layout_marginLeft="@dimen/alphabet_line_margin"
 			android:layout_marginRight="@dimen/alphabet_line_margin"
 			android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
