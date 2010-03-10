@@ -21,13 +21,17 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		IPosCharStateChangedListener {
 
 	private static final String TAG = "CharView";
-	static Animation anim;
+	private static final String ATTR_STATELESS = "stateless";
+	private static final String ATTR_CHANGE_STATE_ON_CLICK = "changeStateOnClick";
 	
+	
+	static Animation anim;
 	public Paint paint;
 
 	private Char ch = Char.NULL;
 	
-	public boolean changeStateOnClick = true; 
+	public boolean changeStateOnClick = true;
+	public boolean stateless = false;	//should we react on clicks, should we redraw background based on state? 
 	
 	/**
 	 *	For "bull" when position of CharView pointed. Stores for the CharView instance position of it in word.
@@ -42,6 +46,9 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		changeStateOnClick = attrs.getAttributeBooleanValue(null, ATTR_CHANGE_STATE_ON_CLICK, true);
+		stateless = attrs.getAttributeBooleanValue(null, ATTR_STATELESS, false);
+		Log.d(TAG, "CharView const: @stateless=" + stateless + ", @changeStateOnClick = " + changeStateOnClick);
 		initView(context);
 	}
 	
@@ -68,7 +75,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		setBackground();
 		startAnimation(anim);
 	}
-	
+
 	public Char getChar() {
 		return ch;
 	}
@@ -105,6 +112,8 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	private void setBackground() {
 		if (ch == null)
+			return;
+		if (stateless)
 			return;
 		switch (ch.getState()) {
 		case NONE:
