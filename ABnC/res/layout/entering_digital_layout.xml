@@ -31,7 +31,6 @@
           qwad:animation="fade"
     	  qwad:renderAdOnCreate="false"
     	  qwad:bgColor="#00000000"
-    	  qwad:defaultAdImage="@drawable/banner"
     	  qwad:testMode="false"  
         />
 		
@@ -46,6 +45,16 @@
 			android:layout_marginLeft="@dimen/line_left_margin"
 			android:layout_marginRight="@dimen/line_left_margin"
 			>
+			
+			<paxus.bnc.android.view.CharView
+				android:id="@+id/BackspaceView"
+				android:layout_width="@dimen/entering_char_width"
+				android:layout_height="@dimen/entering_char_height"
+				android:layout_marginLeft="@dimen/backspace_left_margin"
+				android:background="@drawable/wrong"
+				changeStateOnClick="false"
+				stateless="true"
+				/>
 	</LinearLayout>
 
 	<!-- Alphabet -->

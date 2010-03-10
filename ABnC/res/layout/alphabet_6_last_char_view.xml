@@ -4,4 +4,6 @@
 	class="paxus.bnc.android.view.CharView"
 	android:layout_width="@dimen/alphabet_6_last_char_width" 
 	android:layout_height="@dimen/alphabet_char_height"
+	android:background="@drawable/noth"
+	changeStateOnClick="false"
 	/>

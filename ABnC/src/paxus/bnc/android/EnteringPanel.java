@@ -84,7 +84,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 				inflateCharsLine(line, chars, 5, 5, R.layout.alphabet_digital_char_view);
 				break;
 			}
-			case Alphabet.LATIN_ID:	{	//3 x 6 & 1 x 7
+			case Alphabet.LATIN_ID:	{	//2 x 6 & 2 x 7
 				LinearLayout line;
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
 				inflateCharsLine(line, chars, 0, 7, R.layout.alphabet_7_char_view);
@@ -150,13 +150,13 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	
 	private void inflateCharsLine(LinearLayout la, Char[] chars, int from, int length, int layoutId, int lastLayoutId) {
 		int to = from + length;
+		int pos = 0;
 		for (int i = from; i < to; i++) {
 			int lId = layoutId;
 			if (i == to - 1 && lastLayoutId != -1)
 				lId = lastLayoutId;
         	CharView cv = (CharView) Main.layoutInflater.inflate(lId, la, false);
         	cv.paint = Main.paint;
-        	cv.changeStateOnClick = false;
         	if (chars != null)
         		cv.setChar(chars[i]);
     		if (la.getId() == R.id.EnteringLayout) {
@@ -165,13 +165,13 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
         	} else {	//alphabet line layout
         		cv.setOnClickListener(this);
         	}
-        	la.addView(cv);
+        	la.addView(cv, pos++);
         }
 	}
 
 	public void show() {
 		Log.v(TAG, "show");
-		panelDialog.show();
 		ads.displayNextAd();
+		panelDialog.show();
 	}
 }

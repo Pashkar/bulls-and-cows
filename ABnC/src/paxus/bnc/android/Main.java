@@ -597,8 +597,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	   			cv.setChar(chars[i], i == presentPos);	//mark as "bull" at start 
     		}
 
-    		if (la.getId() == R.id.AnswerLine)
-        		cv.changeStateOnClick = false;
+//    		if (la.getId() == R.id.AnswerLine)
+//        		cv.changeStateOnClick = false;
         	la.addView(cv);
         	cv.setVisibility(View.VISIBLE);
         }

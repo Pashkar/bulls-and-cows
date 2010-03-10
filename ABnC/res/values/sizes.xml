@@ -10,6 +10,8 @@
 	<dimen name="entering_char_height">37px</dimen>
 	<dimen name="entering_line_bottom_margin">20px</dimen>
 	
+	<dimen name="backspace_left_margin">3px</dimen>
+	
 	<dimen name="alphabet_line_margin">5px</dimen>
 	<dimen name="alphabet_line_bottom_margin">10px</dimen>
 	<dimen name="alphabet_top_margin">1px</dimen>

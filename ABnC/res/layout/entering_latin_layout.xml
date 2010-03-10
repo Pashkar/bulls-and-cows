@@ -31,7 +31,6 @@
           qwad:animation="fade"
     	  qwad:renderAdOnCreate="false"
     	  qwad:bgColor="#00000000"
-    	  qwad:defaultAdImage="@drawable/banner"
     	  qwad:testMode="false"  
         />
 		
