@@ -46,12 +46,13 @@
 			android:layout_marginRight="@dimen/line_left_margin"
 			>
 			
+			<!-- Backspace  -->
 			<paxus.bnc.android.view.CharView
 				android:id="@+id/BackspaceView"
 				android:layout_width="@dimen/entering_char_width"
 				android:layout_height="@dimen/entering_char_height"
 				android:layout_marginLeft="@dimen/backspace_left_margin"
-				android:background="@drawable/wrong"
+				android:background="@drawable/del"
 				changeStateOnClick="false"
 				stateless="true"
 				/>

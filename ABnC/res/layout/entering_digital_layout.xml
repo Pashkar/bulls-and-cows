@@ -23,6 +23,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
+    	  android:scrollbars="none"
           
           qwad:publisherId="2f69e71864bd46fb88baf4407cbef625"
           qwad:siteId="BnC-g6fi4v3b"
@@ -44,14 +45,16 @@
 			android:layout_marginBottom="@dimen/entering_line_bottom_margin"
 			android:layout_marginLeft="@dimen/line_left_margin"
 			android:layout_marginRight="@dimen/line_left_margin"
+			android:gravity="center_vertical"
 			>
 			
+			<!-- Backspace  -->
 			<paxus.bnc.android.view.CharView
 				android:id="@+id/BackspaceView"
 				android:layout_width="@dimen/entering_char_width"
 				android:layout_height="@dimen/entering_char_height"
 				android:layout_marginLeft="@dimen/backspace_left_margin"
-				android:background="@drawable/wrong"
+				android:background="@drawable/del"
 				changeStateOnClick="false"
 				stateless="true"
 				/>

@@ -6,7 +6,7 @@
 	<dimen name="char_width_max">65px</dimen>
 	<dimen name="char_left_margin">1px</dimen>
 
-	<dimen name="entering_char_width">37px</dimen>
+	<dimen name="entering_char_width">33px</dimen>
 	<dimen name="entering_char_height">37px</dimen>
 	<dimen name="entering_line_bottom_margin">20px</dimen>
 	
