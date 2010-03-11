@@ -44,7 +44,18 @@
 			android:layout_marginBottom="@dimen/entering_line_bottom_margin"
 			android:layout_marginLeft="@dimen/line_left_margin"
 			android:layout_marginRight="@dimen/line_left_margin"
-			/>
+			>
+			
+			<paxus.bnc.android.view.CharView
+				android:id="@+id/BackspaceView"
+				android:layout_width="@dimen/entering_char_width"
+				android:layout_height="@dimen/entering_char_height"
+				android:layout_marginLeft="@dimen/backspace_left_margin"
+				android:background="@drawable/wrong"
+				changeStateOnClick="false"
+				stateless="true"
+				/>
+	</LinearLayout>
 
 	<!-- Alphabet -->
 	<LinearLayout  

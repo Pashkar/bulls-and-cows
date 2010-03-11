@@ -2,6 +2,7 @@
 
 <view xmlns:android="http://schemas.android.com/apk/res/android"
 	class="paxus.bnc.android.view.CharView"
+	android:id="@+id/AlphabetCharView"
 	android:layout_width="@dimen/alphabet_6_char_width" 
 	android:layout_height="@dimen/alphabet_char_height"
 	android:background="@drawable/noth"
