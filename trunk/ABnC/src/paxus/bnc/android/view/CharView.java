@@ -48,7 +48,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		super(context, attrs);
 		changeStateOnClick = attrs.getAttributeBooleanValue(null, ATTR_CHANGE_STATE_ON_CLICK, true);
 		stateless = attrs.getAttributeBooleanValue(null, ATTR_STATELESS, false);
-		Log.d(TAG, "CharView const: @stateless=" + stateless + ", @changeStateOnClick = " + changeStateOnClick);
+//		Log.d(TAG, "CharView const: @stateless=" + stateless + ", @changeStateOnClick = " + changeStateOnClick);
 		initView(context);
 	}
 	
