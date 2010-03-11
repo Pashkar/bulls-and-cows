@@ -30,7 +30,6 @@
     <string name="intro_menu_caption">Intro</string>
     <string name="intro_title">Brief intro</string>
     <string name="translate"><a href="">Translate</a> this word</string>
-    <string name="ads">ads:</string>
     <string name="intro_msg">\
 Hey,\n\n\
 welcome to my version of the <b>Bulls and Cows</b> game for your Androids! Enjoy this amusing logical puzzle and break digital codes the game challenges you by! It might remind you of <b>Mastermind</b> but here you should deal with unique digits, not colours. Still not sure how to play? Read my notes below!\n\n\
