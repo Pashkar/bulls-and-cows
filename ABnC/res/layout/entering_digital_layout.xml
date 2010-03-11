@@ -1,40 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:qwad="http://schemas.android.com/apk/res/paxus.bnc.android"
+		xmlns:admobsdk="http://schemas.android.com/apk/res/paxus.bnc.android"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical"
 		android:gravity="center_horizontal"
 		> 
 		
-	<TextView 
-		android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-		android:layout_marginTop="@dimen/view_top_margin"
-		android:layout_marginLeft="@dimen/answer_link_left_margin"
-		android:layout_marginBottom="@dimen/alphabet_line_margin"
-		android:text="@string/ads"
-		/>
-		
-	<com.qwapi.adclient.android.view.QWAdView
-          android:id="@+id/Ad"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
-    	  android:scrollbars="none"
-          
-          qwad:publisherId="2f69e71864bd46fb88baf4407cbef625"
-          qwad:siteId="BnC-g6fi4v3b"
-          qwad:mediaType="banner"
-          qwad:displayMode="normal"
-          qwad:animation="fade"
-    	  qwad:renderAdOnCreate="false"
-    	  qwad:bgColor="#00000000"
-    	  qwad:testMode="false"  
-        />
-		
+	<com.admob.android.ads.AdView  
+         android:id="@+id/Ad"
+         android:layout_width="wrap_content" 
+         android:layout_height="wrap_content"
+         android:layout_marginBottom="@dimen/alphabet_line_bottom_margin"
+         android:scrollbars="none"
+         
+         admobsdk:backgroundColor="#000000"
+         admobsdk:textColor="#FFFFFF"
+         admobsdk:keywords="Android game puzzle"
+         
+         admobsdk:testing="false"
+ 	/>
+ 	
 	<!-- Entering -->
 	<LinearLayout
 			android:id="@+id/EnteringLayout"

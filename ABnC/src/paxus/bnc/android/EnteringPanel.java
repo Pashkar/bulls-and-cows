@@ -14,7 +14,7 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.qwapi.adclient.android.view.QWAdView;
+import com.admob.android.ads.AdView;
 
 public final class EnteringPanel implements OnClickListener, android.content.DialogInterface.OnClickListener {
 
@@ -29,7 +29,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	private Run run;
 	private View panelView;
 	private AlertDialog panelDialog;	//implementation based on Dialog
-	private QWAdView ads;
+	private AdView ads;
 
 	private final OnWordOfferedListener callback;
 
@@ -64,7 +64,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 
 		enteringWord = new StringBuffer(run2.wordLength);
 		
-		ads = (QWAdView) panelView.findViewById(R.id.Ad);
+		ads = (AdView) panelView.findViewById(R.id.Ad);
 		
         panelDialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, this)
@@ -189,7 +189,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 
 	public void show() {
 		Log.v(TAG, "show");
-		ads.displayNextAd();
+		ads.requestFreshAd();
 		panelDialog.show();
 	}
 }

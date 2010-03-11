@@ -16,7 +16,7 @@
 	<dimen name="alphabet_line_bottom_margin">10px</dimen>
 	<dimen name="alphabet_top_margin">1px</dimen>
 	<dimen name="alphabet_digital_char_height">40px</dimen>
-	<dimen name="alphabet_char_height">30px</dimen>
+	<dimen name="alphabet_char_height">40px</dimen>
 	<dimen name="alphabet_5_char_width">40px</dimen>
 	<dimen name="alphabet_6_char_width">47px</dimen>
 	<dimen name="alphabet_6_last_char_width">45px</dimen>
