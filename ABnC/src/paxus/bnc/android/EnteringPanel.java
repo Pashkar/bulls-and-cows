@@ -33,7 +33,6 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 
 	private final OnWordOfferedListener callback;
 
-
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
 		Log.v(TAG, "<init>");
 		this.callback = callback;
@@ -61,15 +60,17 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
 		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.entering_char_view);
 		inflateAlphabetLines(alphabetId);
+		enteringWordLayout.findViewById(R.id.BackspaceView).setOnClickListener(this);
+
 		enteringWord = new StringBuffer(run2.wordLength);
 		
 		ads = (QWAdView) panelView.findViewById(R.id.Ad);
 		
         panelDialog = new AlertDialog.Builder(context)
-		.setPositiveButton(android.R.string.ok, this)
-		.setNegativeButton(R.string.clear_title, this)
-		.setView(panelView)
-		.create();
+			.setPositiveButton(android.R.string.ok, this)
+			.setNegativeButton(R.string.clear_title, this)
+			.setView(panelView)
+			.create();
         panelDialog.setCanceledOnTouchOutside(true);
 	}
 	
@@ -99,31 +100,48 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		}
 	}
 
-	//Char click
+	//CharView click
 	public void onClick(View v) {
-		if (enteringWord.length() >= run.wordLength) {
-			tooLongWordToast.show();
-			return;
+		Log.v(TAG, "OnClick CharView");
+		switch (v.getId()) {
+			case (R.id.AlphabetCharView): {
+				if (enteringWord.length() >= run.wordLength) {
+					tooLongWordToast.show();
+					return;
+				}
+				
+				CharView cv = (CharView) v;
+				Character ch = cv.getChar().ch;
+				//duplicates are not allowed
+				if (enteringWord.indexOf("" + ch) != -1) {
+					duplicatedCharToast.show();
+					return;
+				}
+					
+				enteringWord.append(ch);
+				int curPos = enteringWord.length() - 1;
+				CharView ecv = (CharView)enteringWordLayout.getChildAt(curPos);
+				//for newly added char PosTable may have already set position and no updates will be sent - force posMatched
+				ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);
+				break;
+			}
+			case (R.id.BackspaceView): {
+				int length = enteringWord.length();
+				if (length == 0)
+					return;
+				int curPos = length - 1;
+				CharView ecv = (CharView)enteringWordLayout.getChildAt(curPos);
+				ecv.resetChar();
+				enteringWord.deleteCharAt(curPos);
+				break;
+			}
 		}
-		
-		CharView cv = (CharView) v;
-		Character ch = cv.getChar().ch;
-		//duplicates are not allowed
-		if (enteringWord.indexOf("" + ch) != -1) {
-			duplicatedCharToast.show();
-			return;
-		}
-			
-		enteringWord.append(ch);
-		int curPos = enteringWord.length() - 1;
-		CharView ecv = (CharView)enteringWordLayout.getChildAt(curPos);
-		//for newly added char PosTable may have already set position and no updates will be sent - force posMatched
-		ecv.setChar(cv.getChar(), run.posTable.getPresentPos(ch) == curPos);		
 	}
 
 
 	//Dialog buttons
 	public void onClick(DialogInterface dialog, int which) {
+		Log.v(TAG, "OnClick Dialog");
 		switch (which) {
 			case DialogInterface.BUTTON_POSITIVE:	//"ok"
 				String word = enteringWord.toString();
