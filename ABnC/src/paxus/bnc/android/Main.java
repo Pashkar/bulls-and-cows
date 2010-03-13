@@ -29,7 +29,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
 import android.widget.LinearLayout.LayoutParams;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
@@ -41,6 +40,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private static final String DICT_LATIN_4 = "latin_dict_4.txt";
 	private static final String DICT_LATIN_5 = "latin_dict_5.txt";
 	private static final String DICT_LATIN_6 = "latin_dict_6.txt";
+
+	private static final String CYRR_LATIN_4 = "cyrr_dict_4.txt";
+	private static final String CYRR_LATIN_5 = "cyrr_dict_5.txt";	
+	private static final String CYRR_LATIN_6 = "cyrr_dict_6.txt";
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
@@ -54,7 +57,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private ScrollView scrollView;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
-	private Toast alphabetNotSupportedToast;
 //	private LayoutAnimationController lineInAnimation;
 	private LinearLayout.LayoutParams charLP;
 	private int displayWidth;
@@ -148,8 +150,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			}
 			case Alphabet.LATIN_ID: {
 				alphabet = new Alphabet.Latin();
-				while (secret == null)	//make sure we don't crash in case loadWord caught exception somehow
-					secret = loadRandomWord(wordSizeChosen);
+				while (secret == null)	//make sure we don't crash in case loadRandomWord caught exception somehow
+					secret = loadRandomWord(alphabetChosen, wordSizeChosen);
+				break;
+			}
+			case Alphabet.CYRILLIC_ID: {
+				alphabet = new Alphabet.Cyrrilic();
+				while (secret == null)	//make sure we don't crash in case loadRandomWord caught exception somehow
+					secret = loadRandomWord(alphabetChosen, wordSizeChosen);
 				break;
 			}
 		}
@@ -165,7 +173,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			Log.e(TAG, e.toString());
 		}
 		
-//		Log.d(TAG, run.secret.toString());
+		Log.d(TAG, run.secret.toString());
 		
 		//finish initialization, interrupted by dialogs chain
 		reinitActivity();
@@ -182,19 +190,19 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return sb.substring(0, size);
 	}
 	
-	private String loadRandomWord(int wordLength) {
-		Log.d(TAG, "loadWord: wordLength = " + wordLength);
+	private String loadRandomWord(int alphabet, int wordLength) {
+		Log.d(TAG, "loadWord: alphabet = " + alphabet + ", wordLength = " + wordLength);
 		String word = null;
 		String file = null;
 		switch (wordLength) {
 			case 4: 
-				file = DICT_LATIN_4;		
+				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_4 : CYRR_LATIN_4;		
 				break;
 			case 5: 
-				file = DICT_LATIN_5;		
+				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_5 : CYRR_LATIN_5;		
 				break;
 			case 6: 
-				file = DICT_LATIN_6;		
+				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_6 : CYRR_LATIN_6;		
 				break;
 		}
 		
@@ -209,8 +217,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			byte[] data = new byte[wordLength];
 			stream.skip(wordNum * (wordLength + 1));
 			stream.read(data);
-			word = new String(data);
-//			Log.d(TAG, "wordNum = " + wordNum + ", word = " + word);
+//			Log.d(TAG, Arrays.toString(data));
+			if (alphabet == Alphabet.CYRILLIC_ID)
+				word = new String(data, "Windows-1251");
+			else
+				word = new String(data);
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
 		} finally {
@@ -232,13 +243,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 					public void onClick(DialogInterface dialog, int which) {
 						alphabetChosen = which;
 						Log.i(TAG, "alphabet chosen: " + alphabetChosen);
-						if (which == Alphabet.CYRILLIC_ID) {	
-							if (alphabetNotSupportedToast == null)	//lazy init
-								alphabetNotSupportedToast = Toast.makeText(Main.this, R.string.alphabet_not_supported_msg, 
-										Toast.LENGTH_LONG);
-							alphabetNotSupportedToast.show();
-							return;
-						}
 						//ask size in chain
 						showDialog(DIALOG_SIZE_ID);
 					}

@@ -12,6 +12,13 @@ import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.RunExecutor;
 
 public class AlphabetTest extends TestCase {
+	public void testCyrillic() throws Exception {
+		Alphabet ca = new Alphabet.Cyrrilic();
+		RunExecutor re = new RunExecutor();
+		String secret = new String(new byte[]{(byte)-32, (byte)-31, (byte)-30}, "Windows-1251");
+		re.startNewRun(ca, secret);
+	}
+	
 	public void testAlphabetSequencer() throws BncException {
 		final Alphabet la = new Alphabet.Latin();
 		RunExecutor re = new RunExecutor();
