@@ -14,9 +14,9 @@
 	</string-array>
 	
 	<string-array name="word_length_array">
-		<item>Four (normal)</item>
-		<item>Five (difficult)</item>
-		<item>Six (hard)</item>
+		<item>Four (easy)</item>
+		<item>Five (normal)</item>
+		<item>Six (difficult)</item>
 	</string-array>
 	
 </resources>

@@ -86,10 +86,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         super.onCreate(savedInstanceState);
 		Log.v(TAG, "onCreate");
 		
-//		Intent intent = new Intent(Intent.ACTION_VIEW);
-//		intent.setData(Uri.parse("http://ya.ru"));
-//		startActivity(intent);
-        
 		//init once per activity creation
 		initActivity();
 		
@@ -153,7 +149,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			case Alphabet.LATIN_ID: {
 				alphabet = new Alphabet.Latin();
 				while (secret == null)	//make sure we don't crash in case loadWord caught exception somehow
-					secret = loadWord(wordSizeChosen);
+					secret = loadRandomWord(wordSizeChosen);
 				break;
 			}
 		}
@@ -186,7 +182,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return sb.substring(0, size);
 	}
 	
-	private String loadWord(int wordLength) {
+	private String loadRandomWord(int wordLength) {
 		Log.d(TAG, "loadWord: wordLength = " + wordLength);
 		String word = null;
 		String file = null;
@@ -596,9 +592,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	    		int presentPos = run.posTable.getPresentPos(chars[i].ch);
 	   			cv.setChar(chars[i], i == presentPos);	//mark as "bull" at start 
     		}
-
-//    		if (la.getId() == R.id.AnswerLine)
-//        		cv.changeStateOnClick = false;
         	la.addView(cv);
         	cv.setVisibility(View.VISIBLE);
         }
