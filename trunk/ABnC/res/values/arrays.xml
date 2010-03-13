@@ -2,7 +2,7 @@
 	<string-array name="alphabet_array">
 		<item>Numerical</item>
 		<item>Latin</item>
-		<item>Cyrillic (coming soon)</item>
+		<item>Cyrillic</item>
 	</string-array>
 
 	<string-array name="num_word_length_array">

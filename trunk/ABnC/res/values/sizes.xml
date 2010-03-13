@@ -21,6 +21,7 @@
 	<dimen name="alphabet_6_char_width">47px</dimen>
 	<dimen name="alphabet_6_last_char_width">45px</dimen>
 	<dimen name="alphabet_7_char_width">40px</dimen>
+	<dimen name="alphabet_8_char_width">35px</dimen>	
 	
 	<dimen name="answer_char_width">40px</dimen>
 	<dimen name="answer_char_height">40px</dimen>

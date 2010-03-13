@@ -21,7 +21,7 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 	public static final int 		LATIN_MIN_WORD_LENGTH = 4;
 	
 	public static final int 		CYRILLIC_ID = 2;
-	public static final String 		CYRILLIC_NAME = "Latin";
+	public static final String 		CYRILLIC_NAME = "Cyrillic";
 	public static final int 		CYRILLIC_MIN_WORD_LENGTH = 4;
 	
 	private final HashSet<Character> symbols = new HashSet<Character>();
@@ -176,6 +176,21 @@ public abstract class Alphabet implements Externalizable, IStatesCounter {
 		out.writeObject(css);
 	}
 
+	public final static class Cyrrilic extends Alphabet {
+		@Override
+		public int getId() {
+			return Alphabet.CYRILLIC_ID;
+		}
+		@Override
+		public String getName() {
+			return CYRILLIC_NAME;
+		}
+		@Override
+		protected String getSymbolsLine() {
+			return "אבגדהוזחטיךכלםמןנסעףפץצקרשתûü‎‏ÿ";
+		}
+	};
+	
 	public final static class Latin extends Alphabet {
 		@Override
 		public int getId() {

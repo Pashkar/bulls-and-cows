@@ -53,6 +53,9 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 			case Alphabet.LATIN_ID:
 				alphabetLayoutId = R.layout.entering_latin_layout;
 				break;
+			case Alphabet.CYRILLIC_ID:
+				alphabetLayoutId = R.layout.entering_cyrillic_layout;
+				break;
 		}
 		
 		panelView = Main.layoutInflater.inflate(alphabetLayoutId, null);
@@ -95,6 +98,18 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 				inflateCharsLine(line, chars, 14, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
 				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line4);
 				inflateCharsLine(line, chars, 20, 6, R.layout.alphabet_6_char_view, R.layout.alphabet_6_last_char_view);
+				break;
+			}
+			case Alphabet.CYRILLIC_ID:	{	//4 x 8
+				LinearLayout line;
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line1);
+				inflateCharsLine(line, chars, 0, 8, R.layout.alphabet_8_char_view);
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line2);
+				inflateCharsLine(line, chars, 8, 8, R.layout.alphabet_8_char_view);
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line3);
+				inflateCharsLine(line, chars, 16, 8, R.layout.alphabet_8_char_view);
+				line = (LinearLayout) panelView.findViewById(R.id.AlphabetLayout_line4);
+				inflateCharsLine(line, chars, 24, 8, R.layout.alphabet_8_char_view);
 				break;
 			}
 		}
