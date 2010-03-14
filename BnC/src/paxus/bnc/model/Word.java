@@ -31,7 +31,11 @@ public final class Word
 			if (chars.indexOf(ch + "") >= 0)	
 				throw new BncException("Duplicate chars \"" + ch + "\" in word \"" + word + "\"");
 			chars.append(ch);
-			mWord[i] = Char.valueOf(ch, alphabet);
+			try {
+				mWord[i] = Char.valueOf(ch, alphabet);
+			} catch (BncException e) {
+				throw new BncException("Word \"" + word + "\": wrong symbol at position " + i, e);
+			}
 		}
 	}
 
