@@ -6,14 +6,13 @@
     <string name="guesses_line">Your guesses</string>
     <string name="position_line">Position is the question...</string>
     
-    <string name="alphabet_not_supported_msg">Sorry, alphabet not yet supported. Follow updates on the Market!</string>
     <string name="diplicated_msg">Duplicated symbol</string>
     <string name="word_too_long_msg">Word is too long</string>
     
     <string name="new_game_title">New game</string>
     <string name="new_word_title">Guess</string>
     <string name="win_title">You win!</string>
-    <string name="win_msg">"Congratulations! You solved the puzzle in %d steps!</string>
+    <string name="win_msg">Congratulations! You solved the puzzle in %d steps!</string>
     
     <string name="clear_marks_title">Clear marks</string>
     <string name="clear_marks_conf">Clear all marks?</string>
@@ -25,7 +24,7 @@
     
     <string name="give_up_title">Give up</string>
     <string name="give_up_conf">Are you sure you want to give up?</string>
-    <string name="give_up_msg">"You failed to guess the secret... Try again!"</string>
+    <string name="give_up_msg">You failed to guess the secret... Try again!</string>
     
     <string name="intro_menu_caption">Intro</string>
     <string name="intro_title">Brief intro</string>
