@@ -17,6 +17,8 @@ public class AlphabetTest extends TestCase {
 		RunExecutor re = new RunExecutor();
 		String secret = new String(new byte[]{(byte)-32, (byte)-31, (byte)-30}, "Windows-1251");
 		re.startNewRun(ca, secret);
+		System.out.println(secret);
+		System.out.println(re.run.secret.asString());
 	}
 	
 	public void testAlphabetSequencer() throws BncException {

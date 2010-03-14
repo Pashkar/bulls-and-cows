@@ -1,10 +1,6 @@
 package paxus.bnc.util;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.Arrays;
 
 public class DictProcessor {
@@ -13,16 +9,16 @@ public class DictProcessor {
 	private static final String DICT_DIST = "/res/dict/dist";
 
 	public static void main(String[] args) throws Exception {
-		if (args.length != 2) {
+		if (args.length < 1) {
 			System.out.println("Processed dictionary file. \n" +
 					"Usage: \n" +
-					"\tjava.exe DictProcessor source_filename result_filename\n" +
+					"\tjava.exe DictProcessor source_filename [result_filename]\n" +
 					"\nNote: files should be located at " + DICT_SRC);
 			System.exit(1);
 		}
 		System.out.println("args: " + Arrays.toString(args));
 		String source = args[0];
-		String distr = args[1];
+		String distr = args.length > 1 ? args[1] : source;
 		String path = new File(DictProcessor.class.getClassLoader().getResource("anchor").toURI())
 				.getParentFile().getParentFile().getAbsolutePath();
 		System.out.println("\nPath = " + path);
@@ -43,7 +39,7 @@ public class DictProcessor {
 			String line;
 			while ((line = fr.readLine()) != null) {
 				if (filtereDuplicateSymbols(line))
-					fw.append(line + "\n");
+					fw.append(line + "\r\n");	//+ 2 bytes on each line
 			}
 			System.out.println("Work is done with no errors");
 		} finally {

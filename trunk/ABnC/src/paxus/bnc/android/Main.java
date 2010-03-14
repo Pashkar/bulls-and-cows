@@ -41,9 +41,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private static final String DICT_LATIN_5 = "latin_dict_5.txt";
 	private static final String DICT_LATIN_6 = "latin_dict_6.txt";
 
-	private static final String CYRR_LATIN_4 = "cyrr_dict_4.txt";
-	private static final String CYRR_LATIN_5 = "cyrr_dict_5.txt";	
-	private static final String CYRR_LATIN_6 = "cyrr_dict_6.txt";
+	private static final String CYR_LATIN_4 = "cyr_dict_4.txt";
+	private static final String CYR_LATIN_5 = "cyr_dict_5.txt";	
+	private static final String CYR_LATIN_6 = "cyr_dict_6.txt";
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
@@ -173,7 +173,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			Log.e(TAG, e.toString());
 		}
 		
-		Log.d(TAG, run.secret.toString());
+//		Log.d(TAG, run.secret.toString());
 		
 		//finish initialization, interrupted by dialogs chain
 		reinitActivity();
@@ -196,28 +196,30 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		String file = null;
 		switch (wordLength) {
 			case 4: 
-				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_4 : CYRR_LATIN_4;		
+				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_4 : CYR_LATIN_4;		
 				break;
 			case 5: 
-				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_5 : CYRR_LATIN_5;		
+				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_5 : CYR_LATIN_5;		
 				break;
 			case 6: 
-				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_6 : CYRR_LATIN_6;		
+				file = alphabet == Alphabet.LATIN_ID ? DICT_LATIN_6 : CYR_LATIN_6;		
 				break;
 		}
 		
 		InputStream stream = null;
 		try {
 			stream = getAssets().open(file);
-			int fileSize = stream.available();
-			int wordsCount = (int) (fileSize / (wordLength + 1));
-			Log.d(TAG, "wordsCount = " + wordsCount);
+			final int fileSize = stream.available();
+			final int lineLength = wordLength + 2;	//2 additional bytes are "\r\n"
+			final int wordsCount = (int) (fileSize / lineLength);
+			Log.d(TAG, "fileSize = " + fileSize + ", wordLength = " + wordLength + ", wordsCount = " + wordsCount);
 
-			int wordNum = rnd.nextInt(wordsCount - 1);
+			int wordNum = rnd.nextInt(wordsCount);
+			
 			byte[] data = new byte[wordLength];
-			stream.skip(wordNum * (wordLength + 1));
+			stream.skip(wordNum * lineLength);	
 			stream.read(data);
-//			Log.d(TAG, Arrays.toString(data));
+			Log.d(TAG, "wordNum = " + wordNum + ", data = " + Arrays.toString(data));
 			if (alphabet == Alphabet.CYRILLIC_ID)
 				word = new String(data, "Windows-1251");
 			else
@@ -467,8 +469,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				enteringPanel.show();
 				break;
 			case R.id.AnswerLink:
+				Log.d(TAG, "onClick: AnswerLink, secret = " + run.secret.asString() + ", Uri = " + Uri.encode(run.secret.asString()));
 				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setData(Uri.parse("http://translate.google.com?text=" + run.secret.asString()));
+				intent.setData(Uri.parse("http://translate.google.com?text=" + Uri.encode(run.secret.asString())));
 				startActivity(intent);
 				break;
 		}
