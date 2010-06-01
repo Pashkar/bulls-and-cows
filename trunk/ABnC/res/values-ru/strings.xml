@@ -7,7 +7,7 @@
     <string name="position_line">Поиск позиции...</string>
     
     <string name="diplicated_msg">Буквы не должны повторяться</string>
-    <string name="word_too_long_msg">Слишко много букв введено</string>
+    <string name="word_too_long_msg">Слишком много букв введено</string>
     
     <string name="new_game_title">Новая игра</string>
     <string name="new_word_title">Ход</string>
