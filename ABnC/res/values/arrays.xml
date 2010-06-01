@@ -1,22 +1,22 @@
 <resources>
 	<string-array name="alphabet_array">
-		<item>Цифровой</item>
-		<item>Латинский</item>
-		<item>Кириллица</item>
+		<item>Numerical</item>
+		<item>Latin</item>
+		<item>Cyrillic</item>
 	</string-array>
 
 	<string-array name="num_word_length_array">
-		<item>Три (просто)</item>
-		<item>Четыре (нормально)</item>
-		<item>Пять (сложно)</item>
-		<item>Шесть (тяжело)</item>
-		<item>Семь (кошмар!)</item>
+		<item>Three (easy)</item>
+		<item>Four (normal)</item>
+		<item>Five (difficult)</item>
+		<item>Six (hard)</item>
+		<item>Seven (nightmare!)</item>
 	</string-array>
 	
 	<string-array name="word_length_array">
-		<item>Четыре (просто)</item>
-		<item>Пять (нормально)</item>
-		<item>Шесть (сложно)</item>
+		<item>Four (easy)</item>
+		<item>Five (normal)</item>
+		<item>Six (difficult)</item>
 	</string-array>
 	
 </resources>
