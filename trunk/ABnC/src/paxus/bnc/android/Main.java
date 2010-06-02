@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.LinearLayout.LayoutParams;
@@ -57,10 +56,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private ScrollView scrollView;
 	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
 
-//	private LayoutAnimationController lineInAnimation;
 	private LinearLayout.LayoutParams charLP;
 	private int displayWidth;
-	private Button guessButton;
+	private CharView guessButton;
 
 	private static final int DIALOG_ALPHABETS_ID = 0;
 	private static final int DIALOG_SIZE_ID = 2;
@@ -105,10 +103,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
     }
 
-    private void initActivity() {
+	private void initActivity() {
     	paint = createPaint(getResources());
-//    	lineInAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_in);
-//    	lineOutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_random_fade_out);
     	layoutInflater = getLayoutInflater();
     	displayWidth = getWindowManager().getDefaultDisplay().getWidth();
     }
@@ -119,11 +115,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
 		posTableLayout = (LinearLayout) findViewById(R.id.PositioningLayout);
 		scrollView = (ScrollView) findViewById(R.id.ScrollOffered);
-		guessButton = (Button) findViewById(R.id.ShowAlphabetButton);
-		guessButton.setEnabled(!(Boolean)run.data.map.get(Run.ExtraData.DATA_GIVEN_UP));
+		
+		Boolean givenUp = (Boolean)run.data.map.get(Run.ExtraData.DATA_GIVEN_UP);
+		guessButton = (CharView) findViewById(R.id.ShowAlphabetButton);
+		guessButton.setEnabled(!givenUp);
+		guessButton.setVisibility(givenUp ? View.INVISIBLE : View.VISIBLE);
 		
 		freePosLayoutList.clear();
-		if (!(Boolean)run.data.map.get(Run.ExtraData.DATA_GIVEN_UP))
+		if (!givenUp)
 			enteringPanel = new EnteringPanel(this, this);
 		ComparisonResultView.reset();
 	}
@@ -296,6 +295,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		            	Log.i(TAG, "Give up");
 		            	inflateAndShowAnswerDialog(R.string.secret_title, getResources().getString(R.string.give_up_msg));
 		            	guessButton.setEnabled(false);
+		            	guessButton.setVisibility(View.INVISIBLE);
 		            	re.giveUp();
 		            }
 		        })
@@ -338,7 +338,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		Run run2 = run;
 		PositionTable posTable = run2.posTable;
 		
-		((Button)findViewById(R.id.ShowAlphabetButton)).setOnClickListener(this);
+		((CharView)findViewById(R.id.ShowAlphabetButton)).setOnClickListener(this);
 		
 		calcOfferedCharLayout();
 		

@@ -24,7 +24,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private static final String ATTR_STATELESS = "stateless";
 	private static final String ATTR_CHANGE_STATE_ON_CLICK = "changeStateOnClick";
 	
-	
 	static Animation anim;
 	public Paint paint;
 
@@ -43,6 +42,9 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private int xOffset = -1;
 	private int yOffset = -1;
 	private OnClickListener clickListener;
+	
+	private AlarmBorder border;
+	private boolean borderVisible;
 	
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -108,8 +110,10 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
         		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
 			canvas.drawText("" + ch.ch, xOffset, yOffset, paint);
 		}
+        if (border != null && borderVisible) 
+        	border.draw(canvas);
     }
-
+	
 	private void setBackground() {
 		if (ch == null)
 			return;
@@ -167,5 +171,20 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	@Override
 	public final void setOnClickListener(OnClickListener l) {
 		clickListener = l;
+	}
+	
+	public void setBorder(AlarmBorder border) {
+		this.border = border;
+		this.border.init(20, 20);
+	}
+	
+	public void setBorderVisible(boolean borderVisible) {
+		this.borderVisible = borderVisible;
+		invalidate();
+	}
+	
+	public void toggleBorderVisible() {
+		setBorderVisible(!borderVisible);
+		Log.d(TAG, this + ": borderVisible: " + borderVisible);
 	}
 }
