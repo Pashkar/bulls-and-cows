@@ -14,8 +14,6 @@ import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.admob.android.ads.AdView;
-
 public final class EnteringPanel implements OnClickListener, android.content.DialogInterface.OnClickListener {
 
 	private static final String TAG = "EnteringPanel";
@@ -29,9 +27,10 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	private Run run;
 	private View panelView;
 	private AlertDialog panelDialog;	//implementation based on Dialog
-	private AdView ads;
 
 	private final OnWordOfferedListener callback;
+
+	private CharView delButton;
 
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
 		Log.v(TAG, "<init>");
@@ -63,11 +62,10 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 		enteringWordLayout = (LinearLayout) panelView.findViewById(R.id.EnteringLayout);
 		inflateCharsLine(enteringWordLayout, null, 0, run2.wordLength, R.layout.entering_char_view);
 		inflateAlphabetLines(alphabetId);
-		enteringWordLayout.findViewById(R.id.BackspaceView).setOnClickListener(this);
+		delButton = (CharView) enteringWordLayout.findViewById(R.id.BackspaceView);
+		delButton.setOnClickListener(this);
 
 		enteringWord = new StringBuffer(run2.wordLength);
-		
-		ads = (AdView) panelView.findViewById(R.id.Ad);
 		
         panelDialog = new AlertDialog.Builder(context)
 			.setPositiveButton(android.R.string.ok, this)
@@ -204,7 +202,6 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 
 	public void show() {
 		Log.v(TAG, "show");
-		ads.requestFreshAd();
 		panelDialog.show();
 	}
 }
