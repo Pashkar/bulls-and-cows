@@ -9,13 +9,4 @@
         android:fillEnabled="false"
         android:fillAfter="false"
         />
-    <!--<scale
-		android:fromXScale="0.5" android:toXScale="2.0"
-		android:fromYScale="0.5" android:toYScale="2.0"
-		android:pivotX="50%" android:pivotY="50%"
-		android:duration="200" 
-		android:fillEnabled="false"
-		android:fillAfter="false"
-        />-->
-	
 </set>

@@ -17,6 +17,7 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
 		android:paddingTop="@dimen/view_top_margin"
+		android:paddingBottom="@dimen/view_top_margin"
 		android:paddingRight="@dimen/secret_line_right_padding"		
 		android:paddingLeft="@dimen/line_left_margin"
 		android:gravity="left" 
@@ -30,12 +31,15 @@
 			android:orientation="horizontal"
 			/> 
 	
-		<Button 
+		<!-- Guess  -->
+		<paxus.bnc.android.view.CharView
 			android:id="@+id/ShowAlphabetButton"
-			android:layout_width="wrap_content" 
-			android:layout_height="@dimen/button_height"
+			android:layout_width="fill_parent"
+			android:layout_height="@dimen/char_height"
 			android:layout_marginLeft="@dimen/button_left_margin"
-			android:text="@string/new_word_title"
+			android:background="@drawable/guess"
+			changeStateOnClick="false"
+			stateless="true"
 			/>
 
 	</LinearLayout>	
