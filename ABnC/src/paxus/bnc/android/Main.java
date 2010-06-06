@@ -6,6 +6,7 @@ import java.util.*;
 import paxus.bnc.BncException;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.ComparisonResultView;
+import paxus.bnc.android.view.Hint;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
@@ -16,6 +17,7 @@ import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -46,9 +48,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
-	
 	public static Paint paint;
 	public static LayoutInflater layoutInflater;
+	public static ContextWrapper context;
 	
 	private EnteringPanel enteringPanel;
 	private LinearLayout offeredsLayout;
@@ -70,6 +72,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private int alphabetChosen;
 	private boolean firstRun = false;
 	private final Random rnd = new Random();
+
+	private Hint hintGuess;
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -93,7 +97,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		try {
 			run = restoreSavedRun();	//not null if restored
 			re.run = run;
-			reinitActivity();
+			reinitPreLayout();
 			layoutViews();
 		} 
 		catch (Exception e) {
@@ -104,12 +108,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
     }
 
 	private void initActivity() {
+		Log.v(TAG, "initActivity");
+		context = this;
     	paint = createPaint(getResources());
     	layoutInflater = getLayoutInflater();
     	displayWidth = getWindowManager().getDefaultDisplay().getWidth();
-    }
+	}
     
-	private void reinitActivity() {
+	private void reinitPreLayout() {
+		Log.v(TAG, "reinitPreLayout");
 		setContentView(R.layout.main);
 		
 		offeredsLayout = (LinearLayout) findViewById(R.id.OfferedsLayout);
@@ -125,11 +132,15 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		if (!givenUp)
 			enteringPanel = new EnteringPanel(this, this);
 		ComparisonResultView.reset();
+		
+		hintGuess = Hint.GUESS.createInstance(guessButton);
+		if (!givenUp)
+			hintGuess.start();
 	}
 
 	/**
 	 *	Asks on Alphabet and WodLength in chain:
-	 *	@see Main#initDialogs()
+	 *	@see Main#onCreateDialog()
 	 *	Ends up with finishStartingNewRun():
 	 *	@see Main#finishStartingNewRun()
 	 */
@@ -175,7 +186,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 //		Log.d(TAG, run.secret.toString());
 		
 		//finish initialization, interrupted by dialogs chain
-		reinitActivity();
+		reinitPreLayout();
 		layoutViews();	
 		firstRun = false;
 	}
@@ -334,7 +345,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}	
 
 	private void layoutViews() {
-		Log.v(TAG, "initViews");
+		Log.v(TAG, "layoutViews");
 		Run run2 = run;
 		PositionTable posTable = run2.posTable;
 		
@@ -397,6 +408,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	protected void onPause() {
 		super.onPause();
 		Log.v(TAG, "onPause");
+		
+		if (hintGuess != null)
+			hintGuess.stop();
+		
 		ObjectOutputStream oos = null;
 		try {
 			FileOutputStream fos = openFileOutput(PERSISTENCE, MODE_PRIVATE);

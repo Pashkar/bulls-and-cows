@@ -11,7 +11,7 @@ public class AlarmBorder extends ShapeDrawable {
 	
 	private static final String TAG = "AlarmBorder";
 
-	private static final int COLOR = 0xFF000000;
+	private static final int COLOR = 0xFFFF9933;
 	private static final int SIDE = 4;
 	private static final int RADIUS = 2;
 	private static final float[] OUTER = new float[] {SIDE, SIDE, SIDE, SIDE, SIDE, SIDE, SIDE, SIDE};
@@ -25,13 +25,13 @@ public class AlarmBorder extends ShapeDrawable {
 	}
 	
 	public void init(int width, int height) {
-		Log.v(TAG, this + " init: " + width + "x" + height);
+		Log.d(TAG, this + " init: " + width + "x" + height);
 		setBounds(0, 0, width, height);
 	}
 
 	@Override
 	public void draw(Canvas canvas) {
-		super.draw(canvas);
 		Log.v(TAG, this + " draw");
+		super.draw(canvas);
 	}
 }
