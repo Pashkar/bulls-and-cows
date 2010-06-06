@@ -2,6 +2,8 @@ package paxus.bnc.android.view;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.R;
+import paxus.bnc.android.hint.AlarmBorder;
+import paxus.bnc.android.hint.IHintView;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.Char;
@@ -18,7 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 public class CharView extends View implements OnClickListener, ICharStateChangedListener, 
-		IPosCharStateChangedListener, IHintBorder {
+		IPosCharStateChangedListener, IHintView {
 
 	private static final String TAG = "CharView";
 	private static final String ATTR_STATELESS = "stateless";

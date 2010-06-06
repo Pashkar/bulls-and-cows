@@ -1,4 +1,4 @@
-package paxus.bnc.android.view;
+package paxus.bnc.android.hint;
 
 import paxus.bnc.android.Main;
 import paxus.bnc.android.R;
@@ -19,7 +19,7 @@ public class Hint {
 	private final String hintMsg;
 	private final Toast toast;
 	private final AlarmBorder border = new AlarmBorder();
-	private IHintBorder view;
+	private IHintView view;
 	private Runnable toggleBorderTask;
 	private boolean active = false;
 
@@ -30,7 +30,7 @@ public class Hint {
 		this.toast = Toast.makeText(Main.context, hintMsgId, Toast.LENGTH_LONG);
 	}
 	
-	public Hint createInstance(IHintBorder view) {
+	public Hint createInstance(IHintView view) {
 		this.view = view;
 		this.initialized = true;
 		this.toggleBorderTask = new Runnable() {
@@ -65,5 +65,7 @@ public class Hint {
 	
 	public synchronized void stop() {
 		active = false;
+		handler.removeCallbacks(toggleBorderTask);
+		view.setBorderVisible(false);
 	}
 }

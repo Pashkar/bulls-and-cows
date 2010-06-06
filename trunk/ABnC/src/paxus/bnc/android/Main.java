@@ -4,9 +4,10 @@ import java.io.*;
 import java.util.*;
 
 import paxus.bnc.BncException;
+import paxus.bnc.android.hint.Hint;
+import paxus.bnc.android.hint.HintManager;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.ComparisonResultView;
-import paxus.bnc.android.view.Hint;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
@@ -73,7 +74,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private boolean firstRun = false;
 	private final Random rnd = new Random();
 
-	private Hint hintGuess;
+	public static HintManager hints = new HintManager();
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -133,13 +134,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			enteringPanel = new EnteringPanel(this, this);
 		ComparisonResultView.reset();
 		
-		hintGuess = Hint.GUESS.createInstance(guessButton);
+		Hint hint = hints.createInstance(Hint.GUESS, guessButton);
 		if (!givenUp)
-			hintGuess.start();
+			hint.start();
 	}
 
 	/**
-	 *	Asks on Alphabet and WodLength in chain:
+	 *	Asks on Alphabet and WordLength in chain:
 	 *	@see Main#onCreateDialog()
 	 *	Ends up with finishStartingNewRun():
 	 *	@see Main#finishStartingNewRun()
@@ -409,8 +410,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		super.onPause();
 		Log.v(TAG, "onPause");
 		
-		if (hintGuess != null)
-			hintGuess.stop();
+		if (hints.guess != null)
+			hints.guess.stop();
 		
 		ObjectOutputStream oos = null;
 		try {
@@ -481,6 +482,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.ShowAlphabetButton:
+				if (hints.guess != null)
+					hints.guess.stop();
 				enteringPanel.show();
 				break;
 			case R.id.AnswerLink:

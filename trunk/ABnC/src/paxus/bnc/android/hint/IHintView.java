@@ -1,6 +1,7 @@
-package paxus.bnc.android.view;
+package paxus.bnc.android.hint;
 
-public interface IHintBorder {
+
+public interface IHintView {
 
 	public void setBorder(AlarmBorder border);
 
