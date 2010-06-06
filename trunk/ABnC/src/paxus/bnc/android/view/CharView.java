@@ -18,7 +18,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 public class CharView extends View implements OnClickListener, ICharStateChangedListener, 
-		IPosCharStateChangedListener {
+		IPosCharStateChangedListener, IHintBorder {
 
 	private static final String TAG = "CharView";
 	private static final String ATTR_STATELESS = "stateless";
@@ -175,7 +175,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	
 	public void setBorder(AlarmBorder border) {
 		this.border = border;
-		this.border.init(20, 20);
 	}
 	
 	public void setBorderVisible(boolean borderVisible) {
@@ -184,7 +183,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	}
 	
 	public void toggleBorderVisible() {
-		setBorderVisible(!borderVisible);
 		Log.d(TAG, this + ": borderVisible: " + borderVisible);
+		setBorderVisible(!borderVisible);
 	}
 }
