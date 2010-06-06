@@ -1,4 +1,4 @@
-package paxus.bnc.android.view;
+package paxus.bnc.android.hint;
 
 import android.graphics.Canvas;
 import android.graphics.RectF;
@@ -12,11 +12,11 @@ public class AlarmBorder extends ShapeDrawable {
 	private static final String TAG = "AlarmBorder";
 
 	private static final int COLOR = 0xFFFF9933;
-	private static final int SIDE = 4;
-	private static final int RADIUS = 2;
+	private static final int SIDE = 2;
+	private static final int RADIUS = 4;
 	private static final float[] OUTER = new float[] {SIDE, SIDE, SIDE, SIDE, SIDE, SIDE, SIDE, SIDE};
-	private static final RectF INNNER = new RectF(RADIUS, RADIUS, RADIUS, RADIUS);
-	private static final Shape SHAPE = new RoundRectShape(OUTER, INNNER, null);
+	private static final RectF INNER_RADIUS = new RectF(RADIUS, RADIUS, RADIUS, RADIUS);
+	private static final Shape SHAPE = new RoundRectShape(OUTER, INNER_RADIUS, null);
 	
 	public AlarmBorder() {
 		super(SHAPE);
@@ -31,7 +31,7 @@ public class AlarmBorder extends ShapeDrawable {
 
 	@Override
 	public void draw(Canvas canvas) {
-		Log.v(TAG, this + " draw");
+//		Log.v(TAG, this + " draw");
 		super.draw(canvas);
 	}
 }
