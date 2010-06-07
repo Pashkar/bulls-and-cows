@@ -175,17 +175,19 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		clickListener = l;
 	}
 	
-	public void setBorder(AlarmBorder border) {
+/*	public void setBorder(AlarmBorder border) {
 		this.border = border;
 	}
 	
 	public void setBorderVisible(boolean borderVisible) {
-		this.borderVisible = borderVisible;
-		invalidate();
-	}
+//		this.borderVisible = borderVisible;
+//		invalidate();
+		startAnimation(anim);
+	}*/
 	
-	public void toggleBorderVisible() {
+	public void doHint() {
 		Log.d(TAG, this + ": borderVisible: " + borderVisible);
-		setBorderVisible(!borderVisible);
+//		setBorderVisible(!borderVisible);
+		startAnimation(anim);
 	}
 }
