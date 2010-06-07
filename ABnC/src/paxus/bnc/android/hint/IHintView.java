@@ -3,11 +3,11 @@ package paxus.bnc.android.hint;
 
 public interface IHintView {
 
-	public void setBorder(AlarmBorder border);
+//	public void setBorder(AlarmBorder border);
 
-	public void setBorderVisible(boolean borderVisible);
+//	public void setBorderVisible(boolean borderVisible);
 
-	public void toggleBorderVisible();
+	public void doHint();
 
 	public int getWidth();	//comes from View class
 

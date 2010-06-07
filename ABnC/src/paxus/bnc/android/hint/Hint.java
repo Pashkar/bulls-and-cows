@@ -18,9 +18,9 @@ public class Hint {
 	private final static Handler handler = new Handler();
 	private final String hintMsg;
 	private final Toast toast;
-	private final AlarmBorder border = new AlarmBorder();
+//	private final AlarmBorder border = new AlarmBorder();
 	private IHintView view;
-	private Runnable toggleBorderTask;
+	private Runnable actTask;
 	private boolean active = false;
 
 	private boolean initialized = false;
@@ -33,11 +33,11 @@ public class Hint {
 	public Hint createInstance(IHintView view) {
 		this.view = view;
 		this.initialized = true;
-		this.toggleBorderTask = new Runnable() {
+		this.actTask = new Runnable() {
 			public void run() {
-				Hint.this.view.toggleBorderVisible();
+				Hint.this.view.doHint();
 				if (active)
-					handler.postDelayed(toggleBorderTask, TOGGLE_PERIOD);	//reschedule the action
+					handler.postDelayed(actTask, TOGGLE_PERIOD);	//reschedule the action
 			}
 		};
 		return this;
@@ -54,10 +54,10 @@ public class Hint {
 					return;
 				Log.d(TAG, "Run for \"" + hintMsg + "\"");
 				toast.show();
-				border.init(view.getWidth(), view.getHeight());	//nowhere earlier getWidth/Height are available
-				view.setBorder(border);
-				view.setBorderVisible(true);
-				handler.postDelayed(toggleBorderTask, TOGGLE_PERIOD);
+//				border.init(view.getWidth(), view.getHeight());	//nowhere earlier getWidth/Height are available
+//				view.setBorder(border);
+//				view.setBorderVisible(true);
+				handler.postDelayed(actTask, TOGGLE_PERIOD);
 			}
 		}, OFFSET_DELAY);
 		return this;
@@ -65,7 +65,7 @@ public class Hint {
 	
 	public synchronized void stop() {
 		active = false;
-		handler.removeCallbacks(toggleBorderTask);
-		view.setBorderVisible(false);
+		handler.removeCallbacks(actTask);
+//		view.setBorderVisible(false);
 	}
 }
