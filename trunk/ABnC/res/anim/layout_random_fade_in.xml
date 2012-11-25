@@ -3,4 +3,5 @@
 <layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
         android:delay="0.2"
         android:animationOrder="random"
-        android:animation="@anim/fade_in_anim"/>
+        android:animation="@anim/fade_in_anim" xmlns:tools="http://schemas.android.com/tools" 
+        tools:ignore="UnusedResources"/>

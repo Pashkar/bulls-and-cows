@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 	<dimen name="char_width">30px</dimen>
 	<dimen name="char_height">30px</dimen>	
 	<dimen name="char_width_max">65px</dimen>
@@ -26,7 +26,7 @@
 	<dimen name="answer_char_width">40px</dimen>
 	<dimen name="answer_char_height">40px</dimen>
 	
-	<dimen name="button_height">35px</dimen>
+	<dimen name="button_height" tools:ignore="UnusedResources">35px</dimen>
 	<dimen name="button_left_margin">3px</dimen>
 	
 	<dimen name="comp_result_width">45px</dimen>

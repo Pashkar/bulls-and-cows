@@ -6,11 +6,35 @@
 	android:orientation="vertical"
 	>
 
-	<TextView
-	    style="?android:attr/listSeparatorTextViewStyle"
-	    android:text="@string/secret_line"
-		/>
-
+    
+    <LinearLayout
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:paddingTop="@dimen/view_top_margin"
+		android:paddingBottom="@dimen/view_top_margin"
+		android:paddingRight="@dimen/secret_line_right_padding"		
+		android:paddingLeft="@dimen/line_left_margin"
+		android:gravity="left" 
+		>
+		<TextView
+		    style="?android:attr/listSeparatorTextViewStyle"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:text="@string/secret_line" />
+		<!-- Menu button -->
+		<!-- paxus.bnc.android.view.CharView
+			android:id="@+id/AAA"
+			android:layout_width="100dp"
+			android:layout_height="@dimen/char_height"
+			android:layout_marginLeft="@dimen/button_left_margin"
+			android:background="@drawable/guess"
+			changeStateOnClick="false"
+			stateless="true"
+			/-->
+	</LinearLayout>
+	    
+	    
 	<!-- Secret word -->
 	<LinearLayout
 		android:layout_width="fill_parent" 
@@ -52,7 +76,7 @@
 	<ScrollView 
 		android:id="@+id/ScrollOffered"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"			
+		android:layout_height="0dp"			
 		android:scrollbars="vertical"
 		android:scrollbarStyle="outsideInset"
 		android:persistentDrawingCache="all"
