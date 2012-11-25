@@ -4,6 +4,7 @@ import paxus.bnc.android.view.CharView;
 import paxus.bnc.model.Alphabet;
 import paxus.bnc.model.Char;
 import paxus.bnc.model.Run;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,19 +20,20 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	private static final String TAG = "EnteringPanel";
 
 	private StringBuffer enteringWord;
-	private LinearLayout enteringWordLayout;
+	private final LinearLayout enteringWordLayout;
 
-	private Toast tooLongWordToast;
-	private Toast duplicatedCharToast;
+	private final Toast tooLongWordToast;
+	private final Toast duplicatedCharToast;
 
-	private Run run;
-	private View panelView;
-	private AlertDialog panelDialog;	//implementation based on Dialog
+	private final Run run;
+	private final View panelView;
+	private final AlertDialog panelDialog;	//implementation based on Dialog
 
 	private final OnWordOfferedListener callback;
 
-	private CharView delButton;
+	private final CharView delButton;
 
+	@SuppressLint("ShowToast")
 	public EnteringPanel(Context context, OnWordOfferedListener callback) {
 		Log.v(TAG, "<init>");
 		this.callback = callback;
@@ -114,6 +116,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 	}
 
 	//CharView click
+	@Override
 	public void onClick(View v) {
 		Log.v(TAG, "OnClick CharView");
 		switch (v.getId()) {
@@ -153,6 +156,7 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 
 
 	//Dialog buttons
+	@Override
 	public void onClick(DialogInterface dialog, int which) {
 		Log.v(TAG, "OnClick Dialog");
 		switch (which) {

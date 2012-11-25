@@ -1,19 +1,34 @@
 package paxus.bnc.android;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import paxus.bnc.BncException;
-import paxus.bnc.android.hint.Hint;
-import paxus.bnc.android.hint.HintManager;
 import paxus.bnc.android.view.CharView;
 import paxus.bnc.android.view.ComparisonResultView;
 import paxus.bnc.android.view.PosCharView;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.controller.IPositionTableListener;
 import paxus.bnc.controller.RunExecutor;
-import paxus.bnc.model.*;
+import paxus.bnc.model.Alphabet;
+import paxus.bnc.model.Char;
+import paxus.bnc.model.ENCharState;
+import paxus.bnc.model.PosChar;
+import paxus.bnc.model.PositionTable;
 import paxus.bnc.model.PositionTable.PositionLine;
+import paxus.bnc.model.Run;
 import paxus.bnc.model.Run.WordCompared;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,11 +42,15 @@ import android.graphics.Paint.Align;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 
 public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
 	
@@ -73,8 +92,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private int alphabetChosen;
 	private boolean firstRun = false;
 	private final Random rnd = new Random();
-
-	public static HintManager hints = new HintManager();
 
 	private static Paint createPaint(Resources resources) {
 		Paint paint = new Paint();
@@ -133,10 +150,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		if (!givenUp)
 			enteringPanel = new EnteringPanel(this, this);
 		ComparisonResultView.reset();
-		
-		Hint hint = hints.createInstance(Hint.GUESS, guessButton);
-		if (!givenUp)
-			hint.start();
 	}
 
 	/**
@@ -222,7 +235,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			stream = getAssets().open(file);
 			final int fileSize = stream.available();
 			final int lineLength = wordLength + 2;	//2 additional bytes are "\r\n"
-			final int wordsCount = (int) (fileSize / lineLength);
+			final int wordsCount = (fileSize / lineLength);
 			Log.d(TAG, "fileSize = " + fileSize + ", wordLength = " + wordLength + ", wordsCount = " + wordsCount);
 
 			int wordNum = rnd.nextInt(wordsCount);
@@ -253,6 +266,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				dialog = new AlertDialog.Builder(this)
 				.setTitle(R.string.alphabet_title)
 				.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						alphabetChosen = which;
 						Log.i(TAG, "alphabet chosen: " + alphabetChosen);
@@ -268,7 +282,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				dialog = new AlertDialog.Builder(this)
 		        .setTitle(R.string.word_length_title)
 		        .setItems(itemsId, new DialogInterface.OnClickListener() {
-		            public void onClick(DialogInterface dialog, int which) {
+		            @Override
+					public void onClick(DialogInterface dialog, int which) {
 		            	wordSizeChosen = Alphabet.getMinSize(alphabetChosen) + which;
 		            	Log.i(TAG, "word size chosen: " + wordSizeChosen);
 		            	finishStartingNewRun();
@@ -276,6 +291,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		        })
 		        .create();
 				dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+					@Override
 					public void onDismiss(DialogInterface arg0) {
 						//clear size dialog instance - it should be initialized each time from the very beginning
 						removeDialog(id);
@@ -289,6 +305,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		        .setIcon(android.R.drawable.ic_dialog_info)
 		        .setTitle(R.string.intro_title)
 		        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
 						if (firstRun)	//very first run - start new game
 							startNewRun(false);
@@ -303,7 +320,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		        .setIcon(android.R.drawable.ic_dialog_alert)
 		        .setTitle(R.string.give_up_title)
 		        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-		            public void onClick(DialogInterface dialog, int whichButton) {
+		            @Override
+					public void onClick(DialogInterface dialog, int whichButton) {
 		            	Log.i(TAG, "Give up");
 		            	inflateAndShowAnswerDialog(R.string.secret_title, getResources().getString(R.string.give_up_msg));
 		            	guessButton.setEnabled(false);
@@ -321,7 +339,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		        .setIcon(android.R.drawable.ic_dialog_alert)
 		        .setTitle(R.string.clear_marks_title)
 		        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-		            public void onClick(DialogInterface dialog, int whichButton) {
+		            @Override
+					public void onClick(DialogInterface dialog, int whichButton) {
 		            	Log.i(TAG, "Clear marks");
 		            	try {
 							run.clearMarks();
@@ -410,9 +429,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		super.onPause();
 		Log.v(TAG, "onPause");
 		
-		if (hints.guess != null)
-			hints.guess.stop();
-		
 		ObjectOutputStream oos = null;
 		try {
 			FileOutputStream fos = openFileOutput(PERSISTENCE, MODE_PRIVATE);
@@ -443,6 +459,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return run;
 	}
 
+	@Override
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
 		if (insert) {
 			LinearLayout pl = freePosLayoutList.removeFirst();
@@ -479,11 +496,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		return line;
 	}
 
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.ShowAlphabetButton:
-				if (hints.guess != null)
-					hints.guess.stop();
 				enteringPanel.show();
 				break;
 			case R.id.AnswerLink:
@@ -495,6 +511,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
 	}
 	
+	@Override
 	public void onWordOffered(String word) {
 		Log.v(TAG, "word offered = " + word);
 		if (word != null && word.length() == run.wordLength)
@@ -640,7 +657,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private class SecretWordPanel implements IPosCharStateChangedListener {
 		
 		public LinearLayout layout;
-		private Run run2;
+		private final Run run2;
 
 		public SecretWordPanel(LinearLayout layout) {
 			this.layout = layout;
@@ -657,6 +674,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			run2.posTable.addAllPosCharStateChangedListener(this);
 		}
 
+		@Override
 		public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
 			CharView cv = (CharView) layout.getChildAt(pch.pos);
 			final Char[] secretLine = (Char[]) run2.data.map.get(Run.ExtraData.DATA_SECRET_LINE);

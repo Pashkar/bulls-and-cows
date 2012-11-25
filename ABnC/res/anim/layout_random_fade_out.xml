@@ -20,4 +20,5 @@
         android:animation="@anim/fade_out_anim"
         android:fillEnabled="true"
         android:fillAfter="true"
-        />
+        xmlns:tools="http://schemas.android.com/tools" 
+        tools:ignore="UnusedResources"/>

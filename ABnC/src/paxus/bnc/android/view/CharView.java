@@ -2,8 +2,6 @@ package paxus.bnc.android.view;
 
 import paxus.bnc.BncException;
 import paxus.bnc.android.R;
-import paxus.bnc.android.hint.AlarmBorder;
-import paxus.bnc.android.hint.IHintView;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.Char;
@@ -20,7 +18,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 public class CharView extends View implements OnClickListener, ICharStateChangedListener, 
-		IPosCharStateChangedListener, IHintView {
+		IPosCharStateChangedListener {
 
 	private static final String TAG = "CharView";
 	private static final String ATTR_STATELESS = "stateless";
@@ -44,9 +42,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private int xOffset = -1;
 	private int yOffset = -1;
 	private OnClickListener clickListener;
-	
-	private AlarmBorder border;
-	private boolean borderVisible;
 	
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -103,7 +98,8 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 //		invalidate();
 	}
 
-    protected void onDraw(Canvas canvas) {
+    @Override
+	protected void onDraw(Canvas canvas) {
         setBackground();
         if (ch != null && paint != null) {
         	if (xOffset == -1)
@@ -112,8 +108,6 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
         		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
 			canvas.drawText("" + ch.ch, xOffset, yOffset, paint);
 		}
-        if (border != null && borderVisible) 
-        	border.draw(canvas);
     }
 	
 	private void setBackground() {
@@ -134,6 +128,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		}
 	}
 	
+	@Override
 	public void onClick(View v) {
 		try {
 			Log.d(TAG, v + ".onClick()");
@@ -146,11 +141,13 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		} catch (BncException e) {};
 	}
 
+	@Override
 	public void onCharStateChanged(Character ch, ENCharState newState) {
 //		invalidate();
 		startAnimation(anim);
 	}
 
+	@Override
 	public void onPosCharStateChanged(PosChar ch, ENCharState newState) {
 		boolean oldMatched = posMatched;
 		if (viewPos != -1 && ch.ch == this.ch.ch && ch.pos == viewPos)
@@ -173,21 +170,5 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	@Override
 	public final void setOnClickListener(OnClickListener l) {
 		clickListener = l;
-	}
-	
-/*	public void setBorder(AlarmBorder border) {
-		this.border = border;
-	}
-	
-	public void setBorderVisible(boolean borderVisible) {
-//		this.borderVisible = borderVisible;
-//		invalidate();
-		startAnimation(anim);
-	}*/
-	
-	public void doHint() {
-		Log.d(TAG, this + ": borderVisible: " + borderVisible);
-//		setBorderVisible(!borderVisible);
-		startAnimation(anim);
 	}
 }
