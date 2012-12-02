@@ -6,36 +6,14 @@
 	android:orientation="vertical"
 	>
 
-    
-    <LinearLayout
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:paddingTop="@dimen/view_top_margin"
-		android:paddingBottom="@dimen/view_top_margin"
-		android:paddingRight="@dimen/secret_line_right_padding"		
-		android:paddingLeft="@dimen/line_left_margin"
-		android:gravity="left" 
-		>
-		<TextView
-		    style="?android:attr/listSeparatorTextViewStyle"
+   	<TextView
+	     style="?android:attr/listSeparatorTextViewStyle"
 		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
-		    android:text="@string/secret_line" />
-		<!-- Menu button -->
-		<!-- paxus.bnc.android.view.CharView
-			android:id="@+id/AAA"
-			android:layout_width="100dp"
-			android:layout_height="@dimen/char_height"
-			android:layout_marginLeft="@dimen/button_left_margin"
-			android:background="@drawable/guess"
-			changeStateOnClick="false"
-			stateless="true"
-			/-->
-	</LinearLayout>
-	    
-	    
-	<!-- Secret word -->
+		    android:text="@string/secret_line"
+		/>
+
+   	<!-- Secret word -->
 	<LinearLayout
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
@@ -56,14 +34,14 @@
 			/> 
 	
 		<!-- Guess  -->
-		<paxus.bnc.android.view.CharView
+		<paxus.bnc.android.view.StatelessCharsView
 			android:id="@+id/ShowAlphabetButton"
 			android:layout_width="fill_parent"
 			android:layout_height="@dimen/char_height"
 			android:layout_marginLeft="@dimen/button_left_margin"
 			android:background="@drawable/guess"
-			changeStateOnClick="false"
-			stateless="true"
+			caption="@string/guess_caption"
+			color="@drawable/font_color_white"
 			/>
 
 	</LinearLayout>	
@@ -95,6 +73,7 @@
 			android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
+			android:persistentDrawingCache="all"
 			/>
 			<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
 			
@@ -105,18 +84,44 @@
 	    android:text="@string/position_line"
 		/>
 	
-	<!-- PosTable: To contain various number of LinearLayouts of PosTable-->
+	<!-- PosTable: To contain various number of LinearLayouts of PosTable. 
+	Also contains "menu" button (system "menu" missed on some devices).
+	No paddings, inner PositioningLayout has what needed-->
 	<LinearLayout
-		android:id="@+id/PositioningLayout"
+		android:id="@+id/PositioningHolderLayout"
 		android:layout_width="fill_parent" 
 		android:layout_height="wrap_content"
-		android:orientation="vertical"
+		android:orientation="horizontal"
 		android:paddingTop="@dimen/view_top_margin"
 		android:paddingBottom="@dimen/view_top_margin"
+		android:paddingRight="@dimen/view_top_margin"		
 		android:paddingLeft="@dimen/line_left_margin"
-		android:paddingRight="@dimen/view_right_padding"
-		/>
-		
-		<!-- android:layoutAnimation="@anim/layout_random_fade_in" -->
+		android:gravity="bottom"
+		>
+	
+		<LinearLayout
+			android:id="@+id/PositioningLayout"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			/>
+			
+			<FrameLayout
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"
+				android:paddingTop="@dimen/view_top_margin"
+				>	<!-- frame to keep same height + top padding even when no pos line visible -->
+				<paxus.bnc.android.view.StatelessCharsView
+					android:id="@+id/ShowMenuButton"
+					android:layout_width="wrap_content"
+					android:layout_height="@dimen/char_height"
+					android:layout_marginLeft="@dimen/button_left_margin"
+					android:background="@drawable/guess"
+					android:alpha="0.5"
+					caption="@string/menu_caption"
+					color="@drawable/font_color_white"			
+					/>
+			</FrameLayout>
+	</LinearLayout>
 		
 </LinearLayout>

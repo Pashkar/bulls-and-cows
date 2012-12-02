@@ -1,4 +1,4 @@
-package paxus.bnc.android;
+ package paxus.bnc.android;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -52,6 +52,10 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
 
+/**
+ * @author paxus
+ *
+ */
 public class Main extends Activity implements IPositionTableListener, OnClickListener, OnWordOfferedListener {
 	
 	private static final String TAG = "Main";
@@ -65,10 +69,12 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private static final String CYR_LATIN_4 = "cyr_dict_4.txt";
 	private static final String CYR_LATIN_5 = "cyr_dict_5.txt";	
 	private static final String CYR_LATIN_6 = "cyr_dict_6.txt";
+	
+	private static Paint paint;
+	private static Paint paint_white;
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
-	public static Paint paint;
 	public static LayoutInflater layoutInflater;
 	public static ContextWrapper context;
 	
@@ -81,6 +87,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private LinearLayout.LayoutParams charLP;
 	private int displayWidth;
 	private CharView guessButton;
+	private CharView menuButton;
 
 	private static final int DIALOG_ALPHABETS_ID = 0;
 	private static final int DIALOG_SIZE_ID = 2;
@@ -88,21 +95,11 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private static final int DIALOG_CLEAR_MARKS_ID = 4;
 	private static final int DIALOG_INTRO_ID = 5;
 	
-	private int wordSizeChosen;
-	private int alphabetChosen;
+	private int wordSizeChosen = -1;
+	private int alphabetChosen = -1;
 	private boolean firstRun = false;
 	private final Random rnd = new Random();
 
-	private static Paint createPaint(Resources resources) {
-		Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setTextSize(16);
-        paint.setTextAlign(Align.CENTER);
-        paint.setColor(resources.getColor(R.drawable.font_color));
-        paint.setDither(true);
-        return paint;
-	}
-	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +107,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		
 		//init once per activity creation
 		initActivity();
-		
+
 		run = null;
 		try {
 			run = restoreSavedRun();	//not null if restored
@@ -128,9 +125,21 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private void initActivity() {
 		Log.v(TAG, "initActivity");
 		context = this;
-    	paint = createPaint(getResources());
+		paint = createPaint(getResources().getColor(R.drawable.font_color_black));
+		paint_white = createPaint(getResources().getColor(R.drawable.font_color_white));
+		
     	layoutInflater = getLayoutInflater();
     	displayWidth = getWindowManager().getDefaultDisplay().getWidth();
+	}
+
+	private static Paint createPaint(int colorId) {
+		Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setTextSize(16);
+        paint.setTextAlign(Align.CENTER);
+        paint.setColor(colorId);
+        paint.setDither(true);
+        return paint;
 	}
     
 	private void reinitPreLayout() {
@@ -145,6 +154,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		guessButton = (CharView) findViewById(R.id.ShowAlphabetButton);
 		guessButton.setEnabled(!givenUp);
 		guessButton.setVisibility(givenUp ? View.INVISIBLE : View.VISIBLE);
+		guessButton.setOnClickListener(this);
+
+		menuButton = (CharView) findViewById(R.id.ShowMenuButton);
+		menuButton.setOnClickListener(this);
 		
 		freePosLayoutList.clear();
 		if (!givenUp)
@@ -162,6 +175,19 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		Log.v(TAG, "startNewRun");
 		showDialog(DIALOG_ALPHABETS_ID);
     }
+	
+	/**
+	 * Initiates new run with different secret according to last used alphabet&word length. No dialog chain.
+	 */
+	private void startNewRunNoDialogs() {
+		Log.v(TAG, "startNewRunNoDialogs");
+		if (firstRun || run == null)
+			startNewRun(false);
+
+		alphabetChosen = Run.alphabet.getId();
+		wordSizeChosen = run.wordLength;
+		finishStartingNewRun();
+	}
 
 	private void finishStartingNewRun() {
 		Alphabet alphabet = null;	
@@ -198,6 +224,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
 		
 //		Log.d(TAG, run.secret.toString());
+		Log.i(TAG, "init new run: alphabetChosen=" + alphabetChosen + ", wordSizeChosen=" + wordSizeChosen);
 		
 		//finish initialization, interrupted by dialogs chain
 		reinitPreLayout();
@@ -264,32 +291,32 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		switch (id) {	
 			case DIALOG_ALPHABETS_ID:	//Dialogs chain - Alphabet then WordLength
 				dialog = new AlertDialog.Builder(this)
-				.setTitle(R.string.alphabet_title)
-				.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						alphabetChosen = which;
-						Log.i(TAG, "alphabet chosen: " + alphabetChosen);
-						//ask size in chain
-						showDialog(DIALOG_SIZE_ID);
-					}
-				})
-				.create();
+						.setTitle(R.string.alphabet_title)
+						.setItems(R.array.alphabet_array, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								alphabetChosen = which;
+								Log.i(TAG, "alphabet chosen: " + alphabetChosen);
+								//ask size in chain
+								showDialog(DIALOG_SIZE_ID);
+							}
+						})
+						.create();
 				Log.d(TAG, "onCreateDialog: DIALOG_ALPHABETS_ID created");
 				break;
 			case DIALOG_SIZE_ID:
 				int itemsId = alphabetChosen == Alphabet.DIGITAL_ID ? R.array.num_word_length_array : R.array.word_length_array;
 				dialog = new AlertDialog.Builder(this)
-		        .setTitle(R.string.word_length_title)
-		        .setItems(itemsId, new DialogInterface.OnClickListener() {
-		            @Override
-					public void onClick(DialogInterface dialog, int which) {
-		            	wordSizeChosen = Alphabet.getMinSize(alphabetChosen) + which;
-		            	Log.i(TAG, "word size chosen: " + wordSizeChosen);
-		            	finishStartingNewRun();
-		            }
-		        })
-		        .create();
+				        .setTitle(R.string.word_length_title)
+				        .setItems(itemsId, new DialogInterface.OnClickListener() {
+				            @Override
+							public void onClick(DialogInterface dialog, int which) {
+				            	wordSizeChosen = Alphabet.getMinSize(alphabetChosen) + which;
+				            	Log.i(TAG, "word size chosen: " + wordSizeChosen);
+				            	finishStartingNewRun();
+				            }
+				        })
+				        .create();
 				dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
 					@Override
 					public void onDismiss(DialogInterface arg0) {
@@ -302,54 +329,54 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				break;
 			case DIALOG_INTRO_ID:	//Dialogs chain - Intro then Alphabet then WordLength
 				dialog = new AlertDialog.Builder(this)
-		        .setIcon(android.R.drawable.ic_dialog_info)
-		        .setTitle(R.string.intro_title)
-		        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface arg0, int arg1) {
-						if (firstRun)	//very first run - start new game
-							startNewRun(false);
-					}
-				})
-		        .setMessage(R.string.intro_msg)
-		        .create();
+				        .setIcon(android.R.drawable.ic_dialog_info)
+				        .setTitle(R.string.intro_title)
+				        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								if (firstRun)	//very first run - start new game
+									startNewRun(false);
+							}
+						})
+				        .setMessage(R.string.intro_msg)
+				        .create();
 				Log.d(TAG, "onCreateDialog: DIALOG_INTRO_ID created");
 				break;
 			case DIALOG_GIVEUP_ID:
 				dialog = new AlertDialog.Builder(this)
-		        .setIcon(android.R.drawable.ic_dialog_alert)
-		        .setTitle(R.string.give_up_title)
-		        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-		            @Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-		            	Log.i(TAG, "Give up");
-		            	inflateAndShowAnswerDialog(R.string.secret_title, getResources().getString(R.string.give_up_msg));
-		            	guessButton.setEnabled(false);
-		            	guessButton.setVisibility(View.INVISIBLE);
-		            	re.giveUp();
-		            }
-		        })
-		        .setNegativeButton(android.R.string.cancel, null)
-		        .setMessage(R.string.give_up_conf)
-		        .create();
+				        .setIcon(android.R.drawable.ic_dialog_alert)
+				        .setTitle(R.string.give_up_title)
+				        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				            @Override
+							public void onClick(DialogInterface dialog, int whichButton) {
+				            	Log.i(TAG, "Give up");
+				            	inflateAndShowAnswerDialog(R.string.secret_title, getResources().getString(R.string.give_up_msg));
+				            	guessButton.setEnabled(false);
+				            	guessButton.setVisibility(View.INVISIBLE);
+				            	re.giveUp();
+				            }
+				        })
+				        .setNegativeButton(android.R.string.cancel, null)
+				        .setMessage(R.string.give_up_conf)
+				        .create();
 				Log.d(TAG, "onCreateDialog: DIALOG_GIVEUP_ID created");
 				break;
 			case DIALOG_CLEAR_MARKS_ID:
 				dialog = new AlertDialog.Builder(this)
-		        .setIcon(android.R.drawable.ic_dialog_alert)
-		        .setTitle(R.string.clear_marks_title)
-		        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-		            @Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-		            	Log.i(TAG, "Clear marks");
-		            	try {
-							run.clearMarks();
-						} catch (BncException e) {}
-		            }
-		        })
-		        .setNegativeButton(android.R.string.cancel, null)
-		        .setMessage(R.string.clear_marks_conf)
-		        .create();
+				        .setIcon(android.R.drawable.ic_dialog_alert)
+				        .setTitle(R.string.clear_marks_title)
+				        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				            @Override
+							public void onClick(DialogInterface dialog, int whichButton) {
+				            	Log.i(TAG, "Clear marks");
+				            	try {
+									run.clearMarks();
+								} catch (BncException e) {}
+				            }
+				        })
+				        .setNegativeButton(android.R.string.cancel, null)
+				        .setMessage(R.string.clear_marks_conf)
+				        .create();
 				Log.d(TAG, "onCreateDialog: DIALOG_CLEAR_MARKS_ID created");
 				break;
 			default: 
@@ -369,8 +396,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		Run run2 = run;
 		PositionTable posTable = run2.posTable;
 		
-		((CharView)findViewById(R.id.ShowAlphabetButton)).setOnClickListener(this);
-		
 		calcOfferedCharLayout();
 		
         //inflate secret word layout
@@ -382,10 +407,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		//also inflate labels
         LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
         for (int i = 0; i < run2.wordLength; i++) {
-        	LinearLayout line = inflatePosLine();
-        	freePosLayoutList2.add(line);
+        	freePosLayoutList2.add(inflatePosLine(R.layout.posline_layout));
         }
         posTable.addPosTableListener(this);
+        
+        //inflate one more row - a dummy one, 1px height - to make sure entire pos table have a content of valid width
+        LinearLayout dummyPosLine = inflatePosLine(R.layout.posline_dummy_layout);
+        dummyPosLine.setVisibility(View.INVISIBLE);
+		posTableLayout.addView(dummyPosLine);
         
         //restore offered words
         try {
@@ -490,6 +519,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
 		if (line == null)
 			return null;
+
 		posTableLayout.removeView(line);
 		
 		//TODO - try to add transition animation - soft disappearing for row
@@ -498,6 +528,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 
 	@Override
 	public void onClick(View v) {
+		Log.v(TAG, "onClick: " + v + ", " + v.getId());
 		switch (v.getId()) {
 			case R.id.ShowAlphabetButton:
 				enteringPanel.show();
@@ -507,6 +538,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 				Intent intent = new Intent(Intent.ACTION_VIEW);
 				intent.setData(Uri.parse("http://translate.google.com?text=" + Uri.encode(run.secret.asString())));
 				startActivity(intent);
+				break;
+			case R.id.ShowMenuButton:
+				Log.v(TAG, "R.id.ShowMenuButton");
+				openOptionsMenu();
 				break;
 		}
 	}
@@ -552,6 +587,9 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			case R.id.MenuNewGame:
 				startNewRun(true);
 				break;
+			case R.id.MenuNewGameNoDialogs:
+				startNewRunNoDialogs();
+				break;
 			case R.id.MenuClearMarks:
 				showDialog(DIALOG_CLEAR_MARKS_ID);
 				break;
@@ -573,8 +611,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		inflater.inflate(R.menu.menu_main, menu);
 		return true;
 	}
-
 	
+	public static Paint getPaint(int colorResId) {
+		if (colorResId == R.drawable.font_color_white)
+			return paint_white;
+		return paint;		//default
+	}
+	
+
 	///////////////////////////////////////////////////////////
 	//Inflaters
 	///////////////////////////////////////////////////////////
@@ -608,7 +652,13 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
             	.setTitle(titleId)
             	.setView(answerLayout)
             	.setMessage(message)
-        		.setPositiveButton(android.R.string.ok, null)
+        		.setPositiveButton(R.string.new_game_title, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							startNewRunNoDialogs();
+						}
+				})
+        		.setNegativeButton(R.string.close_caption, null)
         		.create();
 		dialog.setOwnerActivity(this);
 		dialog.show();
@@ -621,7 +671,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 		for (int i = 0; i < length; i++) {
 			CharView cv = (CharView) layoutInflater.inflate(viewId, la, false);
-        	cv.paint = paint;
         	if (chars != null && i < chars.length)
         		cv.setChar(chars[i]);
         	if (lp != null)
@@ -640,15 +689,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	}
 	
 	//inflate PosCharViews with PosChar.NULL values
-	private LinearLayout inflatePosLine() {
+	private LinearLayout inflatePosLine(int lineLayoutResId) {
 		LayoutInflater layoutInflater2 = layoutInflater;
 		int wordLength = run.wordLength;
-		LinearLayout line = (LinearLayout) layoutInflater2.inflate(R.layout.posline_layout, posTableLayout, false);
+		LinearLayout line = (LinearLayout) layoutInflater2.inflate(lineLayoutResId, posTableLayout, false);
 		
 		for (int i = 0; i < wordLength; i++) {
 			PosCharView pcw = (PosCharView) layoutInflater2.inflate(R.layout.poschar_view, line, false);
 			pcw.setLayoutParams(charLP);
-			pcw.paint = paint;
         	line.addView(pcw);
         }
 		return line;

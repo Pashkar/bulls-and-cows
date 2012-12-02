@@ -1,6 +1,7 @@
 package paxus.bnc.android.view;
 
 import static paxus.bnc.android.view.CharView.anim;
+import paxus.bnc.android.Main;
 import paxus.bnc.android.R;
 import paxus.bnc.controller.IPosCharStateChangedListener;
 import paxus.bnc.model.ENCharState;
@@ -14,10 +15,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class PosCharView extends View implements OnClickListener, IPosCharStateChangedListener {
-	
 	private static final String TAG = "PosCharView";
-
-	public Paint paint;
+	
+	private static final String ATTR_COLOR = "color";
 
 	private PosChar pch = PosChar.NULL;
 
@@ -26,21 +26,16 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	private int xOffset = -1;
 
 	private int yOffset = -1;
+
+	private final Paint paint;
 	
 	public PosCharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		initView(context);
-	}
-
-	public PosCharView(Context context) {
-		super(context);
-		initView(context);
-	}
-
-	private void initView(Context context) {
+		paint = Main.getPaint(attrs.getAttributeValue(null, "color") == null ? -1 /*not set - use default*/ :		 
+			attrs.getAttributeResourceValue(null, ATTR_COLOR, -1));
 		setOnClickListener(this);
 	}
-	
+
 	public void setPosChar(PosChar pch) {
 		this.pch = pch;
 		pch.addPosStateChangedListener(this);
@@ -94,7 +89,8 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
         }
     }
     
-    protected void onDraw(Canvas canvas) {
+    @Override
+	protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (hideOnDraw) {
         	setVisibility(View.INVISIBLE);
@@ -108,11 +104,13 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
         canvas.drawText(pch.ch + "", xOffset, yOffset, paint);
     }
 
+	@Override
 	public void onClick(View v) {
 		Log.d(TAG, v + ".onClick()");
 		pch.movePosState();	//if state really changes - onStateChanged will be notified
 	}
 	
+	@Override
 	public void onPosCharStateChanged(PosChar pch, ENCharState newState) {
 		if (this.pch != pch)
 			return;

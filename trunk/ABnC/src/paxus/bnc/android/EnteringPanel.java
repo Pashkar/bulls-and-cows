@@ -191,7 +191,6 @@ public final class EnteringPanel implements OnClickListener, android.content.Dia
 			if (i == to - 1 && lastLayoutId != -1)
 				lId = lastLayoutId;
         	CharView cv = (CharView) Main.layoutInflater.inflate(lId, la, false);
-        	cv.paint = Main.paint;
         	if (chars != null)
         		cv.setChar(chars[i]);
     		if (la.getId() == R.id.EnteringLayout) {

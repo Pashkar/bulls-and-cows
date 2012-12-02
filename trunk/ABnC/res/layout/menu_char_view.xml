@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+	class="paxus.bnc.android.view.StatelessCharsView"
+	android:id="@+id/ShowMenuView"
+	android:layout_width="@dimen/char_width" 
+	android:layout_height="@dimen/char_height"
+	android:layout_marginLeft="@dimen/char_left_margin"
+	android:background="@drawable/noth"
+	caption="---"
+	/>
