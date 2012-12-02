@@ -10,6 +10,7 @@
     <string name="word_too_long_msg">Слишком много букв введено</string>
     
     <string name="new_game_title">Новая игра</string>
+    <string name="new_game_title_no_dialogs">Новая игра (сразу)</string>
     <string name="new_word_title">Ход</string>
     <string name="win_title">Вы выиграли!</string>
     <string name="win_msg">Поздравляю! Вы угадали слово за %d шагов!</string>
@@ -28,7 +29,9 @@
     
     <string name="intro_menu_caption">Правила</string>
     <string name="intro_title">Приветствие</string>
+    <string name="guess_caption">Ход</string>
     <string name="translate"><a href="">Перевести</a> это слово</string>
+    <string name="close_caption">Закрыть</string>
     <string name="intro_msg">\
 Привет,\n\n\
 Вы только что скачали мой вариант старой доброй игры <b>Быки и Коровы</b> для Вашего Андроида! Получите удовольствие от этой чудесной логической игры, проверьте себя и попробуйте отгадать секретные коды или слова, которые предложит Вам Игра! Забыли как в нее играть? Нет ничего проще, читайте дальше!\n\n\

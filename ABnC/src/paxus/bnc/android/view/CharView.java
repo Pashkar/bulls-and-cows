@@ -1,6 +1,7 @@
 package paxus.bnc.android.view;
 
 import paxus.bnc.BncException;
+import paxus.bnc.android.Main;
 import paxus.bnc.android.R;
 import paxus.bnc.controller.ICharStateChangedListener;
 import paxus.bnc.controller.IPosCharStateChangedListener;
@@ -22,15 +23,16 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
 	private static final String TAG = "CharView";
 	private static final String ATTR_STATELESS = "stateless";
+	private static final String ATTR_COLOR = "color";
 	private static final String ATTR_CHANGE_STATE_ON_CLICK = "changeStateOnClick";
 	
 	static Animation anim;
-	public Paint paint;
+	protected final Paint paint; 
 
 	private Char ch = Char.NULL;
 	
 	public boolean changeStateOnClick = true;
-	public boolean stateless = false;	//should we react on clicks, should we redraw background based on state? 
+	public boolean stateless = false;	//should we react on clicks, should we redraw background based on state?
 	
 	/**
 	 *	For "bull" when position of CharView pointed. Stores for the CharView instance position of it in word.
@@ -39,27 +41,20 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private int viewPos = -1;	
 	
 	private boolean posMatched = false;
-	private int xOffset = -1;
-	private int yOffset = -1;
+	protected int xOffset = -1;
+	protected int yOffset = -1;
 	private OnClickListener clickListener;
 	
 	public CharView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		changeStateOnClick = attrs.getAttributeBooleanValue(null, ATTR_CHANGE_STATE_ON_CLICK, true);
 		stateless = attrs.getAttributeBooleanValue(null, ATTR_STATELESS, false);
-//		Log.d(TAG, "CharView const: @stateless=" + stateless + ", @changeStateOnClick = " + changeStateOnClick);
-		initView(context);
-	}
-	
-	public CharView(Context context) {
-		super(context);
-		initView(context);
-	}
-
-	public void initView(Context context) {
+		if (anim == null)
+			anim = AnimationUtils.loadAnimation(context, R.anim.char_fade_in_anim);
+		String colorAttr = attrs.getAttributeValue(null, ATTR_COLOR);
+		paint = Main.getPaint(colorAttr == null ? 0 /*not set - use default*/ :		 
+			getResources().getIdentifier(colorAttr, null, Main.class.getPackage().getName()));
 		super.setOnClickListener(this);
-        if (anim == null)
-        	anim = AnimationUtils.loadAnimation(context, R.anim.char_fade_in_anim);
 	}
 
 	public void setChar(Char ch, boolean posMatched) {
@@ -100,15 +95,23 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 
     @Override
 	protected void onDraw(Canvas canvas) {
+    	initPaintOffset();
         setBackground();
-        if (ch != null && paint != null) {
-        	if (xOffset == -1)
-        		xOffset = /*getPaddingLeft() + */getWidth() / 2;
-        	if (yOffset == -1)
-        		yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
-			canvas.drawText("" + ch.ch, xOffset, yOffset, paint);
-		}
+        if (paint != null)
+    		doDrawCaption(canvas);
     }
+
+	protected void doDrawCaption(Canvas canvas) {
+		if (ch != null)
+			canvas.drawText("" + ch.ch, xOffset, yOffset, paint);
+	}
+
+	private void initPaintOffset() {
+		if (xOffset == -1)
+			xOffset = /*getPaddingLeft() + */ getWidth() / 2;
+		if (yOffset == -1)
+			yOffset = getHeight() / 2 + (int)paint.getTextSize() / 2;
+	}
 	
 	private void setBackground() {
 		if (ch == null)
@@ -137,7 +140,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			
 			startAnimation(anim);
 			if (changeStateOnClick) 
-				ch.moveState();		//if state really changes - onStateChanged will be notified
+				ch.moveState();		//if state really changes - onStateChanged will be notified to call onDraw()
 		} catch (BncException e) {};
 	}
 

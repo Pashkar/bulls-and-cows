@@ -32,20 +32,6 @@ public class Char implements Serializable, Comparable<Char> {
 		this.asString = ch + "";
 	}
 	
-	private Object readResolve() throws ObjectStreamException {
-		if (Run.alphabet == null)
-			throw new NullPointerException("Run.alphabet must not be null");
-		return Run.alphabet.getCharInstance(ch);
-	}
-	
-	private void readObject(java.io.ObjectInputStream stream) throws IOException {
-		this.ch = stream.readChar();
-	}
-	
-	private void writeObject(java.io.ObjectOutputStream stream) throws IOException {
-		stream.writeChar(ch);
-	}
-	
 	public static Char valueOf(Character ch, Alphabet alphabet) throws BncException {
 		if (alphabet == null) {
 			if (ch == NULL_CHAR)
@@ -59,21 +45,20 @@ public class Char implements Serializable, Comparable<Char> {
 			throw new BncException("Symbol " + ch + " is not allowed in alphabet " + alphabet);
 		return alphabet.char2char.get(ch);	//all char must have been initialized on alphabet load
 	}
-
-/*	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	
+	private Object readResolve() throws ObjectStreamException {
 		if (Run.alphabet == null)
 			throw new NullPointerException("Run.alphabet must not be null");
-		
-		this.alphabet = alphabet;
-		this.ch = ch;
-		this.asString = ch + "";
+		return Run.alphabet.getCharInstance(ch);
 	}
-
-	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeChar(ch);
-	}*/
 	
+	private void readObject(java.io.ObjectInputStream stream) throws IOException {
+		this.ch = stream.readChar();
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream stream) throws IOException {
+		stream.writeChar(ch);
+	}
 
 	public ENCharState getState() {
 		return alphabet.char2state.get(ch);
@@ -136,12 +121,13 @@ public class Char implements Serializable, Comparable<Char> {
 		return true;
 	}
 	
+	@Override
 	public int compareTo(Char obj) {
 		if (this == obj)
 			return 0;
 		if (obj == null)
 			throw new NullPointerException();
-		Char other = (Char) obj;
+		Char other = obj;
 		return this.ch.charValue() - other.ch.charValue();
 	}
 
@@ -149,7 +135,7 @@ public class Char implements Serializable, Comparable<Char> {
 	static {
 		Char ch = null;
 		ch = new Char(null, NULL_CHAR) {
-			private ENCharState state = ENCharState.NONE; 
+			private final ENCharState state = ENCharState.NONE; 
 			@Override
 			public ENCharState moveState(ENCharState... forbidden) {
 				return state;

@@ -8,5 +8,5 @@
 	android:animationCache="true"
 	android:persistentDrawingCache="all"
 	android:gravity="left"
-	android:paddingTop="@dimen/line_top_margin"
+	android:paddingBottom="@dimen/line_top_margin"
 	/><!--android:layoutAnimation="@anim/layout_random_fade_in"-->

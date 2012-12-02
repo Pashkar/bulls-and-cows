@@ -2,14 +2,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Bulls and Cows</string>
     
-    <string name="secret_line">The secret word</string>
+    <string name="secret_line">Secret word</string>
     <string name="guesses_line">Your guesses</string>
-    <string name="position_line">Position is the question&#8230;</string>
+    <string name="position_line">Position in question&#8230;</string>
     
     <string name="diplicated_msg">Duplicated symbol</string>
     <string name="word_too_long_msg">Word is too long</string>
     
     <string name="new_game_title">New game</string>
+    <string name="new_game_title_no_dialogs">Instant new game</string>
     <string name="new_word_title" tools:ignore="UnusedResources">Guess</string>
     <string name="win_title">You win!</string>
     <string name="win_msg">Congratulations! You solved the puzzle in %d steps!</string>
@@ -28,7 +29,10 @@
     
     <string name="intro_menu_caption">Intro</string>
     <string name="intro_title">Brief intro</string>
+	<string name="guess_caption">Guess</string>
+	<string name="menu_caption">&#8230;</string>
     <string name="translate"><a href="">Translate</a> this word</string>
+    <string name="close_caption">Close</string>
     <string name="intro_msg">\
 Hey,\n\n\
 welcome to my version of the <b>Bulls and Cows</b> game for your Androids! Enjoy this amusing logical puzzle and break digital codes or secret words the game challenges you by! It might remind you of <b>Mastermind</b> but here you should deal with unique symbols (digits or letters), not colours. Still not sure how to play? Read my notes below!\n\n\
