@@ -48,6 +48,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ScrollView;
@@ -72,6 +74,8 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	
 	private static Paint paint;
 	private static Paint paint_white;
+	private Animation scaleInAnim;
+	private Animation scaleOutAnim;
 
 	private final RunExecutor re = new RunExecutor();
 	public static Run run;
@@ -82,7 +86,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	private LinearLayout offeredsLayout;
 	private LinearLayout posTableLayout;
 	private ScrollView scrollView;
-	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();
+	private final LinkedList<LinearLayout> freePosLayoutList = new LinkedList<LinearLayout>();		//not an ArrayList as it mostly inserts and removes
 
 	private LinearLayout.LayoutParams charLP;
 	private int displayWidth;
@@ -105,7 +109,6 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         super.onCreate(savedInstanceState);
 		Log.v(TAG, "onCreate");
 		
-		//init once per activity creation
 		initActivity();
 
 		run = null;
@@ -122,11 +125,17 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		}
     }
 
+	/**
+	 * Init once per activity creation
+	 */
 	private void initActivity() {
 		Log.v(TAG, "initActivity");
 		context = this;
 		paint = createPaint(getResources().getColor(R.drawable.font_color_black));
 		paint_white = createPaint(getResources().getColor(R.drawable.font_color_white));
+				
+		scaleInAnim = AnimationUtils.loadAnimation(context, R.anim.scale_in_anim);
+//		scaleOutAnim = AnimationUtils.loadAnimation(context, R.anim.scale_out_anim);
 		
     	layoutInflater = getLayoutInflater();
     	displayWidth = getWindowManager().getDefaultDisplay().getWidth();
@@ -405,9 +414,10 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
         
         //inflate all rows for PositionTable, store prepared lines in list for further usage
 		//also inflate labels
-        LinkedList<LinearLayout> freePosLayoutList2 = freePosLayoutList;
         for (int i = 0; i < run2.wordLength; i++) {
-        	freePosLayoutList2.add(inflatePosLine(R.layout.posline_layout));
+        	LinearLayout posLine = inflatePosLine(R.layout.posline_layout);
+//        	posLine.setLayoutAnimation(lineInAnimation);
+			freePosLayoutList.add(posLine);
         }
         posTable.addPosTableListener(this);
         
@@ -491,14 +501,14 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 	@Override
 	public void onPosTableUpdate(boolean insert, Character ch, PositionLine line) {
 		if (insert) {
-			LinearLayout pl = freePosLayoutList.removeFirst();
+			LinearLayout pl = freePosLayoutList.removeLast();
 			pl.setTag(ch);
 			showPosLine(pl, line.chars, run.wordLength);
 		} else {				//line == null
 			LinearLayout pl = hidePosLine(ch);
 			if (pl == null)
 				return;
-			freePosLayoutList.add(pl);
+			freePosLayoutList.addLast(pl);
 			pl.setTag(null);
 		}
 	}
@@ -510,19 +520,25 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			pcw.setPosChar(chars[i]);
         }
 		posTableLayout.addView(line);
-//		line.setLayoutAnimation(lineInAnimation);
-//		line.invalidate(); //start layout animation	
+		line.startAnimation(scaleInAnim);
 	}
 	
-	//hide PosLineLayout
 	private LinearLayout hidePosLine(Character ch) {
 		final LinearLayout line = (LinearLayout) posTableLayout.findViewWithTag(ch);
 		if (line == null)
 			return null;
 
-		posTableLayout.removeView(line);
+//		scaleOutAnim.setAnimationListener(new AnimationListener() {
+//			@Override public void onAnimationStart(Animation animation) {}
+//			@Override public void onAnimationRepeat(Animation animation) {}
+//			@Override public void onAnimationEnd(Animation animation) {
+//				Log.i(TAG, "scaleOutAnim.onAnimationEnd");
+//			}
+//		});
+
+//		line.startAnimation(scaleOutAnim);
 		
-		//TODO - try to add transition animation - soft disappearing for row
+		posTableLayout.removeView(line);
 		return line;
 	}
 
@@ -542,6 +558,17 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 			case R.id.ShowMenuButton:
 				Log.v(TAG, "R.id.ShowMenuButton");
 				openOptionsMenu();
+				
+				
+//				Run.WordCompared wc;
+//				try {
+//					wc = re.offerWord(run.secret.asString());
+//					addOfferedWord(wc);
+//				} catch (BncException e) {
+//					e.printStackTrace();
+//				}
+//				scrollView.smoothScrollTo(0, 100000);
+				
 				break;
 		}
 	}
@@ -572,7 +599,7 @@ public class Main extends Activity implements IPositionTableListener, OnClickLis
 		offeredLine.addView(compResView);
 
 		offeredsLayout.addView(offeredLine);
-		offeredLine.setVisibility(View.VISIBLE);
+		offeredLine.startAnimation(scaleInAnim);
 	}
 
 	private void winGame(WordCompared wc) {

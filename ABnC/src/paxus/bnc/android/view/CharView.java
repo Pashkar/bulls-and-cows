@@ -26,7 +26,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	private static final String ATTR_COLOR = "color";
 	private static final String ATTR_CHANGE_STATE_ON_CLICK = "changeStateOnClick";
 	
-	static Animation anim;
+	static Animation animFade;
 	protected final Paint paint; 
 
 	private Char ch = Char.NULL;
@@ -49,8 +49,8 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		super(context, attrs);
 		changeStateOnClick = attrs.getAttributeBooleanValue(null, ATTR_CHANGE_STATE_ON_CLICK, true);
 		stateless = attrs.getAttributeBooleanValue(null, ATTR_STATELESS, false);
-		if (anim == null)
-			anim = AnimationUtils.loadAnimation(context, R.anim.char_fade_in_anim);
+		if (animFade == null)
+			animFade = AnimationUtils.loadAnimation(context, R.anim.char_fade_in_anim);
 		String colorAttr = attrs.getAttributeValue(null, ATTR_COLOR);
 		paint = Main.getPaint(colorAttr == null ? 0 /*not set - use default*/ :		 
 			getResources().getIdentifier(colorAttr, null, Main.class.getPackage().getName()));
@@ -67,7 +67,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		ch.addStateChangedListener(this);
 //		invalidate();
 		setBackground();
-		startAnimation(anim);
+		startAnimation(animFade);
 	}
 
 	public Char getChar() {
@@ -81,7 +81,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 		clickListener = null;
 //		invalidate();
 		setBackground();
-		startAnimation(anim);
+		startAnimation(animFade);
 	}
 	
 	/**
@@ -138,7 +138,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			if (clickListener != null)
 				clickListener.onClick(v);
 			
-			startAnimation(anim);
+			startAnimation(animFade);
 			if (changeStateOnClick) 
 				ch.moveState();		//if state really changes - onStateChanged will be notified to call onDraw()
 		} catch (BncException e) {};
@@ -147,7 +147,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 	@Override
 	public void onCharStateChanged(Character ch, ENCharState newState) {
 //		invalidate();
-		startAnimation(anim);
+		startAnimation(animFade);
 	}
 
 	@Override
@@ -157,7 +157,7 @@ public class CharView extends View implements OnClickListener, ICharStateChanged
 			posMatched = (newState == ENCharState.PRESENT);
 		if (oldMatched != posMatched)
 //			invalidate();
-			startAnimation(anim);
+			startAnimation(animFade);
 	}
 	
 	@Override

@@ -1,6 +1,5 @@
 package paxus.bnc.android.view;
 
-import static paxus.bnc.android.view.CharView.anim;
 import paxus.bnc.android.Main;
 import paxus.bnc.android.R;
 import paxus.bnc.controller.IPosCharStateChangedListener;
@@ -16,7 +15,6 @@ import android.view.View.OnClickListener;
 
 public class PosCharView extends View implements OnClickListener, IPosCharStateChangedListener {
 	private static final String TAG = "PosCharView";
-	
 	private static final String ATTR_COLOR = "color";
 
 	private PosChar pch = PosChar.NULL;
@@ -24,7 +22,6 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 	private boolean hideOnDraw = false;
 
 	private int xOffset = -1;
-
 	private int yOffset = -1;
 
 	private final Paint paint;
@@ -115,9 +112,10 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 		if (this.pch != pch)
 			return;
 //		invalidate();
-		startAnimation(anim);
+		if (CharView.animFade != null)
+			startAnimation(CharView.animFade);
 	}
-
+	
 	private void drawBackground() {
 		switch (pch.state) {
 		case NONE:
@@ -131,7 +129,7 @@ public class PosCharView extends View implements OnClickListener, IPosCharStateC
 			break;
 		}
 	}
-
+	
 	@Override
 	public String toString() {
 		return pch + "";
