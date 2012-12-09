@@ -30,7 +30,7 @@
     <string name="intro_menu_caption">Intro</string>
     <string name="intro_title">Brief intro</string>
 	<string name="guess_caption">Guess</string>
-	<string name="menu_caption">&#8230;</string>
+	<string name="menu_caption" tools:ignore="MissingTranslation">&#8230;</string>
     <string name="translate"><a href="">Translate</a> this word</string>
     <string name="close_caption">Close</string>
     <string name="intro_msg">\
